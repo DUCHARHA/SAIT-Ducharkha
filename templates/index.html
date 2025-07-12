@@ -747,9 +747,6 @@
                     </div>
                     <div class="category-name">{{ category.name }}</div>
                     <div class="category-count">{{ category.subcategories|length }} подкатегорий</div>
-                    <div style="margin-top: 10px;">
-                        <small style="color: #6f42c1; font-weight: 500;">Нажмите, чтобы посмотреть товары</small>
-                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -761,38 +758,38 @@
             </button>
             <h2 class="section-title" id="products-title">Товары</h2>
             <div class="products-grid" id="products-grid">
-                {% for group_key, group in grouped_products.items() %}
-                {% set base_product = group.base_product %}
-                <div class="product-group" data-category="{{ base_product.category }}" data-brand="{{ base_product.brand or '' }}">
+                {% for product in products %}
+                <div class="product-group" data-category="{{ product.category }}" data-brand="{{ product.brand or '' }}">
                     <div class="product-image">
-                        {% if base_product.image.startswith('http') %}
-                            <img src="{{ base_product.image }}" alt="{{ base_product.name }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        {% if product.image.startswith('http') %}
+                            <img src="{{ product.image }}" alt="{{ product.name }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div class="product-emoji" style="display: none;">🛒</div>
                         {% else %}
-                            <div class="product-emoji">{{ base_product.image }}</div>
+                            <div class="product-emoji">{{ product.image }}</div>
                         {% endif %}
                     </div>
                     <div class="product-info">
-                        {% if base_product.brand %}
-                        <div class="product-brand">{{ base_product.brand }}</div>
+                        {% if product.brand %}
+                        <div class="product-brand">{{ product.brand }}</div>
                         {% endif %}
-                        <div class="product-name">{{ base_product.name.split()[0] }} {{ base_product.name.split()[1] if base_product.name.split()|length > 1 else '' }}</div>
-                        <div class="product-description">{{ base_product.description.split(',')[0] }}</div>
+                        <div class="product-name">{{ product.name }}</div>
+                        <div class="product-description">{{ product.description }}</div>
 
                         <div class="product-footer">
                             <div class="product-price">
-                                <span id="price-{{ group_key }}">{{ "%.2f"|format(base_product.price) }}</span> 
+                                <span>{{ "%.2f"|format(product.price) }}</span> 
                                 <span class="currency">сом</span>
                             </div>
                             <div class="quantity-controls">
-                                <button class="quantity-btn" onclick="changeQuantity({{ base_product.id }}, -1)" 
-                                        id="minus-{{ base_product.id }}">−</button>
-                                <span class="quantity-display" id="qty-{{ base_product.id }}">0</span>
-                                <button class="quantity-btn" onclick="changeQuantity({{ base_product.id }}, 1)"
-                                        id="plus-{{ base_product.id }}">+</button>
+                                <button class="quantity-btn" onclick="changeQuantity({{ product.id }}, -1)" 
+                                        id="minus-{{ product.id }}">−</button>
+                                <span class="quantity-display" id="qty-{{ product.id }}">0</span>
+                                <button class="quantity-btn" onclick="changeQuantity({{ product.id }}, 1)"
+                                        id="plus-{{ product.id }}">+</button>
                             </div>
                         </div>
                     </div>
+                </div>
                 {% endfor %}
             </div>
         </div>
