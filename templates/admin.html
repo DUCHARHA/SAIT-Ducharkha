@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - Дучарха</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+            transform: translateY(-2px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #6f42c1;
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .orders-section {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .orders-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .order-card {
+            border: 2px solid #f0f0f0;
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .order-card:hover {
+            border-color: #6f42c1;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(111, 66, 193, 0.1);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .order-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .order-status {
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .status-принят {
+            background: linear-gradient(135deg, #17a2b8, #138496);
+        }
+
+        .status-собирается {
+            background: linear-gradient(135deg, #ffc107, #e0a800);
+            color: #333;
+        }
+
+        .status-в-пути {
+            background: linear-gradient(135deg, #6f42c1, #5a2d91);
+        }
+
+        .status-доставлен {
+            background: linear-gradient(135deg, #28a745, #1e7e34);
+        }
+
+        .order-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .order-products {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .product-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+        .product-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .product-details {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .order-total {
+            text-align: right;
+            margin-top: 15px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #6f42c1;
+        }
+
+        .popular-products {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .product-rank {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .rank-number {
+            background: #6f42c1;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .product-info {
+            flex: 1;
+            margin-left: 15px;
+        }
+
+        .product-stats {
+            text-align: right;
+            color: #666;
+        }
+
+        /* Стили для формы промокода */
+        .promocode-form-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .promocode-form-container {
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .promocode-form {
+            padding: 30px;
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .form-header h3 {
+            margin: 0;
+            color: #333;
+            font-size: 24px;
+        }
+
+        .close-btn {
+            background: #f8f9fa;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: #e9ecef;
+            transform: rotate(90deg);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #6f42c1;
+            box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.1);
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+            font-size: 12px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .promo-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .promo-message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .promo-message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 10px;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .order-info {
+                grid-template-columns: 1fr;
+            }
+
+            .order-header {
+                flex-direction: column;
+                gap: 10px;
+                text-align: center;
+            }
+
+            .promocode-form-container {
+                width: 95%;
+                margin: 10px;
+            }
+
+            .promocode-form {
+                padding: 20px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="header">
+            <h1>👨‍💼 Админ-панель Дучарха</h1>
+            <a href="/admin_logout" class="logout-btn">Выйти</a>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ orders|length }}</div>
+                <div class="stat-label">Всего заказов</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ total_items_sold }}</div>
+                <div class="stat-label">Товаров продано</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ "%.0f"|format(total_revenue) }} сом</div>
+                <div class="stat-label">Общая выручка</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ orders|selectattr('status', 'equalto', 'Доставлен')|list|length }}</div>
+                <div class="stat-label">Доставлено заказов</div>
+            </div>
+        </div>
+
+        <div class="orders-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                <h2 class="section-title">📦 Заказы</h2>
+                <button onclick="openPromocodeForm()" style="background: linear-gradient(135deg, #6f42c1, #8b5cf6); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                    🎁 Создать промокод
+                </button>
+            </div>
+            <div class="orders-list">
+                {% for order in orders %}
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-number">Заказ №{{ order.number }}</div>
+                        <select class="order-status status-{{ order.status.lower().replace(' ', '-') }}" 
+                                onchange="updateOrderStatus('{{ order.number }}', this.value)">
+                            <option value="Принят" {{ 'selected' if order.status == 'Принят' }}>Принят</option>
+                            <option value="Собирается" {{ 'selected' if order.status == 'Собирается' }}>Собирается</option>
+                            <option value="В пути" {{ 'selected' if order.status == 'В пути' }}>В пути</option>
+                            <option value="Доставлен" {{ 'selected' if order.status == 'Доставлен' }}>Доставлен</option>
+                        </select>
+                    </div>
+
+                    <div class="order-info">
+                        <div class="info-item">
+                            <div class="info-label">Клиент</div>
+                            <div class="info-value">{{ order.customer.name }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Телефон</div>
+                            <div class="info-value">{{ order.customer.phone }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Адрес</div>
+                            <div class="info-value">{{ order.customer.address }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Время доставки</div>
+                            <div class="info-value">{{ order.delivery_time }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Оплата</div>
+                            <div class="info-value">{{ 'Наличные' if order.payment_method == 'cash' else ('Картой' if order.payment_method == 'card' else 'Онлайн') }}</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-label">Дата создания</div>
+                            <div class="info-value">{{ order.created_at }}</div>
+                        </div>
+                    </div>
+
+                    {% if order.comments %}
+                    <div class="info-item">
+                        <div class="info-label">Комментарий</div>
+                        <div class="info-value">{{ order.comments }}</div>
+                    </div>
+                    {% endif %}
+
+                    <div class="order-products">
+                        <strong>Товары:</strong>
+                        {% for product in order.products %}
+                        <div class="product-item">
+                            <div>
+                                <div class="product-name">{{ product.name }}</div>
+                                <div class="product-details">{{ product.quantity }} × {{ product.price }} сом</div>
+                            </div>
+                            <div class="product-details">{{ product.total }} сом</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="order-total">
+                        Итого: {{ order.final_total or order.total_price }} сом
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if popular_products %}
+        <div class="popular-products">
+            <h2 class="section-title">🏆 Популярные товары</h2>
+            {% for product_name, stats in popular_products %}
+            <div class="product-rank">
+                <div class="rank-number">{{ loop.index }}</div>
+                <div class="product-info">
+                    <div class="product-name">{{ product_name }}</div>
+                </div>
+                <div class="product-stats">
+                    <div>{{ stats.quantity }} шт</div>
+                    <div>{{ "%.0f"|format(stats.revenue) }} сом</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Модальное окно для создания промокода -->
+    <div id="promocode-overlay" class="promocode-form-overlay" style="display: none;">
+        <div class="promocode-form-container">
+            <div class="promocode-form">
+                <div class="form-header">
+                    <h3>🎁 Создать промокод</h3>
+                    <button class="close-btn" onclick="closePromocodeForm()">×</button>
+                </div>
+                
+                <form id="promocode-form" onsubmit="createPromocode(event)">
+                    <div class="form-group">
+                        <label for="promo-code">Код промокода</label>
+                        <input type="text" id="promo-code" name="code" required 
+                               placeholder="Например: SUMMER2025" 
+                               style="text-transform: uppercase;"
+                               pattern="[A-Za-z0-9]+" 
+                               title="Только буквы и цифры">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="promo-type">Тип скидки</label>
+                        <select id="promo-type" name="type" required onchange="toggleDiscountInput()">
+                            <option value="percent">Процент (%)</option>
+                            <option value="fixed">Фиксированная сумма (сом)</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="promo-discount">Размер скидки</label>
+                        <input type="number" id="promo-discount" name="discount" required 
+                               min="1" max="100" step="0.01"
+                               placeholder="Например: 15">
+                        <small id="discount-hint">Максимум 100%</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="promo-usage-limit">Лимит использований</label>
+                        <input type="number" id="promo-usage-limit" name="usage_limit" required 
+                               min="1" max="10000" step="1"
+                               placeholder="Например: 100">
+                        <small>Максимальное количество использований промокода</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="promo-min-order">Минимальная сумма заказа (необязательно)</label>
+                        <input type="number" id="promo-min-order" name="min_order" 
+                               min="0" step="0.01"
+                               placeholder="Например: 50">
+                        <small>Промокод будет действовать только для заказов от указанной суммы</small>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" onclick="closePromocodeForm()" 
+                                style="background: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; flex: 1;">
+                            Отмена
+                        </button>
+                        <button type="submit" 
+                                style="background: linear-gradient(135deg, #28a745, #20c997); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; flex: 2; font-weight: 600;">
+                            Создать промокод
+                        </button>
+                    </div>
+                </form>
+
+                <div id="promo-message" class="promo-message" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openPromocodeForm() {
+            document.getElementById('promocode-overlay').style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePromocodeForm() {
+            document.getElementById('promocode-overlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('promocode-form').reset();
+            document.getElementById('promo-message').style.display = 'none';
+        }
+
+        function toggleDiscountInput() {
+            const type = document.getElementById('promo-type').value;
+            const discountInput = document.getElementById('promo-discount');
+            const hint = document.getElementById('discount-hint');
+            
+            if (type === 'percent') {
+                discountInput.max = '100';
+                discountInput.placeholder = 'Например: 15';
+                hint.textContent = 'Максимум 100%';
+            } else {
+                discountInput.max = '1000';
+                discountInput.placeholder = 'Например: 50';
+                hint.textContent = 'Сумма скидки в сомах';
+            }
+        }
+
+        function createPromocode(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(event.target);
+            const data = {
+                code: formData.get('code').toUpperCase(),
+                type: formData.get('type'),
+                discount: parseFloat(formData.get('discount')),
+                usage_limit: parseInt(formData.get('usage_limit')),
+                min_order: formData.get('min_order') ? parseFloat(formData.get('min_order')) : 0
+            };
+
+            // Валидация
+            if (data.type === 'percent' && (data.discount < 1 || data.discount > 100)) {
+                showPromoMessage('Процент скидки должен быть от 1 до 100', 'error');
+                return;
+            }
+
+            if (data.type === 'fixed' && data.discount < 1) {
+                showPromoMessage('Сумма скидки должна быть больше 0', 'error');
+                return;
+            }
+
+            if (data.usage_limit < 1) {
+                showPromoMessage('Лимит использований должен быть больше 0', 'error');
+                return;
+            }
+
+            fetch('/admin/create_promocode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    showPromoMessage(result.message, 'success');
+                    setTimeout(() => {
+                        closePromocodeForm();
+                    }, 2000);
+                } else {
+                    showPromoMessage(result.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                showPromoMessage('Ошибка при создании промокода', 'error');
+            });
+        }
+
+        function showPromoMessage(message, type) {
+            const messageEl = document.getElementById('promo-message');
+            messageEl.textContent = message;
+            messageEl.className = `promo-message ${type}`;
+            messageEl.style.display = 'block';
+        }
+
+        // Закрытие по клику вне модального окна
+        document.getElementById('promocode-overlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePromocodeForm();
+            }
+        });
+
+        // Закрытие по Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && document.getElementById('promocode-overlay').style.display === 'flex') {
+                closePromocodeForm();
+            }
+        });
+
+        function updateOrderStatus(orderNumber, newStatus) {
+            fetch('/admin/update_order_status', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    order_number: orderNumber,
+                    status: newStatus
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Обновляем класс для цвета
+                    const select = event.target;
+                    select.className = `order-status status-${newStatus.toLowerCase().replace(' ', '-')}`;
+
+                    // Показываем уведомление
+                    showNotification(`Статус заказа №${orderNumber} изменен на "${newStatus}"`);
+
+                    // Обновляем страницу через 1 секунду для обновления статистики
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    alert('Ошибка при обновлении статуса');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Ошибка при обновлении статуса');
+            });
+        }
+
+        function showNotification(message) {
+            // Создаем уведомление
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #28a745;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+                z-index: 1000;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            // Анимация появления
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            // Удаление через 3 секунды
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

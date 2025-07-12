@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мои заказы - Дучарха</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
+            padding: 12px 0;
+            box-shadow: 0 2px 20px rgba(111, 66, 193, 0.3);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .cart-link {
+            background-color: rgba(255,255,255,0.15);
+            position: relative;
+        }
+
+        .cart-count {
+            background-color: #ff6b35;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+            position: absolute;
+            top: -5px;
+            right: -5px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .phone-input {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .phone-input input {
+            width: 100%;
+            max-width: 300px;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .phone-input input:focus {
+            outline: none;
+            border-color: #6f42c1;
+            box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.1);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(111, 66, 193, 0.3);
+        }
+
+        .order-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .order-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f8f9fa;
+        }
+
+        .order-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .order-date {
+            color: #666;
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .order-status {
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: white;
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+        }
+
+        .status-accepted { 
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+        }
+        .status-preparing { 
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+        }
+        .status-shipping { 
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+        }
+        .status-delivered { 
+            background: linear-gradient(135deg, #00b956, #00a04b);
+        }
+
+        .order-progress {
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .progress-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .progress-step.completed {
+            background-color: #6f42c1;
+            color: white;
+        }
+
+        .progress-step.current {
+            background-color: #ffc107;
+            color: white;
+        }
+
+        .progress-step.pending {
+            background-color: #e9ecef;
+            color: #6c757d;
+        }
+
+        .progress-line {
+            position: absolute;
+            top: 50%;
+            left: 40px;
+            right: 40px;
+            height: 4px;
+            background-color: #e9ecef;
+            z-index: 1;
+        }
+
+        .progress-line::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background-color: #6f42c1;
+            transition: width 0.3s ease;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .order-items {
+            margin: 20px 0;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #f8f9fa;
+        }
+
+        .item-info {
+            flex-grow: 1;
+        }
+
+        .item-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .item-details {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .item-total {
+            font-weight: 600;
+            color: #6f42c1;
+        }
+
+        .order-total {
+            text-align: right;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #f8f9fa;
+        }
+
+        .total-amount {
+            font-size: 20px;
+            font-weight: bold;
+            color: #6f42c1;
+        }
+
+        .review-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #f8f9fa;
+        }
+
+        .review-form {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .rating-group {
+            margin-bottom: 15px;
+        }
+
+        .rating-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .star-rating {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+
+        .star {
+            font-size: 24px;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .star.active {
+            color: #ffc107;
+        }
+
+        .review-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .submit-review-btn {
+            background-color: #6f42c1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .no-orders {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+        }
+
+        .no-orders h2 {
+            color: #666;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .no-orders p {
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .continue-shopping {
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 12px;
+            display: inline-block;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .continue-shopping:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(111, 66, 193, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 10px;
+            }
+
+            .order-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .order-status {
+                align-self: flex-end;
+            }
+
+            .progress-labels {
+                font-size: 10px;
+            }
+
+            .star-rating {
+                justify-content: center;
+            }
+        }
+        .status-принят { 
+            background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        }
+        .status-собирается { 
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+        }
+        .status-в-пути { 
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+        .status-shipping { 
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+        .status-доставлен { 
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <a href="/" class="logo">💜 Дучарха</a>
+            <nav class="nav-links">
+                <a href="/">Главная</a>
+                <a href="/my_orders">📋 Мои заказы</a>
+                <a href="/cart" class="cart-link">
+                    🛒 Корзина
+                    <span class="cart-count">{{ cart_count }}</span>
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="page-title">Мои заказы</h1>
+
+        <div class="phone-input">
+            <input type="tel" id="phone-search" placeholder="Введите номер телефона для поиска заказов" value="{{ phone or '' }}">
+            <br>
+            <button class="search-btn" onclick="searchOrders()">Найти заказы</button>
+        </div>
+
+        {% if orders %}
+            {% for order in orders %}
+            <div class="order-card">
+                <div class="order-header">
+                    <div>
+                        <div class="order-number">Заказ №{{ order.number }}</div>
+                        <div class="order-date">{{ order.created_at }}</div>
+                    </div>
+                    <div class="order-status status-{{ order.status.lower().replace(' ', '-') }}">
+                        {{ order.status }}
+                    </div>
+                </div>
+
+                <div class="order-progress">
+                    <div class="progress-bar">
+                        <div class="progress-step {{ 'completed' if order.status in ['Собирается', 'В пути', 'Доставлен'] else ('current' if order.status == 'Принят' else 'pending') }}">📝</div>
+                        <div class="progress-step {{ 'completed' if order.status in ['В пути', 'Доставлен'] else ('current' if order.status == 'Собирается' else 'pending') }}">📦</div>
+                        <div class="progress-step {{ 'completed' if order.status == 'Доставлен' else ('current' if order.status == 'В пути' else 'pending') }}">🚚</div>
+                        <div class="progress-step {{ 'completed' if order.status == 'Доставлен' else 'pending' }}">✅</div>
+                        <div class="progress-line"></div>
+                    </div>
+                    <div class="progress-labels">
+                        <span>Принят</span>
+                        <span>Собирается</span>
+                        <span>В пути</span>
+                        <span>Доставлен</span>
+                    </div>
+                </div>
+
+                <div class="order-items">
+                    {% for product in order.products %}
+                    <div class="order-item">
+                        <div class="item-info">
+                            <div class="item-name">{{ product.name }}</div>
+                            <div class="item-details">{{ product.quantity }} шт. × {{ "%.2f"|format(product.price) }} сом</div>
+                        </div>
+                        <div class="item-total">{{ "%.2f"|format(product.total) }} сом</div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                {% if order.promocode %}
+                <div style="text-align: right; color: #00b956; font-size: 14px; margin: 5px 0;">
+                    🎁 Применен промокод: {{ order.promocode }}
+                </div>
+                {% endif %}
+
+                <div class="order-total">
+                    <div class="total-amount">
+                        Итого: {{ "%.2f"|format(order.final_total or order.total_price) }} сом
+                    </div>
+                    <div style="font-size: 14px; color: #00b956; margin-top: 5px;">
+                        🚚 Доставка: Бесплатно
+                    </div>
+                </div>
+
+                {% if order.status == 'Доставлен' %}
+                <div class="review-section">
+                    <h4>Оцените заказ</h4>
+                    <div class="review-form">
+                        <div class="rating-group">
+                            <label class="rating-label">Качество товаров:</label>
+                            <div class="star-rating" data-rating="product" data-order="{{ order.number }}">
+                                <span class="star" data-value="1">⭐</span>
+                                <span class="star" data-value="2">⭐</span>
+                                <span class="star" data-value="3">⭐</span>
+                                <span class="star" data-value="4">⭐</span>
+                                <span class="star" data-value="5">⭐</span>
+                            </div>
+                        </div>
+                        <div class="rating-group">
+                            <label class="rating-label">Качество доставки:</label>
+                            <div class="star-rating" data-rating="delivery" data-order="{{ order.number }}">
+                                <span class="star" data-value="1">⭐</span>
+                                <span class="star" data-value="2">⭐</span>
+                                <span class="star" data-value="3">⭐</span>
+                                <span class="star" data-value="4">⭐</span>
+                                <span class="star" data-value="5">⭐</span>
+                            </div>
+                        </div>
+                        <textarea class="review-textarea" placeholder="Оставьте отзыв о заказе..." id="comment-{{ order.number }}"></textarea>
+                        <button class="submit-review-btn" onclick="submitReview('{{ order.number }}', '{{ phone }}')">Отправить отзыв</button>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        {% elif phone %}
+            <div class="no-orders">
+                <h2>📋 Заказов не найдено</h2>
+                <p>По номеру {{ phone }} заказы не найдены</p>
+                <a href="/" class="continue-shopping">Сделать заказ</a>
+            </div>
+        {% else %}
+            <div class="no-orders">
+                <h2>📋 Введите номер телефона</h2>
+                <p>Для просмотра истории заказов введите номер телефона, который указывали при оформлении</p>
+                <a href="/" class="continue-shopping">Перейти к покупкам</a>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        let ratings = {};
+
+        function searchOrders() {
+            const phone = document.getElementById('phone-search').value.trim();
+            if (phone) {
+                window.location.href = `/my_orders?phone=${encodeURIComponent(phone)}`;
+            }
+        }
+
+        // Обработка рейтинга звездами
+        document.querySelectorAll('.star-rating').forEach(ratingGroup => {
+            const stars = ratingGroup.querySelectorAll('.star');
+            const ratingType = ratingGroup.dataset.rating;
+            const orderNumber = ratingGroup.dataset.order;
+
+            stars.forEach((star, index) => {
+                star.addEventListener('click', () => {
+                    const rating = index + 1;
+
+                    // Обновляем визуальное состояние
+                    stars.forEach((s, i) => {
+                        if (i < rating) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+
+                    // Сохраняем рейтинг
+                    if (!ratings[orderNumber]) {
+                        ratings[orderNumber] = {};
+                    }
+                    ratings[orderNumber][ratingType] = rating;
+                });
+
+                star.addEventListener('mouseenter', () => {
+                    stars.forEach((s, i) => {
+                        if (i <= index) {
+                            s.style.color = '#ffc107';
+                        } else {
+                            s.style.color = '#ddd';
+                        }
+                    });
+                });
+            });
+
+            ratingGroup.addEventListener('mouseleave', () => {
+                stars.forEach((s, i) => {
+                    if (s.classList.contains('active')) {
+                        s.style.color = '#ffc107';
+                    } else {
+                        s.style.color = '#ddd';
+                    }
+                });
+            });
+        });
+
+        function submitReview(orderNumber, customerPhone) {
+            const orderRatings = ratings[orderNumber];
+            const comment = document.getElementById(`comment-${orderNumber}`).value;
+
+            if (!orderRatings || !orderRatings.product || !orderRatings.delivery) {
+                alert('Пожалуйста, поставьте оценки за товары и доставку');
+                return;
+            }
+
+            fetch('/leave_review', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    order_number: orderNumber,
+                    customer_phone: customerPhone,
+                    product_rating: orderRatings.product,
+                    delivery_rating: orderRatings.delivery,
+                    comment: comment
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(data.message);
+                    // Скрываем форму отзыва
+                    document.querySelector(`[data-order="${orderNumber}"]`).closest('.review-section').style.display = 'none';
+                } else {
+                    alert('Ошибка при отправке отзыва');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                alert('Ошибка при отправке отзыва');
+            });
+        }
+
+        // Enter для поиска
+        document.getElementById('phone-search').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchOrders();
+            }
+        });
+
+        // Анимация прогресс-бара
+        document.querySelectorAll('.progress-line').forEach(line => {
+            const completedSteps = line.parentElement.querySelectorAll('.progress-step.completed').length;
+            const totalSteps = 4;
+            const progressWidth = (completedSteps / totalSteps) * 100;
+            line.style.setProperty('--progress-width', progressWidth + '%');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,630 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление заказа - Дучарха</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
+            padding: 12px 0;
+            box-shadow: 0 2px 20px rgba(111, 66, 193, 0.3);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .checkout-form {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .form-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background-color: #fff;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #6f42c1;
+            box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .order-summary {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .summary-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-info {
+            flex-grow: 1;
+        }
+
+        .item-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .item-details {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .item-total {
+            font-weight: 600;
+            color: #6f42c1;
+        }
+
+        .delivery-info {
+            background: linear-gradient(135deg, #00b956, #00a04b);
+            color: white;
+            padding: 16px;
+            border-radius: 12px;
+            margin: 16px 0;
+            text-align: center;
+        }
+
+        .delivery-info h4 {
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .delivery-info p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .promocode-section {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+
+        .promocode-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .promocode-input {
+            flex-grow: 1;
+            padding: 10px 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .apply-promocode-btn {
+            background-color: #6f42c1;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .apply-promocode-btn:hover {
+            background-color: #5a369e;
+        }
+
+        .promocode-message {
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .promocode-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .promocode-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .total-section {
+            background: white;
+            border: 2px solid #6f42c1;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+
+        .total-row.final {
+            border-top: 2px solid #e9ecef;
+            margin-top: 12px;
+            padding-top: 16px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #6f42c1;
+        }
+
+        .place-order-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .place-order-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(111, 66, 193, 0.3);
+        }
+
+        .place-order-btn:disabled {
+            background: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .minimum-order-warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 12px;
+            margin: 16px 0;
+            text-align: center;
+        }
+
+        .geolocation-btn {
+            background-color: #17a2b8;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+
+        .phone-error {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 10px;
+            }
+
+            .checkout-form {
+                padding: 20px 15px;
+            }
+
+            .promocode-input-group {
+                flex-direction: column;
+            }
+
+            .apply-promocode-btn {
+                margin-top: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <a href="/" class="logo">💜 Дучарха</a>
+            <nav class="nav-links">
+                <a href="/">Главная</a>
+                <a href="/my_orders">📋 Мои заказы</a>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1 class="page-title">Оформление заказа</h1>
+
+        <form class="checkout-form" action="/place_order" method="POST" id="checkout-form">
+            <div class="form-section">
+                <h3 class="section-title">👤 Контактная информация</h3>
+                <div class="form-group">
+                    <label class="form-label" for="name">Имя</label>
+                    <input type="text" id="name" name="name" class="form-input" required placeholder="Ваше имя">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="phone">Телефон</label>
+                    <input type="tel" id="phone" name="phone" class="form-input" required placeholder="+992 987654321 или 987654321">
+                    <div class="phone-error" id="phone-error" style="display: none;">
+                        Номер должен содержать 9 цифр. Формат: +992987654321, 992987654321 или 987654321
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">📍 Адрес доставки</h3>
+                <div class="form-group">
+                    <label class="form-label" for="address">Адрес</label>
+                    <input type="text" id="address" name="address" class="form-input" required placeholder="Улица, дом, квартира">
+                    <button type="button" class="geolocation-btn" onclick="getLocation()">📍 Моя геолокация</button>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">🕐 Время доставки</h3>
+                <div class="form-group">
+                    <label class="form-label" for="delivery_time">Время доставки</label>
+                    <select name="delivery_time" id="delivery_time" class="form-select" required>
+                        <option value="" disabled selected>Выберите время доставки</option>
+                        <option value="ASAP">⚡ Как можно скорее (10-15 мин)</option>
+                        <option value="Через 30 минут">🕐 Через 30 минут</option>
+                        <option value="Через 1 час">🕑 Через 1 час</option>
+                        <option value="Через 2 часа">🕒 Через 2 часа</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">💳 Способ оплаты</h3>
+                <div class="form-group">
+                    <label class="form-label" for="payment_method">Способ оплаты</label>
+                    <select name="payment_method" id="payment_method" class="form-select" required>
+                        <option value="" disabled selected>Выберите способ оплаты</option>
+                        <option value="cash">💵 Наличными при доставке</option>
+                        <option value="card">💳 Картой курьеру</option>
+                        <option value="online">🌐 Онлайн оплата</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="section-title">💬 Комментарии</h3>
+                <div class="form-group">
+                    <label class="form-label" for="comments">Комментарий к заказу</label>
+                    <textarea name="comments" id="comments" class="form-textarea" placeholder="Дополнительная информация для оператора"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="courier_comment">Комментарий курьеру</label>
+                    <textarea name="courier_comment" id="courier_comment" class="form-textarea" placeholder="Информация для курьера (домофон, этаж, особенности доставки)"></textarea>
+                </div>
+            </div>
+
+            <div class="order-summary">
+                <h3 class="summary-title">📦 Ваш заказ</h3>
+                {% for item in cart_products %}
+                <div class="order-item">
+                    <div class="item-info">
+                        <div class="item-name">{{ item.name }}</div>
+                        <div class="item-details">{{ item.quantity }} шт. × {{ "%.2f"|format(item.price) }} сом</div>
+                    </div>
+                    <div class="item-total">{{ "%.2f"|format(item.total) }} сом</div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <div class="delivery-info">
+                <h4>🚚 Доставка БЕСПЛАТНО за 10-15 минут!</h4>
+                <p>Мы доставляем ваш заказ абсолютно бесплатно</p>
+            </div>
+
+            <div class="promocode-section">
+                <h4 style="margin-bottom: 12px;">🎁 Промокод</h4>
+                <div class="promocode-input-group">
+                    <input type="text" id="promocode-input" class="promocode-input" placeholder="Введите промокод">
+                    <button type="button" class="apply-promocode-btn" onclick="applyPromocode()">Применить</button>
+                </div>
+                <div class="promocode-message" id="promocode-message"></div>
+            </div>
+
+            {% if total_price < 10 %}
+            <div class="minimum-order-warning">
+                ⚠️ Минимальная сумма заказа 10 сом. Добавьте товаров на {{ "%.2f"|format(10 - total_price) }} сом.
+            </div>
+            {% endif %}
+
+            <div class="total-section">
+                <div class="total-row">
+                    <span>Товары:</span>
+                    <span id="subtotal">{{ "%.2f"|format(total_price) }} сом</span>
+                </div>
+                <div class="total-row">
+                    <span>Доставка:</span>
+                    <span style="color: #00b956; font-weight: 600;">Бесплатно</span>
+                </div>
+                <div class="total-row" id="discount-row" style="display: none;">
+                    <span>Скидка:</span>
+                    <span id="discount-amount" style="color: #00b956;">-0.00 сом</span>
+                </div>
+                <div class="total-row final">
+                    <span>К оплате:</span>
+                    <span id="final-total">{{ "%.2f"|format(total_price) }} сом</span>
+                </div>
+            </div>
+
+            <input type="hidden" name="promocode" id="applied-promocode">
+            <input type="hidden" name="final_total" id="final-total-input" value="{{ total_price }}">
+
+            <button type="submit" class="place-order-btn" {{ 'disabled' if total_price < 10 else '' }}>
+                {% if total_price < 10 %}
+                    Минимальная сумма заказа 10 сом
+                {% else %}
+                    Оформить заказ
+                {% endif %}
+            </button>
+        </form>
+    </div>
+
+    <script>
+        let currentTotal = {{ total_price }};
+        let discountApplied = 0;
+
+        // Валидация телефона в реальном времени
+        document.getElementById('phone').addEventListener('input', function() {
+            validatePhone();
+        });
+
+        function validatePhone() {
+            const phone = document.getElementById('phone').value.trim();
+            const errorEl = document.getElementById('phone-error');
+            const phoneInput = document.getElementById('phone');
+
+            // Убираем все пробелы и специальные символы для проверки
+            const cleanPhone = phone.replace(/[\s\-\(\)\+]/g, '');
+
+            let isValid = false;
+
+            if (cleanPhone.length === 0) {
+                // Пустое поле - скрываем ошибку
+                errorEl.style.display = 'none';
+                phoneInput.style.borderColor = '#e9ecef';
+                return true;
+            }
+
+            // Проверяем различные форматы:
+            // 992987654321 (12 цифр с кодом страны)
+            // 987654321 (9 цифр без кода)
+            if (cleanPhone.match(/^992\d{9}$/) || cleanPhone.match(/^\d{9}$/)) {
+                isValid = true;
+            }
+
+            if (isValid) {
+                errorEl.style.display = 'none';
+                phoneInput.style.borderColor = '#00b956';
+            } else {
+                errorEl.style.display = 'block';
+                phoneInput.style.borderColor = '#dc3545';
+            }
+
+            return isValid;
+        }
+
+        function applyPromocode() {
+            const code = document.getElementById('promocode-input').value.trim();
+            const messageEl = document.getElementById('promocode-message');
+
+            if (!code) {
+                showPromocodeMessage('Введите промокод', 'error');
+                return;
+            }
+
+            fetch('/apply_promocode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    code: code,
+                    total: currentTotal
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    discountApplied = data.discount;
+                    updateTotals(data.new_total, data.discount);
+                    document.getElementById('applied-promocode').value = code;
+                    showPromocodeMessage(data.message, 'success');
+                    document.getElementById('promocode-input').disabled = true;
+                    document.querySelector('.apply-promocode-btn').disabled = true;
+                } else {
+                    showPromocodeMessage(data.message, 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                showPromocodeMessage('Ошибка применения промокода', 'error');
+            });
+        }
+
+        function showPromocodeMessage(message, type) {
+            const messageEl = document.getElementById('promocode-message');
+            messageEl.textContent = message;
+            messageEl.className = `promocode-message ${type}`;
+            messageEl.style.display = 'block';
+        }
+
+        function updateTotals(newTotal, discount) {
+            document.getElementById('final-total').textContent = newTotal.toFixed(2) + ' сом';
+            document.getElementById('final-total-input').value = newTotal;
+
+            if (discount > 0) {
+                document.getElementById('discount-row').style.display = 'flex';
+                document.getElementById('discount-amount').textContent = '-' + discount.toFixed(2) + ' сом';
+            }
+
+            // Обновляем кнопку заказа если сумма меньше минимальной
+            const orderBtn = document.querySelector('.place-order-btn');
+            if (newTotal < 10) {
+                orderBtn.disabled = true;
+                orderBtn.textContent = 'Минимальная сумма заказа 10 сом';
+            } else {
+                orderBtn.disabled = false;
+                orderBtn.textContent = 'Оформить заказ';
+            }
+        }
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    // Здесь можно использовать API для получения адреса по координатам
+                    // Для демонстрации просто показываем координаты
+                    document.getElementById('address').value = `Координаты: ${lat.toFixed(6)}, ${lon.toFixed(6)}`;
+                }, function(error) {
+                    alert('Не удалось получить местоположение: ' + error.message);
+                });
+            } else {
+                alert('Геолокация не поддерживается этим браузером');
+            }
+        }
+
+        // Валидация формы при отправке
+        document.getElementById('checkout-form').addEventListener('submit', function(e) {
+            const finalTotal = parseFloat(document.getElementById('final-total-input').value);
+            if (finalTotal < 10) {
+                e.preventDefault();
+                alert('Минимальная сумма заказа составляет 10 сом');
+                return false;
+            }
+
+            if (!validatePhone()) {
+                e.preventDefault();
+                alert('Пожалуйста, введите корректный номер телефона');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>

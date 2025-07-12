@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дучарха - Интернет-магазин</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
+            padding: 12px 0;
+            box-shadow: 0 2px 20px rgba(111, 66, 193, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .cart-link {
+            background-color: rgba(255,255,255,0.15);
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .cart-link:hover {
+            background-color: rgba(255,255,255,0.25);
+        }
+
+        .cart-count {
+            background-color: #ff6b35;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .profile-menu {
+            position: relative;
+        }
+
+        .profile-btn {
+            background-color: rgba(255,255,255,0.15);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+        }
+
+        .profile-btn:hover {
+            background-color: rgba(255,255,255,0.25);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 16px;
+            padding: 16px 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            min-width: 200px;
+            display: none;
+            z-index: 1001;
+            margin-top: 8px;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .profile-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .profile-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .profile-item-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Search Section - Fixed */
+        .search-section {
+            background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
+            padding: 20px 16px;
+            color: white;
+            position: sticky;
+            top: 80px;
+            z-index: 999;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .search-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .search-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .search-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .search-box-container {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 14px 50px 14px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 25px;
+            outline: none;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            background-color: white;
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: #6f42c1;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background-color: #5a369e;
+        }
+
+        .search-history {
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        .history-item {
+            display: inline-block;
+            background-color: rgba(255,255,255,0.15);
+            color: white;
+            padding: 4px 10px;
+            margin: 2px;
+            border-radius: 12px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .history-item:hover {
+            background-color: rgba(255,255,255,0.25);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 16px;
+        }
+
+        /* Categories Section */
+        .categories-section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+            text-align: center;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-bottom: 30px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+        }
+
+        .category-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .category-card.active {
+            border-color: #6f42c1;
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: white;
+        }
+
+        .category-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .category-name {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .category-count {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .category-card.active .category-count {
+            opacity: 0.9;
+        }
+
+        /* Products Section */
+        .products-section {
+            display: none;
+            margin-bottom: 30px;
+        }
+
+        .products-section.show {
+            display: block;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .product-group {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .product-group:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-emoji {
+            font-size: 4em;
+        }
+
+        .product-info {
+            padding: 16px;
+        }
+
+        .product-brand {
+            color: #6f42c1;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .product-description {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 12px;
+            line-height: 1.4;
+        }
+
+        .product-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-price {
+            font-size: 18px;
+            font-weight: bold;
+            color: #6f42c1;
+        }
+
+        .currency {
+            font-size: 14px;
+            color: #888;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quantity-btn {
+            background-color: #6f42c1;
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quantity-btn:hover {
+            background-color: #5a369e;
+            transform: scale(1.1);
+        }
+
+        .quantity-btn:disabled {
+            background-color: #e9ecef;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .quantity-display {
+            min-width: 24px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        /* Help Modal */
+        .help-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 10000;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .help-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+        }
+
+        .help-modal h3 {
+            margin-bottom: 16px;
+            color: #6f42c1;
+            text-align: center;
+        }
+
+        .help-contact {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f8f9fa;
+            border-radius: 12px;
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        .help-contact:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .help-close {
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        /* Success Message */
+        .success-message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #00b956, #00a04b);
+            color: white;
+            padding: 12px 20px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,185,86,0.3);
+            z-index: 1000;
+            display: none;
+            font-weight: 500;
+        }
+
+        /* Search Results */
+        .search-results {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .results-header {
+            margin-bottom: 20px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        /* Mobile Adaptations */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 12px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .search-section {
+                padding: 16px 12px;
+                top: 76px;
+            }
+
+            .search-title {
+                font-size: 18px;
+            }
+
+            .search-subtitle {
+                font-size: 13px;
+            }
+
+            .search-box {
+                font-size: 14px;
+                padding: 12px 45px 12px 16px;
+            }
+
+            .categories-grid {
+                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+                gap: 12px;
+            }
+
+            .category-card {
+                padding: 16px 12px;
+            }
+
+            .category-icon {
+                font-size: 32px;
+                margin-bottom: 8px;
+            }
+
+            .category-name {
+                font-size: 14px;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 15px;
+            }
+
+            .main-content {
+                padding: 15px 12px;
+            }
+
+            .section-title {
+                font-size: 20px;
+            }
+
+            .profile-dropdown {
+                right: -8px;
+                min-width: 180px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quantity-controls {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .product-footer {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        .back-to-categories {
+            display: none;
+            background-color: #6f42c1;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .back-to-categories:hover {
+            background-color: #5a369e;
+        }
+
+        .back-to-categories.show {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-content">
+            <a href="/" class="logo">💜 Дучарха</a>
+            <div class="header-right">
+                <a href="/cart" class="cart-link">
+                    🛒 <span class="cart-count" id="cart-count">{{ cart_count }}</span>
+                </a>
+                <div class="profile-menu">
+                    <button class="profile-btn" onclick="toggleProfileMenu()">👤</button>
+                    <div class="profile-dropdown" id="profile-dropdown">
+                        <a href="/my_orders" class="profile-item">
+                            <span class="profile-item-icon">📋</span>
+                            <span>Мои заказы</span>
+                        </a>
+                        <a href="#" class="profile-item" onclick="toggleHelpModal()">
+                            <span class="profile-item-icon">❓</span>
+                            <span>Помощь</span>
+                        </a>
+                        <a href="/admin" class="profile-item">
+                            <span class="profile-item-icon">⚙️</span>
+                            <span>Админ панель</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-section">
+        <div class="search-container">
+            <h1 class="search-title">Свежие продукты с доставкой</h1>
+            <p class="search-subtitle">Более 100 товаров • Бесплатная доставка за 10-15 минут</p>
+
+            <div class="search-box-container">
+                <input type="text" 
+                       class="search-box" 
+                       id="search-input" 
+                       placeholder="Поиск: молоко, помидоры, кола..." 
+                       autocomplete="off">
+                <button class="search-btn" onclick="searchProducts()">🔍</button>
+            </div>
+
+            {% if search_history %}
+            <div class="search-history">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
+                    <span style="opacity: 0.7; font-size: 12px;">Недавние:</span>
+                    <span style="opacity: 0.8; font-size: 11px; cursor: pointer; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 8px;" onclick="clearAllHistory()">✕ Очистить</span>
+                </div>
+                {% for query in search_history %}
+                <span class="history-item" onclick="searchFromHistory('{{ query }}')">
+                    {{ query }} <span style="margin-left: 4px; opacity: 0.7;" onclick="event.stopPropagation(); removeFromHistory('{{ query }}')">✕</span>
+                </span>
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="categories-section" id="categories-section">
+            <h2 class="section-title">Выберите категорию</h2>
+            <div class="categories-grid">
+                {% for category in categories %}
+                <div class="category-card" onclick="showCategoryProducts('{{ category.name }}')">
+                    <div class="category-icon">
+                        {% if category.name == 'Молочные продукты' %}🥛
+                        {% elif category.name == 'Мясо и птица' %}🍗
+                        {% elif category.name == 'Овощи' %}🥬
+                        {% elif category.name == 'Фрукты' %}🍎
+                        {% elif category.name == 'Напитки' %}🥤
+                        {% elif category.name == 'Хлебобулочные' %}🍞
+                        {% elif category.name == 'Крупы и макароны' %}🌾
+                        {% elif category.name == 'Колбасы и деликатесы' %}🥓
+                        {% elif category.name == 'Рыба и морепродукты' %}🐟
+                        {% elif category.name == 'Замороженные продукты' %}❄️
+                        {% elif category.name == 'Консервы' %}🥫
+                        {% elif category.name == 'Приправы и специи' %}🧂
+                        {% elif category.name == 'Масла и соусы' %}🫒
+                        {% elif category.name == 'Яйца' %}🥚
+                        {% elif category.name == 'Сладости и снеки' %}🍫
+                        {% elif category.name == 'Кофе и чай' %}☕
+                        {% elif category.name == 'Детское питание' %}👶
+                        {% elif category.name == 'Бытовая химия' %}🧽
+                        {% elif category.name == 'Товары для дома' %}🏠
+                        {% elif category.name == 'Личная гигиена' %}🧴
+                        {% elif category.name == 'Безалкогольные напитки' %}🍺
+                        {% elif category.name == 'Орехи и сухофрукты' %}🥜
+                        {% else %}📦{% endif %}
+                    </div>
+                    <div class="category-name">{{ category.name }}</div>
+                    <div class="category-count">{{ category.subcategories|length }} подкатегорий</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="products-section" id="products-section">
+            <button class="back-to-categories" id="back-to-categories" onclick="showCategories()">
+                ← Назад к категориям
+            </button>
+            <h2 class="section-title" id="products-title">Товары</h2>
+            <div class="products-grid" id="products-grid">
+                {% for group_key, group in grouped_products.items() %}
+                {% set base_product = group.base_product %}
+                <div class="product-group" data-category="{{ base_product.category }}" data-brand="{{ base_product.brand or '' }}">
+                    <div class="product-image">
+                        {% if base_product.image.startswith('http') %}
+                            <img src="{{ base_product.image }}" alt="{{ base_product.name }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <div class="product-emoji" style="display: none;">🛒</div>
+                        {% else %}
+                            <div class="product-emoji">{{ base_product.image }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        {% if base_product.brand %}
+                        <div class="product-brand">{{ base_product.brand }}</div>
+                        {% endif %}
+                        <div class="product-name">{{ base_product.name.split()[0] }} {{ base_product.name.split()[1] if base_product.name.split()|length > 1 else '' }}</div>
+                        <div class="product-description">{{ base_product.description.split(',')[0] }}</div>
+
+                        <div class="product-footer">
+                            <div class="product-price">
+                                <span id="price-{{ group_key }}">{{ "%.2f"|format(base_product.price) }}</span> 
+                                <span class="currency">сом</span>
+                            </div>
+                            <div class="quantity-controls">
+                                <button class="quantity-btn" onclick="changeQuantity({{ base_product.id }}, -1)" 
+                                        id="minus-{{ base_product.id }}">−</button>
+                                <span class="quantity-display" id="qty-{{ base_product.id }}">0</span>
+                                <button class="quantity-btn" onclick="changeQuantity({{ base_product.id }}, 1)"
+                                        id="plus-{{ base_product.id }}">+</button>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="search-results" id="search-results">
+            <button class="back-to-categories" onclick="hideSearchResults()">
+                ← Назад к категориям
+            </button>
+            <div class="results-header">
+                <h2 class="section-title" id="results-title">Результаты поиска</h2>
+            </div>
+            <div class="products-grid" id="results-grid"></div>
+            <div class="no-results" id="no-results" style="display: none;">
+                <p>По вашему запросу ничего не найдено</p>
+                <p>Попробуйте изменить поисковый запрос</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="success-message" id="success-message">
+        Товар добавлен в корзину!
+    </div>
+
+    <!-- Help Modal -->
+    <div class="help-modal-overlay" id="help-overlay" onclick="closeHelpModal()"></div>
+    <div class="help-modal" id="help-modal">
+        <button class="help-close" onclick="closeHelpModal()">✕</button>
+        <h3>💜 Служба поддержки Дучарха</h3>
+        <p style="text-align: center; color: #666; margin-bottom: 16px;">Остались вопросы? Мы поможем!</p>
+
+        <a href="tel:+992971844884" class="help-contact">
+            <span style="font-size: 20px;">📞</span>
+            <div>
+                <div style="font-weight: 600;">Позвонить</div>
+                <div style="font-size: 14px; color: #666;">+992 971 84 48 84</div>
+            </div>
+        </a>
+
+        <a href="https://t.me/DilovarAkhi" target="_blank" class="help-contact">
+            <span style="font-size: 20px;">💬</span>
+            <div>
+                <div style="font-weight: 600;">Написать в Telegram</div>
+                <div style="font-size: 14px; color: #666;">@DilovarAkhi</div>
+            </div>
+        </a>
+    </div>
+
+    <script>
+        let currentCategory = '';
+        let cartQuantities = {};
+
+        // Загружаем количества из корзины при загрузке страницы
+        window.addEventListener('load', function() {
+            const cartItems = {{ session.get('cart', []) | tojson }};
+            cartItems.forEach(item => {
+                cartQuantities[item.id] = item.quantity;
+                updateQuantityDisplay(item.id, item.quantity);
+            });
+        });
+
+        // Profile Menu
+        function toggleProfileMenu() {
+            const dropdown = document.getElementById('profile-dropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close profile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const profileMenu = document.querySelector('.profile-menu');
+            if (!profileMenu.contains(e.target)) {
+                document.getElementById('profile-dropdown').classList.remove('show');
+            }
+        });
+
+        // Show category products
+        function showCategoryProducts(category) {
+            currentCategory = category;
+
+            // Hide categories, show products
+            document.getElementById('categories-section').style.display = 'none';
+            document.getElementById('products-section').classList.add('show');
+            document.getElementById('back-to-categories').classList.add('show');
+
+            // Filter products by category
+            const productGroups = document.querySelectorAll('.product-group');
+            productGroups.forEach(group => {
+                const groupCategory = group.dataset.category;
+                group.style.display = (groupCategory === category) ? 'block' : 'none';
+            });
+
+            document.getElementById('products-title').textContent = category;
+        }
+
+        // Show categories (back from products)
+        function showCategories() {
+            currentCategory = '';
+            document.getElementById('categories-section').style.display = 'block';
+            document.getElementById('products-section').classList.remove('show');
+            document.getElementById('back-to-categories').classList.remove('show');
+            hideSearchResults();
+        }
+
+        // Search functionality
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchProducts();
+            }
+        });
+
+        document.getElementById('search-input').addEventListener('input', function() {
+            const query = this.value.trim();
+            if (query.length >= 2) {
+                setTimeout(() => {
+                    fetch(`/search?q=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            displaySearchResults(data.results, data.query, data.count);
+                        })
+                        .catch(error => {
+                            console.error('Ошибка поиска:', error);
+                        });
+                }, 300);
+            } else if (query.length === 0) {
+                hideSearchResults();
+            }
+        });
+
+        function searchProducts() {
+            const query = document.getElementById('search-input').value.trim();
+
+            if (!query) {
+                hideSearchResults();
+                return;
+            }
+
+            fetch(`/search?q=${encodeURIComponent(query)}&save_history=true`)
+                .then(response => response.json())
+                .then(data => {
+                    displaySearchResults(data.results, data.query, data.count);
+                })
+                .catch(error => {
+                    console.error('Ошибка поиска:', error);
+                });
+        }
+
+        function searchFromHistory(query) {
+            document.getElementById('search-input').value = query;
+            searchProducts();
+        }
+
+        function displaySearchResults(results, query, count) {
+            const resultsContainer = document.getElementById('search-results');const resultsGrid = document.getElementById('results-grid');
+            const noResults = document.getElementById('no-results');
+            const resultsTitle = document.getElementById('results-title');
+            const categoriesSection = document.getElementById('categories-section');
+            const productsSection = document.getElementById('products-section');
+
+            resultsTitle.textContent = `Результаты поиска "${query}" (${count})`;
+
+            if (results.length === 0) {
+                resultsGrid.style.display = 'none';
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+                resultsGrid.style.display = 'grid';
+
+                resultsGrid.innerHTML = results.map(product => `
+                    <div class="product-group">
+                        <div class="product-image">
+                            ${product.image.startsWith('http') 
+                                ? `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                   <div class="product-emoji" style="display: none;">🛒</div>`
+                                : `<div class="product-emoji">${product.image}</div>`
+                            }
+                        </div>
+                        <div class="product-info">
+                            ${product.brand ? `<div class="product-brand">${product.brand}</div>` : ''}
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-description">${product.description}</div>
+                            <div class="product-footer">
+                                <div class="product-price">
+                                    ${product.price.toFixed(2)} <span class="currency">сом</span>
+                                </div>
+                                <div class="quantity-controls">
+                                    <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">−</button>
+                                    <span class="quantity-display" id="qty-${product.id}">${cartQuantities[product.id] || 0}</span>
+                                    <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            categoriesSection.style.display = 'none';
+            productsSection.classList.remove('show');
+            resultsContainer.style.display = 'block';
+        }
+
+        function hideSearchResults() {
+            document.getElementById('search-results').style.display = 'none';
+            document.getElementById('search-input').value = '';
+            showCategories();
+        }
+
+        function changeQuantity(productId, change) {
+            const currentQty = parseInt(document.getElementById(`qty-${productId}`).textContent);
+            const newQty = Math.max(0, currentQty + change);
+
+            fetch('/update_cart_quantity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'product_id': productId,
+                    'change': change
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById(`qty-${productId}`).textContent = data.current_quantity;
+                    updateCartCount(data.cart_count);
+                    cartQuantities[productId] = data.current_quantity;
+                    updateQuantityDisplay(productId, data.current_quantity);
+                    document.getElementById('cart-count').textContent = data.cart_count;
+
+                    if (change > 0) {
+                        showSuccessMessage();
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+        }
+
+        function updateQuantityDisplay(productId, quantity) {
+            const qtyElement = document.getElementById(`qty-${productId}`);
+            if (qtyElement) {
+                qtyElement.textContent = quantity;
+            }
+
+            const minusBtn = document.getElementById(`minus-${productId}`);
+            if (minusBtn) {
+                minusBtn.disabled = quantity <= 0;
+            }
+        }
+
+        function showSuccessMessage() {
+            const successMessage = document.getElementById('success-message');
+            successMessage.style.display = 'block';
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 2000);
+        }
+
+        // Help Modal Functions
+        function toggleHelpModal() {
+            const modal = document.getElementById('help-modal');
+            const overlay = document.getElementById('help-overlay');
+            const isVisible = modal.style.display === 'block';
+
+            modal.style.display = isVisible ? 'none' : 'block';
+            overlay.style.display = isVisible ? 'none' : 'block';
+
+            // Close profile menu
+            document.getElementById('profile-dropdown').classList.remove('show');
+        }
+
+        function closeHelpModal() {
+            document.getElementById('help-modal').style.display = 'none';
+            document.getElementById('help-overlay').style.display = 'none';
+        }
+
+        // Search History Functions
+        function removeFromHistory(query) {
+            fetch('/remove_search_history', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({query: query})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        }
+
+        function clearAllHistory() {
+            fetch('/clear_search_history', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
