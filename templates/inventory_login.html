@@ -1,0 +1,139 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход товароведа - Дучарха</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input[type="password"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #6f42c1;
+            box-shadow: 0 0 0 3px rgba(111, 66, 193, 0.1);
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(111, 66, 193, 0.3);
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .back-link {
+            margin-top: 20px;
+            display: inline-block;
+            color: #666;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: #6f42c1;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">📦</div>
+        <h1>Панель товароведа</h1>
+        
+        {% if error %}
+        <div class="error-message">{{ error }}</div>
+        {% endif %}
+        
+        <form method="POST">
+            <div class="form-group">
+                <label for="password">Пароль:</label>
+                <input type="password" 
+                       id="password" 
+                       name="password" 
+                       required 
+                       autocomplete="current-password"
+                       placeholder="Введите пароль товароведа">
+            </div>
+            
+            <button type="submit" class="submit-btn">Войти</button>
+        </form>
+        
+        <a href="/" class="back-link">← Вернуться на главную</a>
+    </div>
+</body>
+</html>

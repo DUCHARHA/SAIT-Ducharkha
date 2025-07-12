@@ -9,10 +9,12 @@ app = Flask(__name__)
 app.secret_key = 'sk-7x9m2n8p4q6r1s5t3u7v9w0e8f2g4h6j8k1l3m5n7p9q2r4s6t8u0v2w4x6y8z1a3b5c7d9e'
 
 ADMIN_PASSWORD = 'dilo.artes'
+INVENTORY_PASSWORD = 'tovaroused'
 
 ORDERS_FILE = 'orders.json'
 REVIEWS_FILE = 'reviews.json'
 PROMOCODES_FILE = 'promocodes.json'
+INVENTORY_FILE = 'inventory.json'
 
 # Системы синонимов для умного поиска
 SYNONYMS = {
@@ -75,6 +77,40 @@ def load_promocodes():
             'created_at': '2025-01-01 00:00:00'
         }
     }
+
+def load_inventory():
+    if os.path.exists(INVENTORY_FILE):
+        try:
+            with open(INVENTORY_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            return {}
+    return {}
+
+def save_inventory(inventory):
+    with open(INVENTORY_FILE, 'w', encoding='utf-8') as f:
+        json.dump(inventory, f, ensure_ascii=False, indent=2)
+
+def get_product_stock(product_id):
+    inventory = load_inventory()
+    return inventory.get(str(product_id), {'stock': 50, 'active': True})  # По умолчанию 50 штук
+
+def update_product_stock(product_id, quantity_ordered):
+    """Уменьшает остаток товара при заказе"""
+    inventory = load_inventory()
+    product_key = str(product_id)
+    
+    if product_key not in inventory:
+        inventory[product_key] = {'stock': 50, 'active': True}
+    
+    inventory[product_key]['stock'] = max(0, inventory[product_key]['stock'] - quantity_ordered)
+    
+    # Автоматически деактивируем товар, если остаток 0
+    if inventory[product_key]['stock'] == 0:
+        inventory[product_key]['active'] = False
+    
+    save_inventory(inventory)
+    return inventory[product_key]
 
 def save_order(order):
     orders = load_orders()
@@ -352,11 +388,20 @@ def home():
     # Группируем товары
     grouped_products = group_products(products)
 
+    # Добавляем информацию о остатках к товарам
+    products_with_stock = []
+    for product in products:
+        product_copy = product.copy()
+        stock_info = get_product_stock(product['id'])
+        product_copy['stock'] = stock_info['stock']
+        product_copy['available'] = stock_info['active']
+        products_with_stock.append(product_copy)
+
     # Получаем историю поиска
     search_history = session.get('search_history', [])
 
     return render_template('index.html', 
-                         products=products, 
+                         products=products_with_stock, 
                          grouped_products=grouped_products,
                          categories=category_data, 
                          cart_count=cart_count,
@@ -411,11 +456,30 @@ def update_cart_quantity():
     if 'cart' not in session:
         session['cart'] = []
 
+    # Проверяем остатки на складе
+    stock_info = get_product_stock(product_id)
+    
+    if not stock_info['active']:
+        return jsonify({
+            'success': False,
+            'error': 'Товар закончился'
+        })
+
     cart = session['cart']
     item = next((item for item in cart if item['id'] == product_id), None)
 
+    current_in_cart = item['quantity'] if item else 0
+    new_quantity = current_in_cart + change
+
+    # Проверяем, не превышает ли новое количество остаток на складе
+    if new_quantity > stock_info['stock']:
+        return jsonify({
+            'success': False,
+            'error': f'В наличии только {stock_info["stock"]} шт.',
+            'max_available': stock_info['stock']
+        })
+
     if item:
-        new_quantity = item['quantity'] + change
         if new_quantity <= 0:
             cart = [cart_item for cart_item in cart if cart_item['id'] != product_id]
             current_quantity = 0
@@ -436,7 +500,8 @@ def update_cart_quantity():
     return jsonify({
         'success': True,
         'cart_count': total_cart_count,
-        'current_quantity': current_quantity
+        'current_quantity': current_quantity,
+        'stock_remaining': stock_info['stock'] - current_quantity
     })
 
 @app.route('/cart')
@@ -700,6 +765,10 @@ def place_order():
             with open(PROMOCODES_FILE, 'w', encoding='utf-8') as f:
                 json.dump(promocodes, f, ensure_ascii=False, indent=2)
 
+    # Уменьшаем остатки товаров на складе
+    for item in cart_items:
+        update_product_stock(item['id'], item['quantity'])
+
     session['last_order'] = order
     save_order(order)
     session['cart'] = []
@@ -881,6 +950,64 @@ def remove_search_history():
 def clear_search_history():
     session['search_history'] = []
     return jsonify({'success': True})
+
+@app.route('/inventory')
+def inventory_login():
+    return render_template('inventory_login.html')
+
+@app.route('/inventory_login', methods=['POST'])
+def inventory_login_post():
+    password = request.form.get('password')
+    if password == INVENTORY_PASSWORD:
+        session['inventory_authenticated'] = True
+        return redirect('/inventory_panel')
+    else:
+        return render_template('inventory_login.html', error='Неверный пароль')
+
+@app.route('/inventory_panel')
+def inventory_panel():
+    if not session.get('inventory_authenticated'):
+        return redirect('/inventory')
+
+    inventory = load_inventory()
+    
+    # Добавляем информацию о товарах
+    products_with_stock = []
+    for product in products:
+        stock_info = get_product_stock(product['id'])
+        product_with_stock = product.copy()
+        product_with_stock['current_stock'] = stock_info['stock']
+        product_with_stock['is_active'] = stock_info['active']
+        products_with_stock.append(product_with_stock)
+
+    return render_template('inventory_panel.html', products=products_with_stock)
+
+@app.route('/inventory_logout')
+def inventory_logout():
+    session.pop('inventory_authenticated', None)
+    return redirect('/')
+
+@app.route('/update_stock', methods=['POST'])
+def update_stock():
+    if not session.get('inventory_authenticated'):
+        return jsonify({'success': False, 'message': 'Недостаточно прав'})
+
+    data = request.get_json()
+    product_id = data.get('product_id')
+    new_stock = data.get('stock')
+    active = data.get('active', True)
+
+    if new_stock < 0:
+        return jsonify({'success': False, 'message': 'Остаток не может быть отрицательным'})
+
+    inventory = load_inventory()
+    inventory[str(product_id)] = {
+        'stock': new_stock,
+        'active': active and new_stock > 0  # Автоматически деактивируем если остаток 0
+    }
+    save_inventory(inventory)
+
+    return jsonify({'success': True, 'message': 'Остаток обновлен'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

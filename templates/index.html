@@ -145,15 +145,11 @@
             text-align: center;
         }
 
-        /* Search Section - Fixed */
+        /* Search Section */
         .search-section {
             background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
             padding: 20px 16px;
             color: white;
-            position: sticky;
-            top: 80px;
-            z-index: 999;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
 
         .search-container {
@@ -173,6 +169,17 @@
             opacity: 0.9;
             margin-bottom: 16px;
             text-align: center;
+        }
+
+        /* Sticky Search Box */
+        .sticky-search {
+            position: sticky;
+            top: 80px;
+            z-index: 999;
+            background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
+            padding: 12px 16px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: none;
         }
 
         .search-box-container {
@@ -454,6 +461,39 @@
             font-size: 16px;
         }
 
+        .out-of-stock,
+        .low-stock {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 12px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .low-stock {
+            background: #fff3cd;
+            color: #856404;
+            border-color: #ffeaa7;
+        }
+
+        .unavailable-btn {
+            background: #6c757d;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .product-group.out-of-stock {
+            opacity: 0.6;
+        }
+
         /* Help Modal */
         .help-modal {
             display: none;
@@ -559,7 +599,11 @@
 
             .search-section {
                 padding: 16px 12px;
+            }
+
+            .sticky-search {
                 top: 76px;
+                padding: 8px 12px;
             }
 
             .search-title {
@@ -674,6 +718,10 @@
                             <span class="profile-item-icon">❓</span>
                             <span>Помощь</span>
                         </a>
+                        <a href="/inventory" class="profile-item">
+                            <span class="profile-item-icon">📦</span>
+                            <span>Панель товароведа</span>
+                        </a>
                         <a href="/admin" class="profile-item">
                             <span class="profile-item-icon">⚙️</span>
                             <span>Админ панель</span>
@@ -711,6 +759,20 @@
                 {% endfor %}
             </div>
             {% endif %}
+        </div>
+    </div>
+
+    <!-- Sticky Search Bar -->
+    <div class="sticky-search" id="sticky-search">
+        <div class="search-container">
+            <div class="search-box-container">
+                <input type="text" 
+                       class="search-box" 
+                       id="sticky-search-input" 
+                       placeholder="Поиск: молоко, помидоры, кола..." 
+                       autocomplete="off">
+                <button class="search-btn" onclick="searchProductsSticky()">🔍</button>
+            </div>
         </div>
     </div>
 
@@ -775,18 +837,35 @@
                         <div class="product-name">{{ product.name }}</div>
                         <div class="product-description">{{ product.description }}</div>
 
+                        {% if not product.available %}
+                        <div class="out-of-stock">
+                            <span>❌ Нет в наличии</span>
+                        </div>
+                        {% elif product.stock <= 5 %}
+                        <div class="low-stock">
+                            <span>⚠️ Осталось {{ product.stock }} шт.</span>
+                        </div>
+                        {% endif %}
+
                         <div class="product-footer">
                             <div class="product-price">
                                 <span>{{ "%.2f"|format(product.price) }}</span> 
                                 <span class="currency">сом</span>
                             </div>
+                            {% if product.available %}
                             <div class="quantity-controls">
                                 <button class="quantity-btn" onclick="changeQuantity({{ product.id }}, -1)" 
                                         id="minus-{{ product.id }}">−</button>
                                 <span class="quantity-display" id="qty-{{ product.id }}">0</span>
                                 <button class="quantity-btn" onclick="changeQuantity({{ product.id }}, 1)"
-                                        id="plus-{{ product.id }}">+</button>
+                                        id="plus-{{ product.id }}" 
+                                        data-max-stock="{{ product.stock }}">+</button>
                             </div>
+                            {% else %}
+                            <div class="unavailable-btn">
+                                Недоступно
+                            </div>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -997,7 +1076,14 @@
 
         function changeQuantity(productId, change) {
             const currentQty = parseInt(document.getElementById(`qty-${productId}`).textContent);
-            const newQty = Math.max(0, currentQty + change);
+            const plusBtn = document.getElementById(`plus-${productId}`);
+            const maxStock = parseInt(plusBtn.dataset.maxStock || '999');
+
+            // Проверяем лимиты на фронтенде
+            if (change > 0 && currentQty >= maxStock) {
+                showNotification(`В наличии только ${maxStock} шт.`, 'error');
+                return;
+            }
 
             fetch('/update_cart_quantity', {
                 method: 'POST',
@@ -1013,7 +1099,6 @@
             .then(data => {
                 if (data.success) {
                     document.getElementById(`qty-${productId}`).textContent = data.current_quantity;
-                    updateCartCount(data.cart_count);
                     cartQuantities[productId] = data.current_quantity;
                     updateQuantityDisplay(productId, data.current_quantity);
                     document.getElementById('cart-count').textContent = data.cart_count;
@@ -1021,11 +1106,56 @@
                     if (change > 0) {
                         showSuccessMessage();
                     }
+
+                    // Обновляем кнопку + если достигли лимита
+                    if (data.current_quantity >= maxStock) {
+                        plusBtn.disabled = true;
+                        plusBtn.style.opacity = '0.5';
+                    } else {
+                        plusBtn.disabled = false;
+                        plusBtn.style.opacity = '1';
+                    }
+                } else {
+                    showNotification(data.error || 'Ошибка добавления товара', 'error');
                 }
             })
             .catch(error => {
                 console.error('Ошибка:', error);
+                showNotification('Ошибка соединения', 'error');
             });
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : '#dc3545'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+                z-index: 1000;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
         }
 
         function updateQuantityDisplay(productId, quantity) {
@@ -1065,6 +1195,34 @@
             document.getElementById('help-modal').style.display = 'none';
             document.getElementById('help-overlay').style.display = 'none';
         }
+
+        // Sticky Search Functions
+        window.addEventListener('scroll', function() {
+            const searchSection = document.querySelector('.search-section');
+            const stickySearch = document.getElementById('sticky-search');
+            const searchSectionBottom = searchSection.offsetTop + searchSection.offsetHeight;
+            
+            if (window.scrollY > searchSectionBottom) {
+                stickySearch.style.display = 'block';
+            } else {
+                stickySearch.style.display = 'none';
+            }
+        });
+
+        function searchProductsSticky() {
+            const query = document.getElementById('sticky-search-input').value.trim();
+            document.getElementById('search-input').value = query;
+            searchProducts();
+        }
+
+        // Синхронизация поисковых строк
+        document.getElementById('sticky-search-input').addEventListener('input', function() {
+            document.getElementById('search-input').value = this.value;
+        });
+
+        document.getElementById('search-input').addEventListener('input', function() {
+            document.getElementById('sticky-search-input').value = this.value;
+        });
 
         // Search History Functions
         function removeFromHistory(query) {
