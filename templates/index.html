@@ -722,22 +722,22 @@
                 <div class="category-card" onclick="showCategoryProducts('{{ category.name }}')">
                     <div class="category-icon">
                         {% if category.name == 'Молочные продукты' %}🥛
-                        {% elif category.name == 'Мясо и птица' %}🍗
-                        {% elif category.name == 'Овощи' %}🥬
+                        {% elif category.name == 'Мясо и птица' %}🥩
+                        {% elif category.name == 'Овощи' %}🥕
                         {% elif category.name == 'Фрукты' %}🍎
-                        {% elif category.name == 'Напитки' %}🥤
                         {% elif category.name == 'Хлебобулочные' %}🍞
-                        {% elif category.name == 'Крупы и макароны' %}🌾
+                        {% elif category.name == 'Напитки' %}🥤
+                        {% elif category.name == 'Крупы и макароны' %}🍝
                         {% elif category.name == 'Колбасы и деликатесы' %}🥓
                         {% elif category.name == 'Рыба и морепродукты' %}🐟
-                        {% elif category.name == 'Замороженные продукты' %}❄️
+                        {% elif category.name == 'Замороженные продукты' %}🧊
                         {% elif category.name == 'Консервы' %}🥫
                         {% elif category.name == 'Приправы и специи' %}🧂
-                        {% elif category.name == 'Масла и соусы' %}🫒
+                        {% elif category.name == 'Масла и соусы' %}🍯
                         {% elif category.name == 'Яйца' %}🥚
                         {% elif category.name == 'Сладости и снеки' %}🍫
                         {% elif category.name == 'Кофе и чай' %}☕
-                        {% elif category.name == 'Детское питание' %}👶
+                        {% elif category.name == 'Детское питание' %}🍼
                         {% elif category.name == 'Бытовая химия' %}🧽
                         {% elif category.name == 'Товары для дома' %}🏠
                         {% elif category.name == 'Личная гигиена' %}🧴
@@ -747,6 +747,9 @@
                     </div>
                     <div class="category-name">{{ category.name }}</div>
                     <div class="category-count">{{ category.subcategories|length }} подкатегорий</div>
+                    <div style="margin-top: 10px;">
+                        <small style="color: #6f42c1; font-weight: 500;">Нажмите, чтобы посмотреть товары</small>
+                    </div>
                 </div>
                 {% endfor %}
             </div>
@@ -936,7 +939,7 @@
         }
 
         function searchFromHistory(query) {
-            document.getElementById('search-input').value = query;
+            document.getElementById(`search-input`).value = query;
             searchProducts();
         }
 

@@ -330,9 +330,9 @@
                     <div class="item-name">{{ item.name }}</div>
                     <div class="item-price">{{ "%.2f"|format(item.price) }} сом. за штуку</div>
                     <div class="quantity-controls">
-                        <button class="quantity-btn" onclick="updateQuantity({{ item.id }}, {{ item.quantity - 1 }})">-</button>
+                        <button class="quantity-btn" onclick="updateQuantity({{ item.id }}, Math.max(0, parseInt(document.getElementById('quantity-{{ item.id }}').textContent) - 1))">-</button>
                         <span class="quantity" id="quantity-{{ item.id }}">{{ item.quantity }}</span>
-                        <button class="quantity-btn" onclick="updateQuantity({{ item.id }}, {{ item.quantity + 1 }})">+</button>
+                        <button class="quantity-btn" onclick="updateQuantity({{ item.id }}, parseInt(document.getElementById('quantity-{{ item.id }}').textContent) + 1)">+</button>
                     </div>
                 </div>
                 <div class="item-total" id="total-{{ item.id }}">{{ "%.2f"|format(item.total) }} сом.</div>
@@ -389,7 +389,10 @@
                     // Обновляем общую стоимость и счетчик
                     document.getElementById('total-price').textContent = 'Итого: ' + data.total_price.toFixed(2) + ' сом.';
                     document.getElementById('cart-count-text').textContent = 'Количество товаров: ' + data.cart_count;
-                    document.querySelector('.cart-count').textContent = data.cart_count;
+                    const cartCountElement = document.querySelector('.cart-count');
+                    if (cartCountElement) {
+                        cartCountElement.textContent = data.cart_count;
+                    }
                 }
             })
             .catch(error => {
