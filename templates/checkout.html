@@ -383,7 +383,7 @@
                 <h3 class="section-title">🕐 Время доставки</h3>
                 <div class="form-group">
                     <label class="form-label" for="delivery_time">Время доставки</label>
-                    <select name="delivery_time" id="delivery_time" class="form-select" required>
+                    <select name="delivery_time" id="delivery_time" class="form-select" required onblur="this.blur();">
                         <option value="" disabled selected>Выберите время доставки</option>
                         <option value="ASAP">⚡ Как можно скорее (10-15 мин)</option>
                         <option value="Через 30 минут">🕐 Через 30 минут</option>
@@ -397,7 +397,7 @@
                 <h3 class="section-title">💳 Способ оплаты</h3>
                 <div class="form-group">
                     <label class="form-label" for="payment_method">Способ оплаты</label>
-                    <select name="payment_method" id="payment_method" class="form-select" required>
+                    <select name="payment_method" id="payment_method" class="form-select" required onblur="this.blur();">
                         <option value="" disabled selected>Выберите способ оплаты</option>
                         <option value="cash">💵 Наличными при доставке</option>
                         <option value="card">💳 Картой курьеру</option>
@@ -440,7 +440,7 @@
                 <h4 style="margin-bottom: 12px;">🎁 Промокод</h4>
                 <div class="promocode-input-group">
                     <input type="text" id="promocode-input" class="promocode-input" placeholder="Введите промокод">
-                    <button type="button" class="apply-promocode-btn" onclick="applyPromocode()">Применить</button>
+                    <button type="button" class="apply-promocode-btn" id="promocode-btn" onclick="handlePromocodeAction()">Применить</button>
                 </div>
                 <div class="promocode-message" id="promocode-message"></div>
             </div>
@@ -486,6 +486,8 @@
     <script src="/static/notifications.js"></script>
     <script>
         let currentTotal = {{ total_price }};
+        let isPromocodeApplied = false;
+        let currentDiscount = 0;
 
         // Валидация телефона в реальном времени
         document.getElementById('phone').addEventListener('input', function() {
@@ -527,14 +529,25 @@
             return isValid;
         }
 
+        function handlePromocodeAction() {
+            if (isPromocodeApplied) {
+                removePromocode();
+            } else {
+                applyPromocode();
+            }
+        }
+
         function applyPromocode() {
             const code = document.getElementById('promocode-input').value.trim();
-            const messageEl = document.getElementById('promocode-message');
+            const btn = document.getElementById('promocode-btn');
 
             if (!code) {
                 showPromocodeMessage('Введите промокод', 'error');
                 return;
             }
+
+            btn.disabled = true;
+            btn.textContent = 'Проверка...';
 
             fetch('/apply_promocode', {
                 method: 'POST',
@@ -549,20 +562,37 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    discountApplied = data.discount;
+                    isPromocodeApplied = true;
+                    currentDiscount = data.discount;
                     updateTotals(data.new_total, data.discount);
                     document.getElementById('applied-promocode').value = code;
                     showPromocodeMessage(data.message, 'success');
                     document.getElementById('promocode-input').disabled = true;
-                    document.querySelector('.apply-promocode-btn').disabled = true;
+                    btn.textContent = 'Отменить';
+                    btn.disabled = false;
                 } else {
                     showPromocodeMessage(data.message, 'error');
+                    btn.textContent = 'Применить';
+                    btn.disabled = false;
                 }
             })
             .catch(error => {
                 console.error('Ошибка:', error);
                 showPromocodeMessage('Ошибка применения промокода', 'error');
+                btn.textContent = 'Применить';
+                btn.disabled = false;
             });
+        }
+
+        function removePromocode() {
+            isPromocodeApplied = false;
+            currentDiscount = 0;
+            updateTotals(currentTotal, 0);
+            document.getElementById('applied-promocode').value = '';
+            document.getElementById('promocode-input').disabled = false;
+            document.getElementById('promocode-input').value = '';
+            document.getElementById('promocode-btn').textContent = 'Применить';
+            document.getElementById('promocode-message').style.display = 'none';
         }
 
         function showPromocodeMessage(message, type) {
@@ -579,11 +609,13 @@
             if (discount > 0) {
                 document.getElementById('discount-row').style.display = 'flex';
                 document.getElementById('discount-amount').textContent = '-' + discount.toFixed(2) + ' сом';
+            } else {
+                document.getElementById('discount-row').style.display = 'none';
             }
 
-            // Обновляем кнопку заказа если сумма меньше минимальной
+            // Обновляем кнопку заказа - если применен промокод, разрешаем заказ
             const orderBtn = document.querySelector('.place-order-btn');
-            if (newTotal < 10) {
+            if (!isPromocodeApplied && newTotal < 10) {
                 orderBtn.disabled = true;
                 orderBtn.textContent = 'Минимальная сумма заказа 10 сом';
             } else {
@@ -613,7 +645,7 @@
         document.getElementById('promocode-input').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
-                applyPromocode();
+                handlePromocodeAction();
             }
         });
 
@@ -628,10 +660,20 @@
             }
         });
 
+        // Предотвращение навигации клавишами в select элементах
+        document.querySelectorAll('select').forEach(function(select) {
+            select.addEventListener('change', function() {
+                this.blur(); // Убираем фокус после выбора
+            });
+        });
+
         // Валидация формы при отправке
         document.getElementById('checkout-form').addEventListener('submit', function(e) {
             const finalTotal = parseFloat(document.getElementById('final-total-input').value);
-            if (finalTotal < 10) {
+            const hasPromocode = document.getElementById('applied-promocode').value.trim() !== '';
+            
+            // Если применен промокод, разрешаем заказ даже если сумма меньше 10 сом
+            if (!hasPromocode && finalTotal < 10) {
                 e.preventDefault();
                 alert('Минимальная сумма заказа составляет 10 сом');
                 return false;

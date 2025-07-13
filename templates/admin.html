@@ -505,6 +505,16 @@
                         <div class="info-value">{{ order.comments }}</div>
                     </div>
                     {% endif %}
+                    {% if order.promocode %}
+                    <div class="info-item">
+                        <div class="info-label">Промокод</div>
+                        <div class="info-value" style="color: #6f42c1; font-weight: bold;">{{ order.promocode }}</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Скидка</div>
+                        <div class="info-value" style="color: #00b956; font-weight: bold;">{{ "%.2f"|format(order.total_price - order.final_total) }} сом</div>
+                    </div>
+                    {% endif %}
 
                     <div class="order-products">
                         <strong>Товары:</strong>
@@ -520,7 +530,12 @@
                     </div>
 
                     <div class="order-total">
-                        Итого: {{ order.final_total or order.total_price }} сом
+                        {% if order.promocode %}
+                        <div style="font-size: 14px; color: #666; margin-bottom: 5px;">
+                            Без скидки: {{ "%.2f"|format(order.total_price) }} сом
+                        </div>
+                        {% endif %}
+                        Итого: {{ "%.2f"|format(order.final_total or order.total_price) }} сом
                     </div>
                 </div>
                 {% endfor %}

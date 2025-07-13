@@ -311,7 +311,23 @@
             {% endfor %}
 
             <div class="total-section">
-                <div class="total-price">Итого к оплате: {{ "%.2f"|format(order.total_price) }} сом.</div>
+                {% if order.promocode %}
+                <div style="margin-bottom: 15px; padding: 10px; background: #d4edda; border-radius: 8px; color: #155724;">
+                    🎁 Применен промокод: <strong>{{ order.promocode }}</strong><br>
+                    💰 Скидка: <strong>{{ "%.2f"|format(order.total_price - order.final_total) }} сом</strong>
+                </div>
+                {% endif %}
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Сумма товаров:</span>
+                    <span>{{ "%.2f"|format(order.total_price) }} сом</span>
+                </div>
+                {% if order.promocode %}
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px; color: #00b956;">
+                    <span>Скидка:</span>
+                    <span>-{{ "%.2f"|format(order.total_price - order.final_total) }} сом</span>
+                </div>
+                {% endif %}
+                <div class="total-price">Итого к оплате: {{ "%.2f"|format(order.final_total) }} сом.</div>
             </div>
         </div>
 

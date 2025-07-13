@@ -668,7 +668,7 @@
             border-radius: 12px;
         }
 
-        .product-modal-emoji {
+        .product-emoji {
             font-size: 4em;
         }
 
@@ -976,24 +976,24 @@
                             <div style="font-weight: 600; color: #6f42c1;" id="user-phone"></div>
                             <div style="font-size: 12px; color: #666;">Авторизован</div>
                         </div>
-                        
+
                         <a href="/login" class="profile-item" id="login-item">
                             <span class="profile-item-icon">🔐</span>
                             <span>Войти</span>
                         </a>
-                        
+
                         <a href="/my_orders" class="profile-item">
                             <span class="profile-item-icon">📋</span>
                             <span>Мои заказы</span>
                         </a>
-                        
+
                         <a href="#" class="profile-item" onclick="logoutUser()" id="logout-item" style="display: none;">
                             <span class="profile-item-icon">🚪</span>
                             <span>Выйти</span>
                         </a>
-                        
+
                         <div style="border-top: 1px solid #eee; margin: 8px 0;"></div>
-                        
+
                         <a href="#" class="profile-item" onclick="toggleHelpModal()">
                             <span class="profile-item-icon">❓</span>
                             <span>Помощь</span>
@@ -1117,11 +1117,14 @@
                             </div>
                             {% if product.available %}
                             <div class="quantity-controls">
-                                <button class="quantity-btn" onclick="changeQuantity({{ product.id }}, -1)" 
-                                        id="minus-{{ product.id }}">−</button>
-                                <span class="quantity-display" id="qty-{{ product.id }}">0</span>
-                                <button class="quantity-btn" onclick="changeQuantity({{ product.id }}, 1)"
+                                <button class="quantity-btn minus" 
+                                        id="minus-{{ product.id }}" 
+                                        onclick="event.stopPropagation(); changeQuantity({{ product.id }, -1)"
+                                        ${cartQuantities[product.id] <= 0 ? 'disabled' : ''}>-</button>
+                                <span class="quantity-display" id="qty-{{ product.id }}">${cartQuantities[product.id] || 0}</span>
+                                <button class="quantity-btn plus" 
                                         id="plus-{{ product.id }}" 
+                                        onclick="event.stopPropagation(); changeQuantity({{ product.id }, 1)"
                                         data-max-stock="{{ product.stock }}">+</button>
                             </div>
                             {% else %}
@@ -1536,10 +1539,10 @@
         function selectSuggestion(productName, containerId) {
             const isSticky = containerId.includes('sticky');
             const inputId = isSticky ? 'sticky-search-input' : 'search-input';
-            
+
             document.getElementById(inputId).value = productName;
             hideSearchSuggestions(containerId);
-            
+
             if (isSticky) {
                 searchProductsSticky();
             } else {
@@ -1730,7 +1733,7 @@
                     .catch(error => {
                         console.log('Ошибка при регистрации Service Worker:', error);
                     });
-                
+
                 // Проверяем аутентификацию после загрузки
                 checkAuthentication();
             });
