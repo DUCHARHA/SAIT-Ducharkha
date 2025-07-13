@@ -54,5 +54,37 @@
     "status_updated_at": "2025-07-13 14:38:54",
     "deleted_by_user": true,
     "deleted_at": "2025-07-13 14:41:33"
+  },
+  {
+    "customer": {
+      "name": "а",
+      "phone": "971844484",
+      "address": "Джами 37"
+    },
+    "delivery_time": "Через 30 минут",
+    "payment_method": "online",
+    "comments": "",
+    "courier_comment": "",
+    "promocode": "",
+    "products": [
+      {
+        "name": "Молоко 3.2%",
+        "price": 8.5,
+        "quantity": 1,
+        "total": 8.5
+      },
+      {
+        "name": "Бананы",
+        "price": 12.0,
+        "quantity": 1,
+        "total": 12.0
+      }
+    ],
+    "total_price": 20.5,
+    "final_total": 20.5,
+    "delivery_cost": 0,
+    "number": "1307-3",
+    "status": "Принят",
+    "created_at": "2025-07-13 14:53:16"
   }
 ]
