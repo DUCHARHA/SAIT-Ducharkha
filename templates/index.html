@@ -40,13 +40,21 @@
         .header-left {
             display: flex;
             align-items: center;
-            gap: 20px;
+            flex: 1;
+        }
+
+        .header-center {
+            flex: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .header-title {
             display: flex;
             flex-direction: column;
             gap: 2px;
+            text-align: center;
         }
 
         .main-title {
@@ -74,6 +82,8 @@
             display: flex;
             align-items: center;
             gap: 12px;
+            flex: 1;
+            justify-content: flex-end;
         }
 
         .cart-link {
@@ -220,6 +230,10 @@
             display: none;
         }
 
+        .sticky-search.show {
+            display: block;
+        }
+
         .search-box-container {
             position: relative;
             max-width: 500px;
@@ -275,6 +289,56 @@
 
         .history-item:hover {
             background-color: rgba(255,255,255,0.25);
+        }
+
+        /* Автодополнение поиска */
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+
+        .search-suggestions.show {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
+        }
+
+        .suggestion-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .suggestion-category {
+            font-size: 12px;
+            color: #666;
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 8px;
         }
 
         /* Main Content */
@@ -532,6 +596,98 @@
             opacity: 0.6;
         }
 
+        /* Product Modal */
+        .product-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 10000;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .product-modal.show {
+            display: block;
+        }
+
+        .product-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .product-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .product-modal-image {
+            width: 100%;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .product-modal-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .product-modal-emoji {
+            font-size: 4em;
+        }
+
+        .product-modal-brand {
+            color: #6f42c1;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .product-modal-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .product-modal-description {
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .product-modal-price {
+            font-size: 24px;
+            font-weight: bold;
+            color: #6f42c1;
+            margin-bottom: 20px;
+        }
+
+        .product-modal-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
         /* Help Modal */
         .help-modal {
             display: none;
@@ -629,12 +785,28 @@
         @media (max-width: 768px) {
             .header-content {
                 padding: 0 12px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .header-left, .header-center, .header-right {
+                flex: none;
+                width: 100%;
             }
 
             .header-left {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .header-center {
+                order: 2;
+            }
+
+            .header-right {
+                order: 1;
+                justify-content: flex-end;
             }
 
             .logo {
@@ -756,15 +928,14 @@
         <div class="header-content">
             <div class="header-left">
                 <a href="/" class="logo">💜 Дучарха</a>
+            </div>
+            <div class="header-center">
                 <div class="header-title">
                     <span class="main-title">Свежие продукты с доставкой</span>
                     <span class="sub-title">Более 1000 товаров • Бесплатная доставка за 10-15 минут</span>
                 </div>
             </div>
             <div class="header-right">
-                <button id="notification-toggle" class="notification-btn">
-                    🔔 Уведомления
-                </button>
                 <a href="/cart" class="cart-link">
                     🛒 <span class="cart-count" id="cart-count">{{ cart_count }}</span>
                 </a>
@@ -820,6 +991,7 @@
                        placeholder="Поиск: молоко, помидоры, кола..." 
                        autocomplete="off">
                 <button class="search-btn" onclick="searchProducts()">🔍</button>
+                <div class="search-suggestions" id="search-suggestions"></div>
             </div>
 
             {% if search_history %}
@@ -848,6 +1020,7 @@
                        placeholder="Поиск: молоко, помидоры, кола..." 
                        autocomplete="off">
                 <button class="search-btn" onclick="searchProductsSticky()">🔍</button>
+                <div class="search-suggestions" id="sticky-search-suggestions"></div>
             </div>
         </div>
     </div>
@@ -884,7 +1057,6 @@
                         {% else %}📦{% endif %}
                     </div>
                     <div class="category-name">{{ category.name }}</div>
-                    <div class="category-count">{{ category.subcategories|length }} подкатегорий</div>
                 </div>
                 {% endfor %}
             </div>
@@ -897,7 +1069,7 @@
             <h2 class="section-title" id="products-title">Товары</h2>
             <div class="products-grid" id="products-grid">
                 {% for product in products %}
-                <div class="product-group" data-category="{{ product.category }}" data-brand="{{ product.brand or '' }}">
+                <div class="product-group" data-category="{{ product.category }}" data-brand="{{ product.brand or '' }}" onclick="openProductModal({{ product.id }})">
                     <div class="product-image">
                         {% if product.image.startswith('http') %}
                             <img src="{{ product.image }}" alt="{{ product.name }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -968,6 +1140,16 @@
         Товар добавлен в корзину!
     </div>
 
+    <!-- Product Modal -->
+    <div class="help-modal-overlay" id="product-overlay" onclick="closeProductModal()"></div>
+    <div class="product-modal" id="product-modal">
+        <div class="product-modal-header">
+            <h3>Информация о товаре</h3>
+            <button class="product-modal-close" onclick="closeProductModal()">×</button>
+        </div>
+        <div id="product-modal-content"></div>
+    </div>
+
     <!-- Help Modal -->
     <div class="help-modal-overlay" id="help-overlay" onclick="closeHelpModal()"></div>
     <div class="help-modal" id="help-modal">
@@ -997,6 +1179,7 @@
     <script>
         let currentCategory = '';
         let cartQuantities = {};
+        const products = {{ products | tojson }};
 
         // Загружаем количества из корзины при загрузке страницы
         window.addEventListener('load', function() {
@@ -1058,19 +1241,32 @@
 
         document.getElementById('search-input').addEventListener('input', function() {
             const query = this.value.trim();
-            if (query.length >= 2) {
-                setTimeout(() => {
-                    fetch(`/search?q=${encodeURIComponent(query)}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            displaySearchResults(data.results, data.query, data.count);
-                        })
-                        .catch(error => {
-                            console.error('Ошибка поиска:', error);
-                        });
-                }, 300);
-            } else if (query.length === 0) {
+            if (query.length >= 1) {
+                showSearchSuggestions(query, 'search-suggestions');
+                if (query.length >= 2) {
+                    setTimeout(() => {
+                        fetch(`/search?q=${encodeURIComponent(query)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                displaySearchResults(data.results, data.query, data.count);
+                            })
+                            .catch(error => {
+                                console.error('Ошибка поиска:', error);
+                            });
+                    }, 300);
+                }
+            } else {
+                hideSearchSuggestions('search-suggestions');
                 hideSearchResults();
+            }
+        });
+
+        document.getElementById('sticky-search-input').addEventListener('input', function() {
+            const query = this.value.trim();
+            if (query.length >= 1) {
+                showSearchSuggestions(query, 'sticky-search-suggestions');
+            } else {
+                hideSearchSuggestions('sticky-search-suggestions');
             }
         });
 
@@ -1242,6 +1438,11 @@
                 qtyElement.textContent = quantity;
             }
 
+            const modalQtyElement = document.getElementById(`modal-qty-${productId}`);
+            if (modalQtyElement) {
+                modalQtyElement.textContent = quantity;
+            }
+
             const minusBtn = document.getElementById(`minus-${productId}`);
             if (minusBtn) {
                 minusBtn.disabled = quantity <= 0;
@@ -1281,9 +1482,103 @@
             const searchSectionBottom = searchSection.offsetTop + searchSection.offsetHeight;
 
             if (window.scrollY > searchSectionBottom) {
-                stickySearch.style.display = 'block';
+                stickySearch.classList.add('show');
             } else {
-                stickySearch.style.display = 'none';
+                stickySearch.classList.remove('show');
+            }
+        });
+
+        // Search Suggestions
+        function showSearchSuggestions(query, containerId) {
+            const container = document.getElementById(containerId);
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(query.toLowerCase()) ||
+                product.category.toLowerCase().includes(query.toLowerCase()) ||
+                product.subcategory.toLowerCase().includes(query.toLowerCase())
+            ).slice(0, 5);
+
+            if (filteredProducts.length > 0) {
+                container.innerHTML = filteredProducts.map(product => `
+                    <div class="suggestion-item" onclick="selectSuggestion('${product.name}', '${containerId}')">
+                        <div class="suggestion-name">${product.name}</div>
+                        <div class="suggestion-category">${product.category}</div>
+                    </div>
+                `).join('');
+                container.classList.add('show');
+            } else {
+                container.classList.remove('show');
+            }
+        }
+
+        function hideSearchSuggestions(containerId) {
+            const container = document.getElementById(containerId);
+            container.classList.remove('show');
+        }
+
+        function selectSuggestion(productName, containerId) {
+            const isSticky = containerId.includes('sticky');
+            const inputId = isSticky ? 'sticky-search-input' : 'search-input';
+            
+            document.getElementById(inputId).value = productName;
+            hideSearchSuggestions(containerId);
+            
+            if (isSticky) {
+                searchProductsSticky();
+            } else {
+                searchProducts();
+            }
+        }
+
+        // Product Modal Functions
+        function openProductModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const modal = document.getElementById('product-modal');
+            const overlay = document.getElementById('product-overlay');
+            const content = document.getElementById('product-modal-content');
+
+            const stockInfo = cartQuantities[productId] || 0;
+            const isAvailable = product.available && product.stock > 0;
+
+            content.innerHTML = `
+                <div class="product-modal-image">
+                    ${product.image.startsWith('http') 
+                        ? `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                           <div class="product-modal-emoji" style="display: none;">🛒</div>`
+                        : `<div class="product-modal-emoji">${product.image}</div>`
+                    }
+                </div>
+                ${product.brand ? `<div class="product-modal-brand">${product.brand}</div>` : ''}
+                <div class="product-modal-name">${product.name}</div>
+                <div class="product-modal-description">${product.description}</div>
+                <div class="product-modal-price">${product.price.toFixed(2)} сом</div>
+                ${!isAvailable ? '<div class="out-of-stock">❌ Нет в наличии</div>' : 
+                  product.stock <= 5 ? `<div class="low-stock">⚠️ Осталось ${product.stock} шт.</div>` : ''}
+                ${isAvailable ? `
+                    <div class="product-modal-controls">
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">−</button>
+                            <span class="quantity-display" id="modal-qty-${product.id}">${stockInfo}</span>
+                            <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)" data-max-stock="${product.stock}">+</button>
+                        </div>
+                    </div>
+                ` : '<div class="unavailable-btn">Недоступно</div>'}
+            `;
+
+            modal.classList.add('show');
+            overlay.style.display = 'block';
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.remove('show');
+            document.getElementById('product-overlay').style.display = 'none';
+        }
+
+        // Закрытие модального окна при клике вне его
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('help-modal-overlay')) {
+                closeProductModal();
             }
         });
 
