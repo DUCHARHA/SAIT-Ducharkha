@@ -8,13 +8,43 @@ import threading
 import time
 import requests
 from urllib.parse import urlparse
+import logging
+from logging.handlers import RotatingFileHandler
 from sms_auth import (
     send_sms_code, verify_sms_code, get_user_by_session, 
     logout_user, cleanup_expired_codes
 )
+from flask import send_from_directory
 
 app = Flask(__name__)
 app.secret_key = 'sk-7x9m2n8p4q6r1s5t3u7v9w0e8f2g4h6j8k1l3m5n7p9q2r4s6t8u0v2w4x6y8z1a3b5c7d9e'
+
+# Настройка логирования
+if not app.debug:
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
+    
+    file_handler = RotatingFileHandler('logs/ducharha.log', maxBytes=10240, backupCount=10)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
+    ))
+    file_handler.setLevel(logging.INFO)
+    app.logger.addHandler(file_handler)
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('Дучарха запущена')
+
+# Обработка ошибок
+@app.errorhandler(404)
+def not_found_error(error):
+    return render_template('error.html', error_code=404, error_message='Страница не найдена'), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    return render_template('error.html', error_code=500, error_message='Внутренняя ошибка сервера'), 500
+
+@app.errorhandler(405)
+def method_not_allowed(error):
+    return render_template('error.html', error_code=405, error_message='Метод не разрешен'), 405
 
 def get_current_user():
     """Получает текущего авторизованного пользователя"""
@@ -484,6 +514,10 @@ products = [
     {'id': 99, 'name': 'Изюм', 'price': 28.00, 'description': 'Изюм без косточек, 500г', 'category': 'Орехи и сухофрукты', 'subcategory': 'Сухофрукты', 'image': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=200&h=200&fit=crop', 'brand': 'Узбекские', 'composition': 'Виноград сушеный', 'expiry': '1 год'},
     {'id': 100, 'name': 'Курага', 'price': 45.00, 'description': 'Курага сушеная, 500г', 'category': 'Орехи и сухофрукты', 'subcategory': 'Сухофрукты', 'image': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=200&h=200&fit=crop', 'brand': 'Таджикские', 'composition': 'Абрикосы сушеные', 'expiry': '1 год'},
 ]
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory('static', 'favicon.ico')
 
 @app.route('/')
 def home():
@@ -1105,7 +1139,7 @@ def clear_search_history():
 def inventory_login():
     return render_template('inventory_login.html')
 
-@app.route('/inventory_login', methods=['POST'])
+@app.route('/inventory', methods=['POST'])
 def inventory_login_post():
     password = request.form.get('password')
     if password == INVENTORY_PASSWORD:
