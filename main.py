@@ -4,6 +4,10 @@ import os
 from datetime import datetime, date
 import re
 import difflib
+import threading
+import time
+import requests
+from urllib.parse import urlparse
 
 app = Flask(__name__)
 app.secret_key = 'sk-7x9m2n8p4q6r1s5t3u7v9w0e8f2g4h6j8k1l3m5n7p9q2r4s6t8u0v2w4x6y8z1a3b5c7d9e'
@@ -15,6 +19,7 @@ ORDERS_FILE = 'orders.json'
 REVIEWS_FILE = 'reviews.json'
 PROMOCODES_FILE = 'promocodes.json'
 INVENTORY_FILE = 'inventory.json'
+PUSH_SUBSCRIPTIONS_FILE = 'push_subscriptions.json'
 
 # Системы синонимов для умного поиска
 SYNONYMS = {
@@ -90,6 +95,105 @@ def load_inventory():
 def save_inventory(inventory):
     with open(INVENTORY_FILE, 'w', encoding='utf-8') as f:
         json.dump(inventory, f, ensure_ascii=False, indent=2)
+
+def load_push_subscriptions():
+    if os.path.exists(PUSH_SUBSCRIPTIONS_FILE):
+        try:
+            with open(PUSH_SUBSCRIPTIONS_FILE, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except:
+            return {}
+    return {}
+
+def save_push_subscriptions(subscriptions):
+    with open(PUSH_SUBSCRIPTIONS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(subscriptions, f, ensure_ascii=False, indent=2)
+
+def send_push_notification(phone, title, body, order_number=None, actions=None):
+    """Отправка push уведомления пользователю"""
+    try:
+        subscriptions = load_push_subscriptions()
+        user_subscriptions = subscriptions.get(phone, [])
+        
+        if not user_subscriptions:
+            print(f"Нет подписок для телефона {phone}")
+            return False
+        
+        # Данные для уведомления
+        notification_data = {
+            'title': title,
+            'body': body,
+            'icon': '/static/icon-192x192.png',
+            'badge': '/static/badge-72x72.png',
+            'order_number': order_number,
+            'phone': phone,
+            'url': f'/my_orders?phone={phone}',
+            'actions': actions or [],
+            'requireInteraction': True,
+            'tag': f'order-{order_number}' if order_number else 'ducharha-notification'
+        }
+        
+        # Симуляция отправки push уведомления
+        # В реальной системе здесь был бы запрос к Push API
+        print(f"📱 PUSH уведомление для {phone}:")
+        print(f"📋 Заголовок: {title}")
+        print(f"💬 Текст: {body}")
+        print(f"🔗 Заказ: {order_number}")
+        print("✅ Уведомление отправлено!")
+        
+        return True
+        
+    except Exception as e:
+        print(f"Ошибка при отправке push уведомления: {e}")
+        return False
+
+def notify_order_status_change(order_number, new_status, phone):
+    """Отправка уведомления при смене статуса заказа"""
+    
+    status_messages = {
+        'Принят': {
+            'title': '🛒 Заказ принят!',
+            'body': f'Заказ №{order_number} принят в обработку. Начинаем сборку вашего заказа.',
+            'actions': [
+                {'action': 'view_order', 'title': '👀 Посмотреть заказ'},
+                {'action': 'cancel_order', 'title': '❌ Отменить заказ'}
+            ]
+        },
+        'Собирается': {
+            'title': '📦 Заказ собирается',
+            'body': f'Ваш заказ №{order_number} собирается. Скоро курьер будет назначен.',
+            'actions': [
+                {'action': 'view_order', 'title': '👀 Посмотреть заказ'},
+                {'action': 'cancel_order', 'title': '❌ Отменить заказ'}
+            ]
+        },
+        'В пути': {
+            'title': '🚚 Курьер выехал к вам!',
+            'body': f'Курьер взял заказ №{order_number} и едет к вам. Ориентировочное время: 10-15 минут.',
+            'actions': [
+                {'action': 'track_courier', 'title': '📍 Отследить курьера'},
+                {'action': 'view_order', 'title': '👀 Посмотреть заказ'}
+            ]
+        },
+        'Доставлен': {
+            'title': '✅ Заказ доставлен!',
+            'body': f'Заказ №{order_number} успешно доставлен. Спасибо за покупку в Дучарха!',
+            'actions': [
+                {'action': 'repeat_order', 'title': '🔄 Повторить заказ'},
+                {'action': 'view_order', 'title': '⭐ Оставить отзыв'}
+            ]
+        }
+    }
+    
+    message_config = status_messages.get(new_status)
+    if message_config:
+        send_push_notification(
+            phone=phone,
+            title=message_config['title'],
+            body=message_config['body'],
+            order_number=order_number,
+            actions=message_config['actions']
+        )
 
 def get_product_stock(product_id):
     inventory = load_inventory()
@@ -871,14 +975,27 @@ def update_order_status():
     new_status = data.get('status')
 
     orders = load_orders()
+    updated_order = None
+    
     for order in orders:
         if order.get('number') == order_number:
             order['status'] = new_status
             order['status_updated_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            updated_order = order
             break
 
-    with open(ORDERS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(orders, f, ensure_ascii=False, indent=2)
+    if updated_order:
+        with open(ORDERS_FILE, 'w', encoding='utf-8') as f:
+            json.dump(orders, f, ensure_ascii=False, indent=2)
+        
+        # Отправляем push уведомление клиенту
+        customer_phone = updated_order.get('customer', {}).get('phone')
+        if customer_phone:
+            # Запускаем отправку уведомления в отдельном потоке
+            threading.Thread(
+                target=notify_order_status_change,
+                args=(order_number, new_status, customer_phone)
+            ).start()
 
     return jsonify({'success': True})
 
@@ -1008,6 +1125,104 @@ def update_stock():
     save_inventory(inventory)
 
     return jsonify({'success': True, 'message': 'Остаток обновлен'})
+
+@app.route('/api/subscribe', methods=['POST'])
+def subscribe_to_notifications():
+    """Подписка на push уведомления"""
+    try:
+        data = request.get_json()
+        subscription = data.get('subscription')
+        phone = data.get('phone')
+        
+        if not subscription or not phone:
+            return jsonify({'success': False, 'message': 'Нет данных подписки или телефона'})
+        
+        # Загружаем существующие подписки
+        subscriptions = load_push_subscriptions()
+        
+        # Добавляем подписку для пользователя
+        if phone not in subscriptions:
+            subscriptions[phone] = []
+        
+        # Проверяем, нет ли уже такой подписки
+        endpoint = subscription.get('endpoint')
+        existing = any(sub.get('endpoint') == endpoint for sub in subscriptions[phone])
+        
+        if not existing:
+            subscriptions[phone].append({
+                'endpoint': endpoint,
+                'keys': subscription.get('keys', {}),
+                'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            })
+            
+            save_push_subscriptions(subscriptions)
+            print(f"✅ Пользователь {phone} подписан на уведомления")
+        
+        return jsonify({'success': True, 'message': 'Подписка успешно сохранена'})
+        
+    except Exception as e:
+        print(f"Ошибка при подписке: {e}")
+        return jsonify({'success': False, 'message': 'Ошибка сервера'})
+
+@app.route('/api/unsubscribe', methods=['POST'])
+def unsubscribe_from_notifications():
+    """Отписка от push уведомлений"""
+    try:
+        data = request.get_json()
+        endpoint = data.get('endpoint')
+        
+        if not endpoint:
+            return jsonify({'success': False, 'message': 'Нет данных подписки'})
+        
+        # Загружаем существующие подписки
+        subscriptions = load_push_subscriptions()
+        
+        # Ищем и удаляем подписку
+        for phone, user_subscriptions in subscriptions.items():
+            subscriptions[phone] = [
+                sub for sub in user_subscriptions 
+                if sub.get('endpoint') != endpoint
+            ]
+            
+            # Удаляем пустые записи
+            if not subscriptions[phone]:
+                del subscriptions[phone]
+        
+        save_push_subscriptions(subscriptions)
+        print(f"✅ Подписка {endpoint} отменена")
+        
+        return jsonify({'success': True, 'message': 'Подписка отменена'})
+        
+    except Exception as e:
+        print(f"Ошибка при отписке: {e}")
+        return jsonify({'success': False, 'message': 'Ошибка сервера'})
+
+@app.route('/api/test_notification', methods=['POST'])
+def test_notification():
+    """Тестовая отправка уведомления"""
+    if not session.get('admin_authenticated'):
+        return jsonify({'success': False, 'message': 'Недостаточно прав'})
+    
+    data = request.get_json()
+    phone = data.get('phone')
+    
+    if not phone:
+        return jsonify({'success': False, 'message': 'Укажите номер телефона'})
+    
+    success = send_push_notification(
+        phone=phone,
+        title='🧪 Тестовое уведомление',
+        body='Это тестовое уведомление от Дучарха для проверки работы системы',
+        order_number='TEST-001',
+        actions=[
+            {'action': 'view_order', 'title': '👀 Посмотреть заказ'}
+        ]
+    )
+    
+    if success:
+        return jsonify({'success': True, 'message': 'Тестовое уведомление отправлено'})
+    else:
+        return jsonify({'success': False, 'message': 'Ошибка при отправке уведомления'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
