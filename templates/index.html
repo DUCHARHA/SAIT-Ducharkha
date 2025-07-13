@@ -1119,12 +1119,12 @@
                             <div class="quantity-controls">
                                 <button class="quantity-btn minus" 
                                         id="minus-{{ product.id }}" 
-                                        onclick="event.stopPropagation(); changeQuantity({{ product.id }, -1)"
-                                        ${cartQuantities[product.id] <= 0 ? 'disabled' : ''}>-</button>
-                                <span class="quantity-display" id="qty-{{ product.id }}">${cartQuantities[product.id] || 0}</span>
+                                        onclick="event.stopPropagation(); changeQuantity({{ product.id }}, -1)"
+                                        {% if product.id in session.get('cart', []) %}{% else %}disabled{% endif %}>-</button>
+                                <span class="quantity-display" id="qty-{{ product.id }}">0</span>
                                 <button class="quantity-btn plus" 
                                         id="plus-{{ product.id }}" 
-                                        onclick="event.stopPropagation(); changeQuantity({{ product.id }, 1)"
+                                        onclick="event.stopPropagation(); changeQuantity({{ product.id }}, 1)"
                                         data-max-stock="{{ product.stock }}">+</button>
                             </div>
                             {% else %}
