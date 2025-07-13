@@ -22,7 +22,37 @@
     "final_total": 18.0,
     "delivery_cost": 0,
     "number": "1307-1",
-    "status": "Принят",
-    "created_at": "2025-07-13 14:00:32"
+    "status": "Собирается",
+    "created_at": "2025-07-13 14:00:32",
+    "status_updated_at": "2025-07-13 14:36:43"
+  },
+  {
+    "customer": {
+      "name": "e",
+      "phone": "971844884",
+      "address": "l;fv"
+    },
+    "delivery_time": "ASAP",
+    "payment_method": "cash",
+    "comments": "",
+    "courier_comment": "",
+    "promocode": "",
+    "products": [
+      {
+        "name": "Яблоки красные",
+        "price": 15.0,
+        "quantity": 1,
+        "total": 15.0
+      }
+    ],
+    "total_price": 15.0,
+    "final_total": 15.0,
+    "delivery_cost": 0,
+    "number": "1307-2",
+    "status": "Доставлен",
+    "created_at": "2025-07-13 14:38:16",
+    "status_updated_at": "2025-07-13 14:38:54",
+    "deleted_by_user": true,
+    "deleted_at": "2025-07-13 14:41:33"
   }
 ]
