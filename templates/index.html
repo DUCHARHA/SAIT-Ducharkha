@@ -221,19 +221,36 @@
 
         /* Sticky Search Box */
         .sticky-search {
-            position: fixed;
-            top: 76px;
+            position: absolute;
+            top: 0;
             left: 0;
             right: 0;
             z-index: 999;
-            background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
-            padding: 12px 16px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            display: none;
+            background: transparent;
+            padding: 20px 16px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
         }
 
         .sticky-search.show {
-            display: block;
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: all;
+        }
+
+        .header-center {
+            position: relative;
+        }
+
+        .header-title {
+            transition: all 0.3s ease;
+        }
+
+        .header-center.search-mode .header-title {
+            opacity: 0;
+            transform: translateY(-10px);
         }
 
         .search-box-container {
@@ -828,8 +845,7 @@
             }
 
             .sticky-search {
-                top: 76px;
-                padding: 8px 12px;
+                padding: 16px 12px;
             }
 
             .search-title {
@@ -936,6 +952,18 @@
                     <span class="main-title">Свежие продукты с доставкой</span>
                     <span class="sub-title">Более 1000 товаров • Бесплатная доставка за 10-15 минут</span>
                 </div>
+                <!-- Sticky Search Bar -->
+                <div class="sticky-search" id="sticky-search">
+                    <div class="search-box-container">
+                        <input type="text" 
+                               class="search-box" 
+                               id="sticky-search-input" 
+                               placeholder="Поиск: молоко, помидоры, кола..." 
+                               autocomplete="off">
+                        <button class="search-btn" onclick="searchProductsSticky()">🔍</button>
+                        <div class="search-suggestions" id="sticky-search-suggestions"></div>
+                    </div>
+                </div>
             </div>
             <div class="header-right">
                 <a href="/cart" class="cart-link">
@@ -1009,21 +1037,6 @@
                 {% endfor %}
             </div>
             {% endif %}
-        </div>
-    </div>
-
-    <!-- Sticky Search Bar -->
-    <div class="sticky-search" id="sticky-search">
-        <div class="search-container">
-            <div class="search-box-container">
-                <input type="text" 
-                       class="search-box" 
-                       id="sticky-search-input" 
-                       placeholder="Поиск: молоко, помидоры, кола..." 
-                       autocomplete="off">
-                <button class="search-btn" onclick="searchProductsSticky()">🔍</button>
-                <div class="search-suggestions" id="sticky-search-suggestions"></div>
-            </div>
         </div>
     </div>
 
@@ -1481,12 +1494,15 @@
         window.addEventListener('scroll', function() {
             const searchSection = document.querySelector('.search-section');
             const stickySearch = document.getElementById('sticky-search');
+            const headerCenter = document.querySelector('.header-center');
             const searchSectionBottom = searchSection.offsetTop + searchSection.offsetHeight;
 
             if (window.scrollY > searchSectionBottom) {
                 stickySearch.classList.add('show');
+                headerCenter.classList.add('search-mode');
             } else {
                 stickySearch.classList.remove('show');
+                headerCenter.classList.remove('search-mode');
             }
         });
 
