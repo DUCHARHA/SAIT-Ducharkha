@@ -896,7 +896,10 @@ def my_orders():
 
     if phone:
         all_orders = load_orders()
-        user_orders = [order for order in all_orders if order.get('customer', {}).get('phone') == phone]
+        # Фильтруем заказы: показываем только те, которые не удалены пользователем
+        user_orders = [order for order in all_orders 
+                      if (order.get('customer', {}).get('phone') == phone and 
+                          not order.get('deleted_by_user', False))]
         user_orders.sort(key=lambda x: x.get('created_at', ''), reverse=True)
         return render_template('my_orders.html', orders=user_orders, phone=phone, cart_count=cart_count)
 
@@ -1223,6 +1226,78 @@ def test_notification():
         return jsonify({'success': True, 'message': 'Тестовое уведомление отправлено'})
     else:
         return jsonify({'success': False, 'message': 'Ошибка при отправке уведомления'})
+
+@app.route('/cancel_order', methods=['POST'])
+def cancel_order():
+    """Отмена заказа клиентом"""
+    data = request.get_json()
+    order_number = data.get('order_number')
+    phone = data.get('phone')
+    
+    if not order_number or not phone:
+        return jsonify({'success': False, 'message': 'Недостаточно данных'})
+    
+    orders = load_orders()
+    
+    for order in orders:
+        if (order.get('number') == order_number and 
+            order.get('customer', {}).get('phone') == phone and
+            order.get('status') not in ['Доставлен', 'Отменен']):
+            
+            order['status'] = 'Отменен'
+            order['cancelled_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            
+            # Возвращаем товары на склад
+            for product in order.get('products', []):
+                product_id = None
+                # Ищем ID товара по названию
+                for p in products:
+                    if p['name'] == product['name']:
+                        product_id = p['id']
+                        break
+                
+                if product_id:
+                    inventory = load_inventory()
+                    product_key = str(product_id)
+                    if product_key in inventory:
+                        inventory[product_key]['stock'] += product['quantity']
+                        inventory[product_key]['active'] = True
+                        save_inventory(inventory)
+            
+            with open(ORDERS_FILE, 'w', encoding='utf-8') as f:
+                json.dump(orders, f, ensure_ascii=False, indent=2)
+            
+            return jsonify({'success': True, 'message': 'Заказ отменен'})
+    
+    return jsonify({'success': False, 'message': 'Заказ не найден или не может быть отменен'})
+
+@app.route('/delete_order', methods=['POST'])
+def delete_order():
+    """Удаление заказа из истории клиента"""
+    data = request.get_json()
+    order_number = data.get('order_number')
+    phone = data.get('phone')
+    
+    if not order_number or not phone:
+        return jsonify({'success': False, 'message': 'Недостаточно данных'})
+    
+    orders = load_orders()
+    
+    for i, order in enumerate(orders):
+        if (order.get('number') == order_number and 
+            order.get('customer', {}).get('phone') == phone and
+            order.get('status') == 'Доставлен'):
+            
+            # Помечаем заказ как удаленный пользователем
+            orders[i]['deleted_by_user'] = True
+            orders[i]['deleted_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            
+            with open(ORDERS_FILE, 'w', encoding='utf-8') as f:
+                json.dump(orders, f, ensure_ascii=False, indent=2)
+            
+            return jsonify({'success': True, 'message': 'Заказ удален из истории'})
+    
+    return jsonify({'success': False, 'message': 'Заказ не найден или не может быть удален'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

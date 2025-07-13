@@ -609,6 +609,25 @@
             }
         }
 
+        // Обработчик Enter для промокода
+        document.getElementById('promocode-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                applyPromocode();
+            }
+        });
+
+        // Предотвращаем отправку формы по Enter в других полях
+        document.querySelectorAll('input, select, textarea').forEach(function(element) {
+            if (element.id !== 'promocode-input') {
+                element.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                    }
+                });
+            }
+        });
+
         // Валидация формы при отправке
         document.getElementById('checkout-form').addEventListener('submit', function(e) {
             const finalTotal = parseFloat(document.getElementById('final-total-input').value);
