@@ -1,0 +1,29 @@
+{
+  "FIRST10": {
+    "discount": 10,
+    "type": "percent",
+    "usage_limit": 100,
+    "used_count": 0,
+    "min_order": 0,
+    "active": true,
+    "created_at": "2025-01-01 00:00:00"
+  },
+  "KAMILA": {
+    "discount": 100,
+    "type": "percent",
+    "usage_limit": 22,
+    "used_count": 0,
+    "min_order": 20,
+    "active": true,
+    "created_at": "2025-07-13 16:10:39"
+  },
+  "SA50": {
+    "discount": 50,
+    "type": "percent",
+    "usage_limit": 50,
+    "used_count": 1,
+    "min_order": 10,
+    "active": true,
+    "created_at": "2025-07-13 16:18:03"
+  }
+}

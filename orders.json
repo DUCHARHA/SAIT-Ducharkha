@@ -84,7 +84,47 @@
     "final_total": 20.5,
     "delivery_cost": 0,
     "number": "1307-3",
-    "status": "Принят",
-    "created_at": "2025-07-13 14:53:16"
+    "status": "Доставлен",
+    "created_at": "2025-07-13 14:53:16",
+    "status_updated_at": "2025-07-13 16:09:21"
+  },
+  {
+    "customer": {
+      "name": "Hi",
+      "phone": "971844884",
+      "address": "Джами 37"
+    },
+    "delivery_time": "ASAP",
+    "payment_method": "cash",
+    "comments": "",
+    "courier_comment": "",
+    "promocode": "SA50",
+    "products": [
+      {
+        "name": "Вода питьевая BonAqua 1л",
+        "price": 5.0,
+        "quantity": 1,
+        "total": 5.0
+      },
+      {
+        "name": "Молоко 3.2%",
+        "price": 8.5,
+        "quantity": 1,
+        "total": 8.5
+      },
+      {
+        "name": "Молоко обезжиренное",
+        "price": 7.5,
+        "quantity": 1,
+        "total": 7.5
+      }
+    ],
+    "total_price": 21.0,
+    "final_total": 10.5,
+    "delivery_cost": 0,
+    "number": "1307-4",
+    "status": "Собирается",
+    "created_at": "2025-07-13 16:19:12",
+    "status_updated_at": "2025-07-13 16:20:21"
   }
 ]
