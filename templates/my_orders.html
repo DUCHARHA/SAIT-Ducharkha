@@ -256,11 +256,17 @@
     <div class="container">
         <h1 class="page-title">Мои заказы</h1>
 
+        {% if not authenticated %}
         <div class="phone-input">
-            <input type="tel" id="phone-search" placeholder="Введите номер телефона для поиска заказов" value="{{ phone or '' }}">
+            <p style="margin-bottom: 16px; color: #666;">
+                <a href="/login" style="color: #6f42c1; text-decoration: none; font-weight: 600;">👤 Войдите в систему</a> 
+                для автоматического отображения ваших заказов
+            </p>
+            <input type="tel" id="phone-search" placeholder="Или введите номер телефона для поиска заказов" value="{{ phone or '' }}">
             <br>
             <button class="search-btn" onclick="searchOrders()">Найти заказы</button>
         </div>
+        {% endif %}
 
         {% if orders %}
             {% for order in orders %}

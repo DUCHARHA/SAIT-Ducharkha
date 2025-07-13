@@ -8,9 +8,23 @@ import threading
 import time
 import requests
 from urllib.parse import urlparse
+from sms_auth import (
+    send_sms_code, verify_sms_code, get_user_by_session, 
+    logout_user, cleanup_expired_codes
+)
 
 app = Flask(__name__)
 app.secret_key = 'sk-7x9m2n8p4q6r1s5t3u7v9w0e8f2g4h6j8k1l3m5n7p9q2r4s6t8u0v2w4x6y8z1a3b5c7d9e'
+
+def get_current_user():
+    """Получает текущего авторизованного пользователя"""
+    session_token = request.headers.get('Authorization')
+    if not session_token:
+        session_token = request.cookies.get('session_token')
+    
+    if session_token:
+        return get_user_by_session(session_token)
+    return None
 
 ADMIN_PASSWORD = 'dilo.artes'
 INVENTORY_PASSWORD = 'tovaroused'
@@ -893,17 +907,33 @@ def order_confirmation():
 def my_orders():
     phone = request.args.get('phone', '').strip()
     cart_count = len(session.get('cart', []))
-
-    if phone:
+    
+    # Проверяем, авторизован ли пользователь
+    current_user = get_current_user()
+    
+    if current_user:
+        # Пользователь авторизован, показываем его заказы
+        phone = current_user['phone']
         all_orders = load_orders()
-        # Фильтруем заказы: показываем только те, которые не удалены пользователем
         user_orders = [order for order in all_orders 
                       if (order.get('customer', {}).get('phone') == phone and 
                           not order.get('deleted_by_user', False))]
         user_orders.sort(key=lambda x: x.get('created_at', ''), reverse=True)
-        return render_template('my_orders.html', orders=user_orders, phone=phone, cart_count=cart_count)
-
-    return render_template('my_orders.html', orders=None, phone=None, cart_count=cart_count)
+        return render_template('my_orders.html', orders=user_orders, phone=phone, 
+                             cart_count=cart_count, authenticated=True, user=current_user)
+    elif phone:
+        # Старый способ поиска по номеру телефона (для совместимости)
+        all_orders = load_orders()
+        user_orders = [order for order in all_orders 
+                      if (order.get('customer', {}).get('phone') == phone and 
+                          not order.get('deleted_by_user', False))]
+        user_orders.sort(key=lambda x: x.get('created_at', ''), reverse=True)
+        return render_template('my_orders.html', orders=user_orders, phone=phone, 
+                             cart_count=cart_count, authenticated=False)
+    else:
+        # Пользователь не авторизован и не указан телефон
+        return render_template('my_orders.html', orders=None, phone=None, 
+                             cart_count=cart_count, authenticated=False)
 
 @app.route('/leave_review', methods=['POST'])
 def leave_review():
@@ -1298,6 +1328,88 @@ def delete_order():
             return jsonify({'success': True, 'message': 'Заказ удален из истории'})
     
     return jsonify({'success': False, 'message': 'Заказ не найден или не может быть удален'})
+
+# Маршруты для SMS аутентификации
+@app.route('/login')
+def login_page():
+    """Страница входа по телефону"""
+    return render_template('login.html')
+
+@app.route('/auth/send_code', methods=['POST'])
+def send_code():
+    """Отправка SMS кода"""
+    data = request.get_json()
+    phone = data.get('phone', '').strip()
+    
+    if not phone:
+        return jsonify({'success': False, 'message': 'Укажите номер телефона'})
+    
+    # Очищаем истекшие коды перед отправкой
+    cleanup_expired_codes()
+    
+    result = send_sms_code(phone)
+    return jsonify(result)
+
+@app.route('/auth/verify_code', methods=['POST'])
+def verify_code():
+    """Проверка SMS кода"""
+    data = request.get_json()
+    phone = data.get('phone', '').strip()
+    code = data.get('code', '').strip()
+    
+    if not phone or not code:
+        return jsonify({'success': False, 'message': 'Укажите телефон и код'})
+    
+    result = verify_sms_code(phone, code)
+    
+    if result['success']:
+        # Устанавливаем cookie с токеном сессии
+        response = jsonify(result)
+        response.set_cookie('session_token', result['session_token'], 
+                          max_age=30*24*60*60, httponly=True, secure=False)
+        return response
+    
+    return jsonify(result)
+
+@app.route('/auth/check_session', methods=['POST'])
+def check_session():
+    """Проверка действительности сессии"""
+    data = request.get_json()
+    session_token = data.get('session_token')
+    
+    user = get_user_by_session(session_token)
+    if user:
+        return jsonify({'success': True, 'user': user})
+    else:
+        return jsonify({'success': False, 'message': 'Сессия недействительна'})
+
+@app.route('/auth/logout', methods=['POST'])
+def logout():
+    """Выход из системы"""
+    session_token = request.cookies.get('session_token')
+    
+    if session_token:
+        logout_user(session_token)
+    
+    response = jsonify({'success': True, 'message': 'Выход выполнен'})
+    response.set_cookie('session_token', '', expires=0)
+    return response
+
+@app.route('/profile')
+def profile():
+    """Профиль пользователя"""
+    user = get_current_user()
+    if not user:
+        return redirect('/login')
+    
+    # Получаем заказы пользователя
+    all_orders = load_orders()
+    user_orders = [order for order in all_orders 
+                  if (order.get('customer', {}).get('phone') == user['phone'] and 
+                      not order.get('deleted_by_user', False))]
+    user_orders.sort(key=lambda x: x.get('created_at', ''), reverse=True)
+    
+    return render_template('profile.html', user=user, orders=user_orders)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
