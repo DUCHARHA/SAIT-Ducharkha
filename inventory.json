@@ -20,7 +20,23 @@
     "active": true
   },
   "3": {
-    "stock": 49,
+    "stock": 0,
+    "active": false
+  },
+  "30": {
+    "stock": 50,
     "active": true
+  },
+  "40": {
+    "stock": 50,
+    "active": false
+  },
+  "8": {
+    "stock": 1,
+    "active": true
+  },
+  "7": {
+    "stock": 0,
+    "active": false
   }
 }
