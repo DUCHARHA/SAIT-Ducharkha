@@ -802,28 +802,17 @@
 
         /* Mobile Adaptations */
         @media (max-width: 768px) {
-            .header-content {
-                padding: 0 12px;
-                flex-direction: column;
-                gap: 12px;
+            .nav-links {
+                gap: 15px;
             }
 
-            .header-left, .header-center, .header-right {
-                flex: none;
-                width: 100%;
-            }
-
-            .header-left {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
+            .nav-links a {
+                font-size: 14px;
+                padding: 6px 12px;
             }
 
             .header-center {
-                order: 2;
-            }
-
-            .header-right {
+                flex: 1;
                 order: 1;
                 justify-content: flex-end;
             }
@@ -862,26 +851,66 @@
             }
 
             .categories-grid {
-                grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-                gap: 12px;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
             }
 
             .category-card {
-                padding: 16px 12px;
+                padding: 12px 8px;
+                min-height: 100px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
             }
 
             .category-icon {
-                font-size: 32px;
-                margin-bottom: 8px;
+                font-size: 28px;
+                margin-bottom: 6px;
             }
 
             .category-name {
-                font-size: 14px;
+                font-size: 12px;
+                text-align: center;
+                line-height: 1.2;
             }
 
             .products-grid {
-                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-                gap: 15px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .product-group {
+                min-height: 320px;
+            }
+
+            .product-image {
+                height: 140px;
+            }
+
+            .product-info {
+                padding: 12px;
+            }
+
+            .product-name {
+                font-size: 14px;
+                line-height: 1.3;
+                margin-bottom: 6px;
+            }
+
+            .product-description {
+                font-size: 12px;
+                line-height: 1.3;
+                margin-bottom: 8px;
+            }
+
+            .product-price {
+                font-size: 16px;
+            }
+
+            .add-to-cart-btn {
+                padding: 6px 12px;
+                font-size: 12px;
             }
 
             .main-content {
@@ -1493,7 +1522,7 @@
         document.addEventListener('click', function(e) {
             const searchContainer = document.querySelector('.search-container');
             const stickySearchContainer = document.querySelector('.sticky-search');
-            
+
             if (!searchContainer.contains(e.target) && !stickySearchContainer.contains(e.target)) {
                 hideSearchSuggestions('search-suggestions');
                 hideSearchSuggestions('sticky-search-suggestions');
@@ -1569,10 +1598,10 @@
                             ${product.brand ? `<div class="product-brand">${product.brand}</div>` : ''}
                             <div class="product-name">${product.name}</div>
                             <div class="product-description">${product.description}</div>
-                            
+
                             ${!product.available ? '<div class="out-of-stock"><span>❌ Нет в наличии</span></div>' :
                               product.stock <= 5 ? `<div class="low-stock"><span>⚠️ Осталось ${product.stock} шт.</span></div>` : ''}
-                            
+
                             <div class="product-footer">
                                 <div class="product-price">
                                     ${product.price.toFixed(2)} <span class="currency">сом</span>
@@ -1748,7 +1777,7 @@
             const stickySearch = document.getElementById('sticky-search');
             const headerCenter = document.querySelector('.header-center');
             const header = document.querySelector('.header');
-            
+
             // Вычисляем позицию более точно
             const headerHeight = header.offsetHeight;
             const searchSectionBottom = searchSection.offsetTop + searchSection.offsetHeight - headerHeight;
@@ -1912,7 +1941,7 @@
                             item.remove();
                         }
                     });
-                    
+
                     // Если история пуста, скрываем весь блок
                     const remainingItems = document.querySelectorAll('.history-item');
                     if (remainingItems.length === 0) {
