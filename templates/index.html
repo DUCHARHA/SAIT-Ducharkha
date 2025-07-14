@@ -1103,8 +1103,7 @@
         .promo-note {
             font-size: 12px;
             color: #888;
-            ```text
-margin-bottom: 20px;
+            margin-bottom: 20px;
         }
 
         .promo-use-btn {
@@ -1288,8 +1287,7 @@ margin-bottom: 20px;
             </div>
         </div>
 
-        <!-- Товары по категориям -->
-        <div id="main-products" class="products-section">
+        <div class="products-section" id="products-section">
             <button class="back-to-categories" id="back-to-categories" onclick="showCategories()">
                 ← Назад к категориям
             </button>
@@ -1404,14 +1402,627 @@ margin-bottom: 20px;
         </a>
     </div>
 
-    <script>
-        // Передаем данные в глобальную область для script.js
-        window.products = {{ products | tojson }};
-        window.cartItems = {{ session.get('cart', []) | tojson }};
-    </script>
     <script src="/static/script.js"></script>
     <script src="/static/notifications.js"></script>
     <script>
+        let currentCategory = '';
+        let cartQuantities = {};
+        const products = {{ products | tojson }};
+
+        // Загружаем количества из корзины при загрузке страницы
+        window.addEventListener('load', function() {
+            const cartItems = {{ session.get('cart', []) | tojson }};
+            cartItems.forEach(item => {
+                cartQuantities[item.id] = item.quantity;
+                updateQuantityDisplay(item.id, item.quantity);
+            });
+        });
+
+        // Profile Menu
+        function toggleProfileMenu() {
+            const dropdown = document.getElementById('profile-dropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close profile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const profileMenu = document.querySelector('.profile-menu');
+            if (!profileMenu.contains(e.target)) {
+                document.getElementById('profile-dropdown').classList.remove('show');
+            }
+        });
+
+        // Show category products
+        function showCategoryProducts(category) {
+            currentCategory = category;
+
+            // Hide categories, show products
+            document.getElementById('categories-section').style.display = 'none';
+            document.getElementById('products-section').classList.add('show');
+            document.getElementById('back-to-categories').classList.add('show');
+
+            // Filter products by category
+            const productGroups = document.querySelectorAll('.product-group');
+            productGroups.forEach(group => {
+                const groupCategory = group.dataset.category;
+                group.style.display = (groupCategory === category) ? 'block' : 'none';
+            });
+
+            document.getElementById('products-title').textContent = category;
+        }
+
+        // Show categories (back from products)
+        function showCategories() {
+            currentCategory = '';
+            document.getElementById('categories-section').style.display = 'block';
+            document.getElementById('products-section').classList.remove('show');
+            document.getElementById('back-to-categories').classList.remove('show');
+            hideSearchResults();
+        }
+
+        // Search functionality
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchProducts();
+            }
+        });
+
+        document.getElementById('search-input').addEventListener('input', function() {
+            const query = this.value.trim();
+            if (query.length >= 1) {
+                showSearchSuggestions(query, 'search-suggestions');
+                if (query.length >= 2) {
+                    setTimeout(() => {
+                        fetch(`/search?q=${encodeURIComponent(query)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                displaySearchResults(data.results, data.query, data.count);
+                            })
+                            .catch(error => {
+                                console.error('Ошибка поиска:', error);
+                            });
+                    }, 300);
+                }
+            } else {
+                hideSearchSuggestions('search-suggestions');
+                hideSearchResults();
+            }
+        });
+
+        document.getElementById('sticky-search-input').addEventListener('input', function() {
+            const query = this.value.trim();
+            if (query.length >= 1) {
+                showSearchSuggestions(query, 'sticky-search-suggestions');
+            } else {
+                hideSearchSuggestions('sticky-search-suggestions');
+            }
+        });
+
+        function searchProducts() {
+            const query = document.getElementById('search-input').value.trim();
+
+            if (!query) {
+                hideSearchResults();
+                return;
+            }
+
+            fetch(`/search?q=${encodeURIComponent(query)}&save_history=true`)
+                .then(response => response.json())
+                .then(data => {
+                    displaySearchResults(data.results, data.query, data.count);
+                })
+                .catch(error => {
+                    console.error('Ошибка поиска:', error);
+                });
+        }
+
+        function searchFromHistory(query) {
+            document.getElementById(`search-input`).value = query;
+            searchProducts();
+        }
+
+        function displaySearchResults(results, query, count) {
+            const resultsContainer = document.getElementById('search-results');const resultsGrid = document.getElementById('results-grid');
+            const noResults = document.getElementById('no-results');
+            const resultsTitle = document.getElementById('results-title');
+            const categoriesSection = document.getElementById('categories-section');
+            const productsSection = document.getElementById('products-section');
+
+            resultsTitle.textContent = `Результаты поиска "${query}" (${count})`;
+
+            if (results.length === 0) {
+                resultsGrid.style.display = 'none';
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+                resultsGrid.style.display = 'grid';
+
+                resultsGrid.innerHTML = results.map(product => `
+                    <div class="product-group ${!product.available ? 'out-of-stock' : ''}" onclick="openProductModal(${product.id})">
+                        <div class="product-image">
+                            ${product.image.startsWith('http') 
+                                ? `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                   <div class="product-emoji" style="display: none;">🛒</div>`
+                                : `<div class="product-emoji">${product.image}</div>`
+                            }
+                        </div>
+                        <div class="product-info">
+                            ${product.brand ? `<div class="product-brand">${product.brand}</div>` : ''}
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-description">${product.description}</div>
+                            
+                            ${!product.available ? '<div class="out-of-stock"><span>❌ Нет в наличии</span></div>' :
+                              product.stock <= 5 ? `<div class="low-stock"><span>⚠️ Осталось ${product.stock} шт.</span></div>` : ''}
+                            
+                            <div class="product-footer">
+                                <div class="product-price">
+                                    ${product.price.toFixed(2)} <span class="currency">сом</span>
+                                </div>
+                                ${product.available ? `
+                                    <div class="quantity-controls">
+                                        <button class="quantity-btn minus" id="search-minus-${product.id}" onclick="event.stopPropagation(); changeQuantity(${product.id}, -1)" ${!cartQuantities[product.id] ? 'disabled' : ''}>−</button>
+                                        <span class="quantity-display" id="search-qty-${product.id}">${cartQuantities[product.id] || 0}</span>
+                                        <button class="quantity-btn plus" id="search-plus-${product.id}" onclick="event.stopPropagation(); changeQuantity(${product.id}, 1)" data-max-stock="${product.stock}">+</button>
+                                    </div>
+                                ` : '<div class="unavailable-btn">Недоступно</div>'}
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            categoriesSection.style.display = 'none';
+            productsSection.classList.remove('show');
+            resultsContainer.style.display = 'block';
+        }
+
+        function hideSearchResults() {
+            document.getElementById('search-results').style.display = 'none';
+            document.getElementById('search-input').value = '';
+            showCategories();
+        }
+
+        function changeQuantity(productId, change) {
+            const currentQty = parseInt(document.getElementById(`qty-${productId}`).textContent);
+            const plusBtn = document.getElementById(`plus-${productId}`);
+            const maxStock = parseInt(plusBtn.dataset.maxStock || '999');
+
+            // Проверяем лимиты на фронтенде
+            if (change > 0 && currentQty >= maxStock) {
+                showNotification(`В наличии только ${maxStock} шт.`, 'error');
+                return;
+            }
+
+            fetch('/update_cart_quantity', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    'product_id': productId,
+                    'change': change
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById(`qty-${productId}`).textContent = data.current_quantity;
+                    cartQuantities[productId] = data.current_quantity;
+                    updateQuantityDisplay(productId, data.current_quantity);
+                    document.getElementById('cart-count').textContent = data.cart_count;
+
+                    if (change > 0) {
+                        showSuccessMessage();
+                    }
+
+                    // Обновляем кнопку + если достигли лимита
+                    if (data.current_quantity >= maxStock) {
+                        plusBtn.disabled = true;
+                        plusBtn.style.opacity = '0.5';
+                    } else {
+                        plusBtn.disabled = false;
+                        plusBtn.style.opacity = '1';
+                    }
+                } else {
+                    showNotification(data.error || 'Ошибка добавления товара', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+                showNotification('Ошибка соединения', 'error');
+            });
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : '#dc3545'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+                z-index: 1000;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        function updateQuantityDisplay(productId, quantity) {
+            // Update main product display
+            const qtyElement = document.getElementById(`qty-${productId}`);
+            if (qtyElement) {
+                qtyElement.textContent = quantity;
+            }
+
+            // Update search results display
+            const searchQtyElement = document.getElementById(`search-qty-${productId}`);
+            if (searchQtyElement) {
+                searchQtyElement.textContent = quantity;
+            }
+
+            // Update modal display
+            const modalQtyElement = document.getElementById(`modal-qty-${productId}`);
+            if (modalQtyElement) {
+                modalQtyElement.textContent = quantity;
+            }
+
+            // Update minus buttons
+            const minusBtn = document.getElementById(`minus-${productId}`);
+            if (minusBtn) {
+                minusBtn.disabled = quantity <= 0;
+            }
+
+            const searchMinusBtn = document.getElementById(`search-minus-${productId}`);
+            if (searchMinusBtn) {
+                searchMinusBtn.disabled = quantity <= 0;
+            }
+        }
+
+        function showSuccessMessage() {
+            const successMessage = document.getElementById('success-message');
+            successMessage.style.display = 'block';
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 2000);
+        }
+
+        // Help Modal Functions
+        function toggleHelpModal() {
+            const modal = document.getElementById('help-modal');
+            const overlay = document.getElementById('help-overlay');
+            const isVisible = modal.style.display === 'block';
+
+            modal.style.display = isVisible ? 'none' : 'block';
+            overlay.style.display = isVisible ? 'none' : 'block';
+
+            // Close profile menu
+            document.getElementById('profile-dropdown').classList.remove('show');
+        }
+
+        function closeHelpModal() {
+            document.getElementById('help-modal').style.display = 'none';
+            document.getElementById('help-overlay').style.display = 'none';
+        }
+
+        /* Sticky Search Functions */
+        window.addEventListener('scroll', function() {
+            const searchSection = document.querySelector('.search-section');
+            const stickySearch = document.getElementById('sticky-search');
+            const headerCenter = document.querySelector('.header-center');
+            const searchSectionBottom = searchSection.offsetTop + searchSection.offsetHeight;
+
+            if (window.scrollY > searchSectionBottom) {
+                stickySearch.classList.add('show');
+                headerCenter.classList.add('search-mode');
+            } else {
+                stickySearch.classList.remove('show');
+                headerCenter.classList.remove('search-mode');
+            }
+
+            // Sticky back button for categories and search results
+            const backButton = document.getElementById('back-to-categories');
+            const productsSection = document.getElementById('products-section');
+            const searchResults = document.getElementById('search-results');
+
+            const shouldShowSticky = (backButton && productsSection && productsSection.classList.contains('show')) ||
+                                   (searchResults && searchResults.style.display === 'block');
+
+            if (shouldShowSticky) {
+                if (window.scrollY > 100) {
+                    backButton.style.position = 'fixed';
+                    backButton.style.top = '80px';
+                    backButton.style.left = '20px';
+                    backButton.style.zIndex = '999';
+                    backButton.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                    backButton.style.display = 'inline-block';
+                } else {
+                    backButton.style.position = 'static';
+                    backButton.style.boxShadow = 'none';
+                }
+            }
+        });
+
+        // Search Suggestions
+        function showSearchSuggestions(query, containerId) {
+            const container = document.getElementById(containerId);
+            const filteredProducts = products.filter(product => 
+                product.name.toLowerCase().includes(query.toLowerCase()) ||
+                product.category.toLowerCase().includes(query.toLowerCase()) ||
+                product.subcategory.toLowerCase().includes(query.toLowerCase())
+            ).slice(0, 5);
+
+            if (filteredProducts.length > 0) {
+                container.innerHTML = filteredProducts.map(product => `
+                    <div class="suggestion-item" onclick="selectSuggestion('${product.name}', '${containerId}')">
+                        <div class="suggestion-name">${product.name}</div>
+                        <div class="suggestion-category">${product.category}</div>
+                    </div>
+                `).join('');
+                container.classList.add('show');
+            } else {
+                container.classList.remove('show');
+            }
+        }
+
+        function hideSearchSuggestions(containerId) {
+            const container = document.getElementById(containerId);
+            container.classList.remove('show');
+        }
+
+        function selectSuggestion(productName, containerId) {
+            const isSticky = containerId.includes('sticky');
+            const inputId = isSticky ? 'sticky-search-input' : 'search-input';
+
+            document.getElementById(inputId).value = productName;
+            hideSearchSuggestions(containerId);
+
+            if (isSticky) {
+                searchProductsSticky();
+            } else {
+                searchProducts();
+            }
+        }
+
+        // Product Modal Functions
+        function openProductModal(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product) return;
+
+            const modal = document.getElementById('product-modal');
+            const overlay = document.getElementById('product-overlay');
+            const content = document.getElementById('product-modal-content');
+
+            const stockInfo = cartQuantities[productId] || 0;
+            const isAvailable = product.available && product.stock > 0;
+
+            content.innerHTML = `
+                <div class="product-modal-image">
+                    ${product.image.startsWith('http') 
+                        ? `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                           <div class="product-modal-emoji" style="display: none;">🛒</div>`
+                        : `<div class="product-modal-emoji">${product.image}</div>`
+                    }
+                </div>
+                ${product.brand ? `<div class="product-modal-brand">${product.brand}</div>` : ''}
+                <div class="product-modal-name">${product.name}</div>
+                <div class="product-modal-description">${product.description}</div>
+                <div class="product-modal-price">${product.price.toFixed(2)} сом</div>
+                ${!isAvailable ? '<div class="out-of-stock">❌ Нет в наличии</div>' : 
+                  product.stock <= 5 ? `<div class="low-stock">⚠️ Осталось ${product.stock} шт.</div>` : ''}
+                ${isAvailable ? `
+                    <div class="product-modal-controls">
+                        <div class="quantity-controls">
+                            <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">−</button>
+                            <span class="quantity-display" id="modal-qty-${product.id}">${stockInfo}</span>
+                            <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)" data-max-stock="${product.stock}">+</button>
+                        </div>
+                    </div>
+                ` : '<div class="unavailable-btn">Недоступно</div>'}
+            `;
+
+            modal.classList.add('show');
+            overlay.style.display = 'block';
+        }
+
+        function closeProductModal() {
+            document.getElementById('product-modal').classList.remove('show');
+            document.getElementById('product-overlay').style.display = 'none';
+        }
+
+        // Закрытие модального окна при клике вне его
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('help-modal-overlay')) {
+                closeProductModal();
+            }
+        });
+
+        function searchProductsSticky() {
+            const query = document.getElementById('sticky-search-input').value.trim();
+            document.getElementById('search-input').value = query;
+            searchProducts();
+        }
+
+        // Синхронизация поисковых строк
+        document.getElementById('sticky-search-input').addEventListener('input', function() {
+            document.getElementById('search-input').value = this.value;
+        });
+
+        document.getElementById('search-input').addEventListener('input', function() {
+            document.getElementById('sticky-search-input').value = this.value;
+        });
+
+        // Search History Functions
+        function removeFromHistory(query) {
+            fetch('/remove_search_history', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({query: query})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        }
+
+        function clearAllHistory() {
+            fetch('/clear_search_history', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        }
+
+        // Проверка аутентификации и обновление UI
+        function checkAuthentication() {
+            const sessionToken = getCookie('session_token');
+            if (sessionToken) {
+                fetch('/auth/check_session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({session_token: sessionToken})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        updateUIForAuthenticatedUser(data.user);
+                    } else {
+                        updateUIForGuestUser();
+                    }
+                })
+                .catch(error => {
+                    console.log('Ошибка проверки сессии:', error);
+                    updateUIForGuestUser();
+                });
+            } else {
+                updateUIForGuestUser();
+            }
+        }
+
+        function updateUIForAuthenticatedUser(user) {
+            document.getElementById('user-info').style.display = 'block';
+            document.getElementById('user-phone').textContent = formatPhone(user.phone);
+            document.getElementById('login-item').style.display = 'none';
+            document.getElementById('logout-item').style.display = 'flex';
+        }
+
+        function updateUIForGuestUser() {
+            document.getElementById('user-info').style.display = 'none';
+            document.getElementById('login-item').style.display = 'flex';
+            document.getElementById('logout-item').style.display = 'none';
+        }
+
+        function formatPhone(phone) {
+            if (phone.length >= 12) {
+                return '+' + phone.substring(0, 3) + ' ' + 
+                       phone.substring(3, 6) + ' ' + 
+                       phone.substring(6, 8) + ' ' + 
+                       phone.substring(8, 10) + ' ' + 
+                       phone.substring(10, 12);
+            }
+            return phone;
+        }
+
+        function logoutUser() {
+            fetch('/auth/logout', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    updateUIForGuestUser();
+                    document.getElementById('profile-dropdown').classList.remove('show');
+                    showNotification('Вы вышли из системы', 'success');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка при выходе:', error);
+            });
+        }
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+            return null;
+        }
+
+        // Анимация курьера
+        function startCourierAnimation() {
+            const courierAnimation = document.getElementById('courier-animation');
+            const hasSeenCourier = localStorage.getItem('has_seen_courier');
+
+            if (!hasSeenCourier) {
+                setTimeout(() => {
+                    courierAnimation.classList.add('show');
+
+                    // Автоматически скрываем через 15 секунд
+                    setTimeout(() => {
+                        courierAnimation.classList.remove('show');
+                    }, 15000);
+                }, 3000); // Показываем через 3 секунды после загрузки
+            }
+        }
+
+        function catchCourier() {
+            const courierAnimation = document.getElementById('courier-animation');
+            const promoModal = document.getElementById('promo-modal');
+            const promoOverlay = document.getElementById('promo-modal-overlay');
+
+            courierAnimation.classList.remove('show');
+            promoModal.classList.add('show');
+            promoOverlay.classList.add('show');
+
+            localStorage.setItem('has_seen_courier', 'true');
+        }
+
+        function closePromoModal() {
+            const promoModal = document.getElementById('promo-modal');
+            const promoOverlay = document.getElementById('promo-modal-overlay');
+
+            promoModal.classList.remove('show');
+            promoOverlay.classList.remove('show');
+        }
+
+        function copyPromoCode() {
+            navigator.clipboard.writeText('ЯКУМ').then(() => {
+                showNotification('Промокод скопирован!', 'success');
+            });
+        }
+
+        function usePromoCode() {
+            closePromoModal();
+            // Можно добавить логику для автоматического перехода к корзине
+            showNotification('Добавьте товары в корзину и используйте промокод ЯКУМ при оформлении', 'success');
+        }
 
         // Регистрация Service Worker
         if ('serviceWorker' in navigator) {
@@ -1423,7 +2034,16 @@ margin-bottom: 20px;
                     .catch(error => {
                         console.log('Ошибка при регистрации Service Worker:', error);
                     });
+
+                // Проверяем аутентификацию после загрузки
+                checkAuthentication();
+
+                // Запускаем анимацию курьера
+                startCourierAnimation();
             });
+        } else {
+            checkAuthentication();
+            startCourierAnimation();
         }
     </script>
 </body>

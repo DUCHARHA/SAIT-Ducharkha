@@ -567,7 +567,7 @@ def home():
         product_copy = product.copy()
         stock_info = get_product_stock(product['id'])
         product_copy['stock'] = stock_info['stock']
-        product_copy['available'] = stock_info['active'] and stock_info['stock'] > 0
+        product_copy['available'] = stock_info['active']
         products_with_stock.append(product_copy)
 
     # Получаем историю поиска
