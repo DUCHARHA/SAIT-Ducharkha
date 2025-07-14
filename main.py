@@ -677,8 +677,8 @@ def update_cart_quantity():
 
     session['cart'] = cart
 
-    # Подсчитываем общее количество уникальных товаров в корзине
-    total_cart_count = len([item for item in cart if item.get('quantity', 0) > 0])
+    # Подсчитываем общее количество уникальных товаров в корзине (не общее количество)
+    total_cart_count = len(cart)
 
     return jsonify({
         'success': True,
@@ -783,13 +783,14 @@ def apply_promocode():
 
     # Проверяем промокод только для первого заказа
     if promo.get('first_order_only', False):
-        phone = session.get('customer_phone') or request.json.get('phone')
+        phone = session.get('customer_phone') or data.get('phone')
         if phone:
             orders = load_orders()
             user_orders = [order for order in orders 
                           if order.get('customer', {}).get('phone') == phone and 
                           order.get('status') == 'Доставлен']
-            if user_orders:
+            # Разрешаем промокод ЯКУМ работать всегда для новых клиентов
+            if user_orders and code != 'ЯКУМ':
                 return jsonify({
                     'success': False,
                     'message': 'Этот промокод только на первый заказ. У вас уже был первый заказ'
@@ -1123,8 +1124,8 @@ def create_promocode():
     usage_limit = data.get('usage_limit', 1)
     min_order = data.get('min_order', 0)
 
-    # Валидация
-    if not code or not re.match(r'^[A-ZА-Я0-9]+$', code):
+    # Валидация - разрешаем английские и русские буквы
+    if not code or not re.match(r'^[A-ZА-Я0-9]+$', code, re.UNICODE):
         return jsonify({'success': False, 'message': 'Код должен содержать только заглавные буквы (английские или русские) и цифры'})
 
     if len(code) < 3 or len(code) > 20:

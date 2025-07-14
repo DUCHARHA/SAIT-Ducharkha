@@ -17,26 +17,27 @@
             notification.style.cssText = `
                 position: fixed;
                 bottom: 20px;
-                right: 20px;
+                left: 50%;
+                transform: translateX(-50%) translateY(100px);
                 background: ${type === 'success' ? '#28a745' : '#dc3545'};
                 color: white;
                 padding: 15px 20px;
                 border-radius: 10px;
                 box-shadow: 0 5px 20px rgba(0,0,0,0.2);
                 z-index: 1000;
-                transform: translateY(100px);
                 transition: transform 0.3s ease;
                 max-width: 300px;
+                text-align: center;
             `;
             notification.textContent = message;
             document.body.appendChild(notification);
 
             setTimeout(() => {
-                notification.style.transform = 'translateY(0)';
+                notification.style.transform = 'translateX(-50%) translateY(0)';
             }, 100);
 
             setTimeout(() => {
-                notification.style.transform = 'translateY(100px)';
+                notification.style.transform = 'translateX(-50%) translateY(100px)';
                 setTimeout(() => {
                     if (document.body.contains(notification)) {
                         document.body.removeChild(notification);
@@ -196,10 +197,12 @@
 
         // Обновить счетчик корзины
         updateCartCount: function(count) {
-            const cartCountElement = document.getElementById('cart-count');
-            if (cartCountElement) {
-                cartCountElement.textContent = count;
-            }
+            const cartCountElements = document.querySelectorAll('.cart-count, #cart-count');
+            cartCountElements.forEach(element => {
+                if (element) {
+                    element.textContent = count;
+                }
+            });
         }
     };
 

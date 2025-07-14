@@ -374,12 +374,18 @@
 
             <div class="cart-summary">
                 <div class="total-price" id="total-price">Итого: {{ "%.2f"|format(total_price) }} сом.</div>
-                 {% if total_price < 10 %}
-                    <p style="color: red;">Минимальная сумма заказа 10 сом. Добавьте товары в корзину.</p>
-                 {% endif %}
+                <div id="minimum-order-warning" {% if total_price >= 10 %}style="display: none;"{% endif %}>
+                    <p style="color: #dc3545; background: #f8d7da; border: 1px solid #f5c6cb; padding: 12px; border-radius: 8px; margin: 16px 0; text-align: center;">
+                        ⚠️ Минимальная сумма заказа 10 сом. Добавьте товары на {{ "%.2f"|format(10 - total_price) }} сом.
+                    </p>
+                </div>
                 <p id="cart-count-text">Количество товаров: {{ cart_count }}</p>
                 <a href="/checkout" class="checkout-btn" id="checkout-btn" {% if total_price < 10 %} style="pointer-events: none; opacity: 0.5;" {% endif %}>
-                    Оформить заказ
+                    {% if total_price < 10 %}
+                        Минимальная сумма 10 сом
+                    {% else %}
+                        Оформить заказ
+                    {% endif %}
                 </a>
                 <br>
                 <a href="/" class="continue-shopping">Продолжить покупки</a>
@@ -495,12 +501,23 @@
 
         function updateCheckoutButton(totalPrice) {
             const checkoutButton = document.getElementById('checkout-btn');
+            const warningDiv = document.getElementById('minimum-order-warning');
+            
             if (totalPrice < 10) {
                 checkoutButton.style.pointerEvents = 'none';
                 checkoutButton.style.opacity = '0.5';
+                checkoutButton.textContent = 'Минимальная сумма 10 сом';
+                if (warningDiv) {
+                    warningDiv.style.display = 'block';
+                    warningDiv.innerHTML = `<p style="color: #dc3545; background: #f8d7da; border: 1px solid #f5c6cb; padding: 12px; border-radius: 8px; margin: 16px 0; text-align: center;">⚠️ Минимальная сумма заказа 10 сом. Добавьте товары на ${(10 - totalPrice).toFixed(2)} сом.</p>`;
+                }
             } else {
                 checkoutButton.style.pointerEvents = 'auto';
                 checkoutButton.style.opacity = '1';
+                checkoutButton.textContent = 'Оформить заказ';
+                if (warningDiv) {
+                    warningDiv.style.display = 'none';
+                }
             }
         }
 

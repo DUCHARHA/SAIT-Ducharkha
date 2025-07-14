@@ -1538,7 +1538,7 @@
                 resultsGrid.style.display = 'grid';
 
                 resultsGrid.innerHTML = results.map(product => `
-                    <div class="product-group">
+                    <div class="product-group ${!product.available ? 'out-of-stock' : ''}" onclick="openProductModal(${product.id})">
                         <div class="product-image">
                             ${product.image.startsWith('http') 
                                 ? `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -1550,15 +1550,21 @@
                             ${product.brand ? `<div class="product-brand">${product.brand}</div>` : ''}
                             <div class="product-name">${product.name}</div>
                             <div class="product-description">${product.description}</div>
+                            
+                            ${!product.available ? '<div class="out-of-stock"><span>❌ Нет в наличии</span></div>' :
+                              product.stock <= 5 ? `<div class="low-stock"><span>⚠️ Осталось ${product.stock} шт.</span></div>` : ''}
+                            
                             <div class="product-footer">
                                 <div class="product-price">
                                     ${product.price.toFixed(2)} <span class="currency">сом</span>
                                 </div>
-                                <div class="quantity-controls">
-                                    <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">−</button>
-                                    <span class="quantity-display" id="qty-${product.id}">${cartQuantities[product.id] || 0}</span>
-                                    <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
-                                </div>
+                                ${product.available ? `
+                                    <div class="quantity-controls">
+                                        <button class="quantity-btn minus" id="search-minus-${product.id}" onclick="event.stopPropagation(); changeQuantity(${product.id}, -1)" ${!cartQuantities[product.id] ? 'disabled' : ''}>−</button>
+                                        <span class="quantity-display" id="search-qty-${product.id}">${cartQuantities[product.id] || 0}</span>
+                                        <button class="quantity-btn plus" id="search-plus-${product.id}" onclick="event.stopPropagation(); changeQuantity(${product.id}, 1)" data-max-stock="${product.stock}">+</button>
+                                    </div>
+                                ` : '<div class="unavailable-btn">Недоступно</div>'}
                             </div>
                         </div>
                     </div>
@@ -1661,19 +1667,33 @@
         }
 
         function updateQuantityDisplay(productId, quantity) {
+            // Update main product display
             const qtyElement = document.getElementById(`qty-${productId}`);
             if (qtyElement) {
                 qtyElement.textContent = quantity;
             }
 
+            // Update search results display
+            const searchQtyElement = document.getElementById(`search-qty-${productId}`);
+            if (searchQtyElement) {
+                searchQtyElement.textContent = quantity;
+            }
+
+            // Update modal display
             const modalQtyElement = document.getElementById(`modal-qty-${productId}`);
             if (modalQtyElement) {
                 modalQtyElement.textContent = quantity;
             }
 
+            // Update minus buttons
             const minusBtn = document.getElementById(`minus-${productId}`);
             if (minusBtn) {
                 minusBtn.disabled = quantity <= 0;
+            }
+
+            const searchMinusBtn = document.getElementById(`search-minus-${productId}`);
+            if (searchMinusBtn) {
+                searchMinusBtn.disabled = quantity <= 0;
             }
         }
 
@@ -1718,17 +1738,22 @@
                 headerCenter.classList.remove('search-mode');
             }
 
-            // Sticky back button
+            // Sticky back button for categories and search results
             const backButton = document.getElementById('back-to-categories');
             const productsSection = document.getElementById('products-section');
+            const searchResults = document.getElementById('search-results');
 
-            if (backButton && productsSection && productsSection.classList.contains('show')) {
-                if (window.scrollY > 200) {
+            const shouldShowSticky = (backButton && productsSection && productsSection.classList.contains('show')) ||
+                                   (searchResults && searchResults.style.display === 'block');
+
+            if (shouldShowSticky) {
+                if (window.scrollY > 100) {
                     backButton.style.position = 'fixed';
                     backButton.style.top = '80px';
                     backButton.style.left = '20px';
                     backButton.style.zIndex = '999';
                     backButton.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                    backButton.style.display = 'inline-block';
                 } else {
                     backButton.style.position = 'static';
                     backButton.style.boxShadow = 'none';
