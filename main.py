@@ -57,7 +57,7 @@ def get_current_user():
     return None
 
 ADMIN_PASSWORD = 'dilo.artes'
-INVENTORY_PASSWORD = 'tovaroused'
+INVENTORY_PASSWORD = 'dilo.artes'
 
 ORDERS_FILE = 'orders.json'
 REVIEWS_FILE = 'reviews.json'
