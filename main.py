@@ -76,8 +76,25 @@ SYNONYMS = {
     'молоко': ['молочко'],
     'хлеб': ['хлебушек', 'батон'],
     'мясо': ['мяско'],
-    'курица': ['куриное мясо', 'курочка'],
-    'яйца': ['яички', 'яйцо']
+    'курица': ['куриное', 'курочка', 'куриная'],
+    'куриная': ['курица', 'куриное', 'курочка'],
+    'куриное': ['курица', 'куриная', 'курочка'],
+    'ку': ['курица', 'куриная', 'куриное'],
+    'кур': ['курица', 'куриная', 'куриное'],
+    'яйца': ['яички', 'яйцо'],
+    'ма': ['масло', 'майонез', 'макароны', 'мандарины'],
+    'мас': ['масло'],
+    'май': ['майонез'],
+    'мак': ['макароны'],
+    'ман': ['мандарины'],
+    'мол': ['молоко', 'молочные'],
+    'сыр': ['сыры'],
+    'мор': ['морковь'],
+    'хл': ['хлеб', 'хлебобулочные'],
+    'нап': ['напитки'],
+    'сок': ['соки'],
+    'вод': ['вода'],
+    'мин': ['минеральная']
 }
 
 def load_orders():
@@ -310,6 +327,9 @@ def save_review(review):
 def smart_search(query, products):
     results = []
     query_lower = query.lower().strip()
+    
+    if not query_lower:
+        return []
 
     # Расширяем поисковый запрос синонимами
     search_terms = [query_lower]
@@ -325,43 +345,67 @@ def smart_search(query, products):
         product_subcategory = product['subcategory'].lower()
         product_brand = product.get('brand', '').lower()
 
-        # Проверяем точное совпадение в названии (высший приоритет)
+        # Проверяем точное совпадение с начала названия (наивысший приоритет)
         for term in search_terms:
-            if term in product_name:
+            if product_name.startswith(term):
+                score += 1000
+            elif term in product_name:
+                # Проверяем, является ли это началом слова в названии
+                words = product_name.split()
+                for word in words:
+                    if word.startswith(term):
+                        score += 500
+                    elif term in word:
+                        score += 200
+
+        # Проверяем точное совпадение в категории
+        for term in search_terms:
+            if product_category.startswith(term):
+                score += 300
+            elif term in product_category:
+                score += 150
+
+        # Проверяем точное совпадение в подкатегории
+        for term in search_terms:
+            if product_subcategory.startswith(term):
+                score += 250
+            elif term in product_subcategory:
                 score += 100
-
-        # Проверяем совпадение в категории
-        for term in search_terms:
-            if term in product_category:
-                score += 50
-
-        # Проверяем совпадение в подкатегории
-        for term in search_terms:
-            if term in product_subcategory:
-                score += 30
 
         # Проверяем совпадение в бренде
         for term in search_terms:
-            if term in product_brand:
-                score += 20
+            if product_brand.startswith(term):
+                score += 200
+            elif term in product_brand:
+                score += 80
 
-        # Проверяем совпадение в описании
+        # Проверяем совпадение в описании (низкий приоритет)
         for term in search_terms:
             if term in product_description:
-                score += 10
+                score += 30
 
-        # Нечеткое совпадение только для названия
-        for word in query_lower.split():
-            name_words = product_name.split()
-            matches = difflib.get_close_matches(word, name_words, n=2, cutoff=0.7)
-            score += len(matches) * 15
+        # Нечеткое совпадение только для коротких запросов (3+ символа)
+        if len(query_lower) >= 3:
+            for word in query_lower.split():
+                name_words = product_name.split()
+                matches = difflib.get_close_matches(word, name_words, n=1, cutoff=0.8)
+                score += len(matches) * 50
+
+        # Бонус за релевантность длины запроса
+        if len(query_lower) >= 2:
+            for term in search_terms:
+                if len(term) >= 2 and term in product_name:
+                    # Чем длиннее совпадение, тем выше бонус
+                    score += len(term) * 10
 
         if score > 0:
             results.append((product, score))
 
     # Сортируем по релевантности
     results.sort(key=lambda x: x[1], reverse=True)
-    return [product for product, score in results]
+    
+    # Возвращаем только топ результаты
+    return [product for product, score in results[:50]]
 
 # Группируем товары по брендам и названиям
 def group_products(products):
@@ -1125,8 +1169,8 @@ def create_promocode():
     min_order = data.get('min_order', 0)
 
     # Валидация - разрешаем английские и русские буквы
-    if not code or not re.match(r'^[A-ZА-Я0-9]+$', code, re.UNICODE):
-        return jsonify({'success': False, 'message': 'Код должен содержать только заглавные буквы (английские или русские) и цифры'})
+    if not code or not re.match(r'^[A-ZА-ЯЁ0-9]+$', code, re.UNICODE):
+        return jsonify({'success': False, 'message': 'Код должен содержать только заглавные буквы (русские или английские) и цифры'})
 
     if len(code) < 3 or len(code) > 20:
         return jsonify({'success': False, 'message': 'Код должен быть от 3 до 20 символов'})

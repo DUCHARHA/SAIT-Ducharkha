@@ -18,54 +18,87 @@
         }
 
         .header {
-            background-color: #6f42c1; /* Фиолетовый цвет */
+            background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
             padding: 12px 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            position: sticky; /* Make the header sticky */
-            top: 0; /* Stick it to the top */
-            z-index: 100; /* Ensure it's above other elements */
+            box-shadow: 0 2px 20px rgba(111, 66, 193, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
         .header-content {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 0 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            color: white;
-            text-decoration: none;
+        .header-left {
+            display: flex;
+            align-items: center;
+            flex: 1;
         }
 
-        .nav-links {
+        .header-center {
+            flex: 2;
             display: flex;
-            gap: 30px;
+            justify-content: center;
             align-items: center;
         }
 
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 20px;
-            transition: all 0.3s ease;
+        .header-title {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            text-align: center;
         }
 
-        .nav-links a:hover {
-            background-color: rgba(255,255,255,0.1);
+        .main-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .sub-title {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            justify-content: flex-end;
         }
 
         .cart-link {
             background-color: rgba(255,255,255,0.15);
-            padding: 8px 16px !important;
+            color: white;
+            text-decoration: none;
+            padding: 8px 12px;
             border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
             position: relative;
+        }
+
+        .cart-link:hover {
+            background-color: rgba(255,255,255,0.25);
         }
 
         .cart-count {
@@ -79,9 +112,68 @@
             justify-content: center;
             font-size: 12px;
             font-weight: bold;
+        }
+
+        .profile-menu {
+            position: relative;
+        }
+
+        .profile-btn {
+            background-color: rgba(255,255,255,0.15);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+        }
+
+        .profile-btn:hover {
+            background-color: rgba(255,255,255,0.25);
+        }
+
+        .profile-dropdown {
             position: absolute;
-            top: -5px;
-            right: -5px;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 16px;
+            padding: 16px 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            min-width: 200px;
+            display: none;
+            z-index: 1001;
+            margin-top: 8px;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .profile-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .profile-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .profile-item-icon {
+            font-size: 20px;
+            width: 24px;
+            text-align: center;
         }
 
         .container {
@@ -293,6 +385,49 @@
         }
 
         @media (max-width: 768px) {
+            .header-content {
+                padding: 0 12px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .header-left, .header-center, .header-right {
+                flex: none;
+                width: 100%;
+            }
+
+            .header-left {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+
+            .header-center {
+                order: 2;
+            }
+
+            .header-right {
+                order: 1;
+                justify-content: flex-end;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .main-title {
+                font-size: 16px;
+            }
+
+            .sub-title {
+                font-size: 12px;
+            }
+
+            .profile-dropdown {
+                right: -8px;
+                min-width: 180px;
+            }
+
             .cart-item {
                 flex-direction: column;
                 align-items: flex-start;
@@ -329,15 +464,59 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <a href="/" class="logo">💜 Дучарха</a>
-            <nav class="nav-links">
-                <a href="/">Главная</a>
-                <a href="/my_orders">📋 Мои заказы</a>
+            <div class="header-left">
+                <a href="/" class="logo">💜 Дучарха</a>
+            </div>
+            <div class="header-center">
+                <div class="header-title">
+                    <span class="main-title">Свежие продукты с доставкой</span>
+                    <span class="sub-title">Более 1000 товаров • Бесплатная доставка за 10-15 минут</span>
+                </div>
+            </div>
+            <div class="header-right">
                 <a href="/cart" class="cart-link">
-                    🛒 Корзина
-                    <span class="cart-count">{{ cart_count }}</span>
+                    🛒 <span class="cart-count" id="cart-count">{{ cart_count or 0 }}</span>
                 </a>
-            </nav>
+                <div class="profile-menu">
+                    <button class="profile-btn" onclick="toggleProfileMenu()" id="profile-btn">👤</button>
+                    <div class="profile-dropdown" id="profile-dropdown">
+                        <div id="user-info" style="display: none; padding: 12px 20px; border-bottom: 1px solid #eee; margin-bottom: 8px;">
+                            <div style="font-weight: 600; color: #6f42c1;" id="user-phone"></div>
+                            <div style="font-size: 12px; color: #666;">Авторизован</div>
+                        </div>
+
+                        <a href="/login" class="profile-item" id="login-item">
+                            <span class="profile-item-icon">🔐</span>
+                            <span>Войти</span>
+                        </a>
+
+                        <a href="/my_orders" class="profile-item">
+                            <span class="profile-item-icon">📋</span>
+                            <span>Мои заказы</span>
+                        </a>
+
+                        <a href="#" class="profile-item" onclick="logoutUser()" id="logout-item" style="display: none;">
+                            <span class="profile-item-icon">🚪</span>
+                            <span>Выйти</span>
+                        </a>
+
+                        <div style="border-top: 1px solid #eee; margin: 8px 0;"></div>
+
+                        <a href="#" class="profile-item" onclick="toggleHelpModal()">
+                            <span class="profile-item-icon">❓</span>
+                            <span>Помощь</span>
+                        </a>
+                        <a href="/inventory" class="profile-item">
+                            <span class="profile-item-icon">📦</span>
+                            <span>Панель товароведа</span>
+                        </a>
+                        <a href="/admin" class="profile-item">
+                            <span class="profile-item-icon">⚙️</span>
+                            <span>Админ панель</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -520,6 +699,20 @@
                 }
             }
         }
+
+        // Profile Menu
+        function toggleProfileMenu() {
+            const dropdown = document.getElementById('profile-dropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Close profile menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const profileMenu = document.querySelector('.profile-menu');
+            if (!profileMenu.contains(e.target)) {
+                document.getElementById('profile-dropdown').classList.remove('show');
+            }
+        });
 
         // Function to display messages at the bottom
         function showMessage(message) {
