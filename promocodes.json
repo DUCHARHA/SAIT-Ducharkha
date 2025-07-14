@@ -25,5 +25,14 @@
     "min_order": 10,
     "active": true,
     "created_at": "2025-07-13 16:18:03"
+  },
+  "DILOVAR": {
+    "discount": 50,
+    "type": "percent",
+    "usage_limit": 100,
+    "used_count": 0,
+    "min_order": 0,
+    "active": true,
+    "created_at": "2025-07-14 02:07:02"
   }
 }
