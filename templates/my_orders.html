@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -298,9 +297,13 @@
                 </div>
 
                 <div class="order-total">
-                    <div class="total-amount">
-                        Итого: {{ "%.2f"|format(order.final_total or order.total_price) }} сом
-                    </div>
+                    <strong>Итого: {{ "%.2f"|format(order.final_total if order.final_total else order.total_price) }} сом.</strong>
+                    {% if order.final_total and order.final_total != order.total_price %}
+                        <small style="color: #28a745;">(скидка применена)</small>
+                    {% endif %}
+                    {% if order.delivery_cost > 0 %}
+                        <small>(включая доставку {{ "%.2f"|format(order.delivery_cost) }} сом.)</small>
+                    {% endif %}
                 </div>
 
                 {% if order.status != 'Доставлен' and order.status != 'Отменен' %}

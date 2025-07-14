@@ -939,6 +939,189 @@
         .back-to-categories.show {
             display: inline-block;
         }
+
+        /* Анимация курьера */
+        .courier-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 500;
+            display: none;
+        }
+
+        .courier-animation.show {
+            display: block;
+        }
+
+        .courier-car {
+            position: absolute;
+            font-size: 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            pointer-events: all;
+            animation: moveCourier 15s linear infinite;
+        }
+
+        .courier-car:hover {
+            transform: scale(1.2);
+        }
+
+        @keyframes moveCourier {
+            0% {
+                top: 20%;
+                left: -60px;
+            }
+            25% {
+                top: 70%;
+                left: 30%;
+            }
+            50% {
+                top: 40%;
+                left: 70%;
+            }
+            75% {
+                top: 80%;
+                left: 20%;
+            }
+            100% {
+                top: 20%;
+                left: calc(100% + 60px);
+            }
+        }
+
+        /* Модальное окно промокода */
+        .promo-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9998;
+            display: none;
+        }
+
+        .promo-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            z-index: 9999;
+            max-width: 400px;
+            width: 90%;
+            display: none;
+            overflow: hidden;
+        }
+
+        .promo-modal.show, .promo-modal-overlay.show {
+            display: block;
+        }
+
+        .promo-modal-header {
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .promo-modal-header h3 {
+            margin: 0;
+            font-size: 24px;
+        }
+
+        .promo-modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .promo-modal-content {
+            padding: 30px;
+            text-align: center;
+        }
+
+        .promo-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .promo-modal-content h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .promo-modal-content p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .promo-code {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px dashed #6f42c1;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        .promo-code strong {
+            color: #6f42c1;
+            font-size: 18px;
+        }
+
+        .copy-btn {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .copy-btn:hover {
+            background: #5a369e;
+        }
+
+        .promo-note {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 20px;
+        }
+
+        .promo-use-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .promo-use-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(40, 167, 69, 0.3);
+        }
     </style>
 </head>
 <body>
@@ -1037,6 +1220,33 @@
                 {% endfor %}
             </div>
             {% endif %}
+        </div>
+    </div>
+
+    <!-- Анимация курьера -->
+    <div class="courier-animation" id="courier-animation">
+        <div class="courier-car" id="courier-car" onclick="catchCourier()">
+            🚗💨
+        </div>
+    </div>
+
+    <!-- Модальное окно промокода -->
+    <div class="promo-modal-overlay" id="promo-modal-overlay" onclick="closePromoModal()"></div>
+    <div class="promo-modal" id="promo-modal">
+        <div class="promo-modal-header">
+            <h3>🎉 Поздравляем!</h3>
+            <button class="promo-modal-close" onclick="closePromoModal()">×</button>
+        </div>
+        <div class="promo-modal-content">
+            <div class="promo-icon">🚗</div>
+            <h4>Вы поймали курьера!</h4>
+            <p>Получите скидку 10% на первый заказ</p>
+            <div class="promo-code">
+                <span>Промокод: <strong>ЯКУМ</strong></span>
+                <button onclick="copyPromoCode()" class="copy-btn">📋 Копировать</button>
+            </div>
+            <p class="promo-note">Действует на заказы от любой суммы</p>
+            <button class="promo-use-btn" onclick="usePromoCode()">Использовать сейчас</button>
         </div>
     </div>
 
@@ -1723,6 +1933,55 @@
             return null;
         }
 
+        // Анимация курьера
+        function startCourierAnimation() {
+            const courierAnimation = document.getElementById('courier-animation');
+            const hasSeenCourier = localStorage.getItem('has_seen_courier');
+            
+            if (!hasSeenCourier) {
+                setTimeout(() => {
+                    courierAnimation.classList.add('show');
+                    
+                    // Автоматически скрываем через 15 секунд
+                    setTimeout(() => {
+                        courierAnimation.classList.remove('show');
+                    }, 15000);
+                }, 3000); // Показываем через 3 секунды после загрузки
+            }
+        }
+
+        function catchCourier() {
+            const courierAnimation = document.getElementById('courier-animation');
+            const promoModal = document.getElementById('promo-modal');
+            const promoOverlay = document.getElementById('promo-modal-overlay');
+            
+            courierAnimation.classList.remove('show');
+            promoModal.classList.add('show');
+            promoOverlay.classList.add('show');
+            
+            localStorage.setItem('has_seen_courier', 'true');
+        }
+
+        function closePromoModal() {
+            const promoModal = document.getElementById('promo-modal');
+            const promoOverlay = document.getElementById('promo-modal-overlay');
+            
+            promoModal.classList.remove('show');
+            promoOverlay.classList.remove('show');
+        }
+
+        function copyPromoCode() {
+            navigator.clipboard.writeText('ЯКУМ').then(() => {
+                showNotification('Промокод скопирован!', 'success');
+            });
+        }
+
+        function usePromoCode() {
+            closePromoModal();
+            // Можно добавить логику для автоматического перехода к корзине
+            showNotification('Добавьте товары в корзину и используйте промокод ЯКУМ при оформлении', 'success');
+        }
+
         // Регистрация Service Worker
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -1736,9 +1995,13 @@
 
                 // Проверяем аутентификацию после загрузки
                 checkAuthentication();
+                
+                // Запускаем анимацию курьера
+                startCourierAnimation();
             });
         } else {
             checkAuthentication();
+            startCourierAnimation();
         }
     </script>
 </body>

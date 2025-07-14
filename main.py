@@ -23,7 +23,7 @@ app.secret_key = 'sk-7x9m2n8p4q6r1s5t3u7v9w0e8f2g4h6j8k1l3m5n7p9q2r4s6t8u0v2w4x6
 if not app.debug:
     if not os.path.exists('logs'):
         os.mkdir('logs')
-    
+
     file_handler = RotatingFileHandler('logs/ducharha.log', maxBytes=10240, backupCount=10)
     file_handler.setFormatter(logging.Formatter(
         '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'
@@ -51,7 +51,7 @@ def get_current_user():
     session_token = request.headers.get('Authorization')
     if not session_token:
         session_token = request.cookies.get('session_token')
-    
+
     if session_token:
         return get_user_by_session(session_token)
     return None
@@ -158,11 +158,11 @@ def send_push_notification(phone, title, body, order_number=None, actions=None):
     try:
         subscriptions = load_push_subscriptions()
         user_subscriptions = subscriptions.get(phone, [])
-        
+
         if not user_subscriptions:
             print(f"Нет подписок для телефона {phone}")
             return False
-        
+
         # Данные для уведомления
         notification_data = {
             'title': title,
@@ -176,7 +176,7 @@ def send_push_notification(phone, title, body, order_number=None, actions=None):
             'requireInteraction': True,
             'tag': f'order-{order_number}' if order_number else 'ducharha-notification'
         }
-        
+
         # Симуляция отправки push уведомления
         # В реальной системе здесь был бы запрос к Push API
         print(f"📱 PUSH уведомление для {phone}:")
@@ -184,16 +184,16 @@ def send_push_notification(phone, title, body, order_number=None, actions=None):
         print(f"💬 Текст: {body}")
         print(f"🔗 Заказ: {order_number}")
         print("✅ Уведомление отправлено!")
-        
+
         return True
-        
+
     except Exception as e:
         print(f"Ошибка при отправке push уведомления: {e}")
         return False
 
 def notify_order_status_change(order_number, new_status, phone):
     """Отправка уведомления при смене статуса заказа"""
-    
+
     status_messages = {
         'Принят': {
             'title': '🛒 Заказ принят!',
@@ -228,7 +228,7 @@ def notify_order_status_change(order_number, new_status, phone):
             ]
         }
     }
-    
+
     message_config = status_messages.get(new_status)
     if message_config:
         send_push_notification(
@@ -247,16 +247,16 @@ def update_product_stock(product_id, quantity_ordered):
     """Уменьшает остаток товара при заказе"""
     inventory = load_inventory()
     product_key = str(product_id)
-    
+
     if product_key not in inventory:
         inventory[product_key] = {'stock': 50, 'active': True}
-    
+
     inventory[product_key]['stock'] = max(0, inventory[product_key]['stock'] - quantity_ordered)
-    
+
     # Автоматически деактивируем товар, если остаток 0
     if inventory[product_key]['stock'] == 0:
         inventory[product_key]['active'] = False
-    
+
     save_inventory(inventory)
     return inventory[product_key]
 
@@ -483,7 +483,7 @@ products = [
     # Сладости и снеки
     {'id': 83, 'name': 'Шоколад молочный', 'price': 22.00, 'description': 'Шоколад молочный, 100г', 'category': 'Сладости и снеки', 'subcategory': 'Шоколад', 'image': 'https://images.unsplash.com/photo-1610450949065-1f2841536c88?w=200&h=200&fit=crop', 'brand': 'Alpen Gold', 'composition': 'Какао, молоко, сахар', 'expiry': '1 год'},
     {'id': 84, 'name': 'Печенье овсяное', 'price': 18.00, 'description': 'Печенье овсяное, 300г', 'category': 'Сладости и снеки', 'subcategory': 'Печенье', 'image': 'https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=200&h=200&fit=crop', 'brand': 'Юбилейное', 'composition': 'Мука, овсяные хлопья, сахар', 'expiry': '6 месяцев'},
-    {'id': 85, 'name': 'Конфеты ассорти', 'price': 65.00, 'description': 'Конфеты ассорти, 500г', 'category': 'Сладости и снеки', 'subcategory': 'Конфеты', 'image': 'https://images.unsplash.com/photo-1610450949065-1f2841536c88?w=200&h=200&fit=crop', 'brand': 'Красный Октябрь', 'composition': 'Сахар, какао, орехи', 'expiry': '1 год'},
+    {'id': 85, 'name': 'Конфеты ассорти', 'price': 65.00, 'description': 'Конфеты ассорти, 500г', 'category': 'Сладости и снеки', 'subcategory': 'Конфеты', 'image': 'https://images.unsplash.com/photo-1610450949065-1f2841536c88?w=200&h=200&fitcrop', 'brand': 'Красный Октябрь', 'composition': 'Сахар, какао, орехи', 'expiry': '1 год'},
 
     # Кофе и чай
     {'id': 86, 'name': 'Кофе растворимый', 'price': 45.00, 'description': 'Кофе растворимый, 190г', 'category': 'Кофе и чай', 'subcategory': 'Кофе', 'image': 'https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=200&h=200&fit=crop', 'brand': 'Nescafe', 'composition': 'Кофе натуральный', 'expiry': '2 года'},
@@ -576,8 +576,18 @@ def search():
             session['search_history'] = search_history
 
     results = smart_search(query, products)
+
+    # Добавляем информацию о остатках к результатам поиска
+    results_with_stock = []
+    for product in results:
+        product_copy = product.copy()
+        stock_info = get_product_stock(product['id'])
+        product_copy['stock'] = stock_info['stock']
+        product_copy['available'] = stock_info['active']
+        results_with_stock.append(product_copy)
+
     return jsonify({
-        'results': results[:20],  # Ограничиваем до 20 результатов
+        'results': results_with_stock[:20],  # Ограничиваем до 20 результатов
         'query': query,
         'count': len(results)
     })
@@ -610,7 +620,7 @@ def update_cart_quantity():
 
     # Проверяем остатки на складе
     stock_info = get_product_stock(product_id)
-    
+
     if not stock_info['active']:
         return jsonify({
             'success': False,
@@ -724,24 +734,24 @@ def apply_promocode():
         })
 
     promo = promocodes[code]
-    
+
     # Проверяем активность
     if not promo.get('active', True):
         return jsonify({
             'success': False,
             'message': 'Промокод неактивен'
         })
-    
+
     # Проверяем лимит использований
     used_count = promo.get('used_count', 0)
     usage_limit = promo.get('usage_limit', float('inf'))
-    
+
     if used_count >= usage_limit:
         return jsonify({
             'success': False,
             'message': 'Промокод исчерпал лимит использований'
         })
-    
+
     # Проверяем минимальную сумму заказа
     min_order = promo.get('min_order', 0)
     if total < min_order:
@@ -749,7 +759,7 @@ def apply_promocode():
             'success': False,
             'message': f'Минимальная сумма заказа для этого промокода: {min_order:.2f} сом'
         })
-    
+
     # Вычисляем скидку
     if promo['type'] == 'percent':
         discount = total * (promo['discount'] / 100)
@@ -757,7 +767,7 @@ def apply_promocode():
         discount = min(promo['discount'], total)  # Скидка не может быть больше суммы заказа
 
     new_total = max(0, total - discount)
-    
+
     # Сохраняем информацию о применении промокода в сессии (увеличиваем счетчик при оформлении заказа)
     session['applied_promocode'] = {
         'code': code,
@@ -913,7 +923,7 @@ def place_order():
             # Деактивируем промокод, если достигнут лимит
             if promocodes[promocode]['used_count'] >= promocodes[promocode].get('usage_limit', float('inf')):
                 promocodes[promocode]['active'] = False
-            
+
             with open(PROMOCODES_FILE, 'w', encoding='utf-8') as f:
                 json.dump(promocodes, f, ensure_ascii=False, indent=2)
 
@@ -941,10 +951,10 @@ def order_confirmation():
 def my_orders():
     phone = request.args.get('phone', '').strip()
     cart_count = len(session.get('cart', []))
-    
+
     # Проверяем, авторизован ли пользователь
     current_user = get_current_user()
-    
+
     if current_user:
         # Пользователь авторизован, показываем его заказы
         phone = current_user['phone']
@@ -1043,7 +1053,7 @@ def update_order_status():
 
     orders = load_orders()
     updated_order = None
-    
+
     for order in orders:
         if order.get('number') == order_number:
             order['status'] = new_status
@@ -1054,7 +1064,7 @@ def update_order_status():
     if updated_order:
         with open(ORDERS_FILE, 'w', encoding='utf-8') as f:
             json.dump(orders, f, ensure_ascii=False, indent=2)
-        
+
         # Отправляем push уведомление клиенту
         customer_phone = updated_order.get('customer', {}).get('phone')
         if customer_phone:
@@ -1070,7 +1080,7 @@ def update_order_status():
 def create_promocode():
     if not session.get('admin_authenticated'):
         return jsonify({'success': False, 'message': 'Недостаточно прав'})
-    
+
     data = request.get_json()
     code = data.get('code', '').upper().strip()
     discount = data.get('discount', 0)
@@ -1081,21 +1091,21 @@ def create_promocode():
     # Валидация
     if not code or not re.match(r'^[A-Z0-9]+$', code):
         return jsonify({'success': False, 'message': 'Код должен содержать только заглавные буквы и цифры'})
-    
+
     if len(code) < 3 or len(code) > 20:
         return jsonify({'success': False, 'message': 'Код должен быть от 3 до 20 символов'})
-    
+
     if promo_type == 'percent' and (discount < 1 or discount > 100):
         return jsonify({'success': False, 'message': 'Процент скидки должен быть от 1 до 100'})
-    
+
     if promo_type == 'fixed' and discount < 1:
         return jsonify({'success': False, 'message': 'Сумма скидки должна быть больше 0'})
-    
+
     if usage_limit < 1 or usage_limit > 10000:
         return jsonify({'success': False, 'message': 'Лимит использований должен быть от 1 до 10000'})
 
     promocodes = load_promocodes()
-    
+
     # Проверяем, не существует ли уже такой промокод
     if code in promocodes:
         return jsonify({'success': False, 'message': f'Промокод {code} уже существует'})
@@ -1154,7 +1164,7 @@ def inventory_panel():
         return redirect('/inventory')
 
     inventory = load_inventory()
-    
+
     # Добавляем информацию о товарах
     products_with_stock = []
     for product in products:
@@ -1200,33 +1210,33 @@ def subscribe_to_notifications():
         data = request.get_json()
         subscription = data.get('subscription')
         phone = data.get('phone')
-        
+
         if not subscription or not phone:
             return jsonify({'success': False, 'message': 'Нет данных подписки или телефона'})
-        
+
         # Загружаем существующие подписки
         subscriptions = load_push_subscriptions()
-        
+
         # Добавляем подписку для пользователя
         if phone not in subscriptions:
             subscriptions[phone] = []
-        
+
         # Проверяем, нет ли уже такой подписки
         endpoint = subscription.get('endpoint')
         existing = any(sub.get('endpoint') == endpoint for sub in subscriptions[phone])
-        
+
         if not existing:
             subscriptions[phone].append({
                 'endpoint': endpoint,
                 'keys': subscription.get('keys', {}),
                 'created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             })
-            
+
             save_push_subscriptions(subscriptions)
             print(f"✅ Пользователь {phone} подписан на уведомления")
-        
+
         return jsonify({'success': True, 'message': 'Подписка успешно сохранена'})
-        
+
     except Exception as e:
         print(f"Ошибка при подписке: {e}")
         return jsonify({'success': False, 'message': 'Ошибка сервера'})
@@ -1237,29 +1247,29 @@ def unsubscribe_from_notifications():
     try:
         data = request.get_json()
         endpoint = data.get('endpoint')
-        
+
         if not endpoint:
             return jsonify({'success': False, 'message': 'Нет данных подписки'})
-        
+
         # Загружаем существующие подписки
         subscriptions = load_push_subscriptions()
-        
+
         # Ищем и удаляем подписку
         for phone, user_subscriptions in subscriptions.items():
             subscriptions[phone] = [
                 sub for sub in user_subscriptions 
                 if sub.get('endpoint') != endpoint
             ]
-            
+
             # Удаляем пустые записи
             if not subscriptions[phone]:
                 del subscriptions[phone]
-        
+
         save_push_subscriptions(subscriptions)
         print(f"✅ Подписка {endpoint} отменена")
-        
+
         return jsonify({'success': True, 'message': 'Подписка отменена'})
-        
+
     except Exception as e:
         print(f"Ошибка при отписке: {e}")
         return jsonify({'success': False, 'message': 'Ошибка сервера'})
@@ -1269,13 +1279,13 @@ def test_notification():
     """Тестовая отправка уведомления"""
     if not session.get('admin_authenticated'):
         return jsonify({'success': False, 'message': 'Недостаточно прав'})
-    
+
     data = request.get_json()
     phone = data.get('phone')
-    
+
     if not phone:
         return jsonify({'success': False, 'message': 'Укажите номер телефона'})
-    
+
     success = send_push_notification(
         phone=phone,
         title='🧪 Тестовое уведомление',
@@ -1285,7 +1295,7 @@ def test_notification():
             {'action': 'view_order', 'title': '👀 Посмотреть заказ'}
         ]
     )
-    
+
     if success:
         return jsonify({'success': True, 'message': 'Тестовое уведомление отправлено'})
     else:
@@ -1297,20 +1307,20 @@ def cancel_order():
     data = request.get_json()
     order_number = data.get('order_number')
     phone = data.get('phone')
-    
+
     if not order_number or not phone:
         return jsonify({'success': False, 'message': 'Недостаточно данных'})
-    
+
     orders = load_orders()
-    
+
     for order in orders:
         if (order.get('number') == order_number and 
             order.get('customer', {}).get('phone') == phone and
             order.get('status') not in ['Доставлен', 'Отменен']):
-            
+
             order['status'] = 'Отменен'
             order['cancelled_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            
+
             # Возвращаем товары на склад
             for product in order.get('products', []):
                 product_id = None
@@ -1319,7 +1329,7 @@ def cancel_order():
                     if p['name'] == product['name']:
                         product_id = p['id']
                         break
-                
+
                 if product_id:
                     inventory = load_inventory()
                     product_key = str(product_id)
@@ -1327,12 +1337,12 @@ def cancel_order():
                         inventory[product_key]['stock'] += product['quantity']
                         inventory[product_key]['active'] = True
                         save_inventory(inventory)
-            
+
             with open(ORDERS_FILE, 'w', encoding='utf-8') as f:
                 json.dump(orders, f, ensure_ascii=False, indent=2)
-            
+
             return jsonify({'success': True, 'message': 'Заказ отменен'})
-    
+
     return jsonify({'success': False, 'message': 'Заказ не найден или не может быть отменен'})
 
 @app.route('/delete_order', methods=['POST'])
@@ -1341,26 +1351,26 @@ def delete_order():
     data = request.get_json()
     order_number = data.get('order_number')
     phone = data.get('phone')
-    
+
     if not order_number or not phone:
         return jsonify({'success': False, 'message': 'Недостаточно данных'})
-    
+
     orders = load_orders()
-    
+
     for i, order in enumerate(orders):
         if (order.get('number') == order_number and 
             order.get('customer', {}).get('phone') == phone and
             order.get('status') == 'Доставлен'):
-            
+
             # Помечаем заказ как удаленный пользователем
             orders[i]['deleted_by_user'] = True
             orders[i]['deleted_at'] = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            
+
             with open(ORDERS_FILE, 'w', encoding='utf-8') as f:
                 json.dump(orders, f, ensure_ascii=False, indent=2)
-            
+
             return jsonify({'success': True, 'message': 'Заказ удален из истории'})
-    
+
     return jsonify({'success': False, 'message': 'Заказ не найден или не может быть удален'})
 
 # Маршруты для SMS аутентификации
@@ -1374,13 +1384,13 @@ def send_code():
     """Отправка SMS кода"""
     data = request.get_json()
     phone = data.get('phone', '').strip()
-    
+
     if not phone:
         return jsonify({'success': False, 'message': 'Укажите номер телефона'})
-    
+
     # Очищаем истекшие коды перед отправкой
     cleanup_expired_codes()
-    
+
     result = send_sms_code(phone)
     return jsonify(result)
 
@@ -1390,19 +1400,19 @@ def verify_code():
     data = request.get_json()
     phone = data.get('phone', '').strip()
     code = data.get('code', '').strip()
-    
+
     if not phone or not code:
         return jsonify({'success': False, 'message': 'Укажите телефон и код'})
-    
+
     result = verify_sms_code(phone, code)
-    
+
     if result['success']:
         # Устанавливаем cookie с токеном сессии
         response = jsonify(result)
         response.set_cookie('session_token', result['session_token'], 
                           max_age=30*24*60*60, httponly=True, secure=False)
         return response
-    
+
     return jsonify(result)
 
 @app.route('/auth/check_session', methods=['POST'])
@@ -1410,7 +1420,7 @@ def check_session():
     """Проверка действительности сессии"""
     data = request.get_json()
     session_token = data.get('session_token')
-    
+
     user = get_user_by_session(session_token)
     if user:
         return jsonify({'success': True, 'user': user})
@@ -1421,10 +1431,10 @@ def check_session():
 def logout():
     """Выход из системы"""
     session_token = request.cookies.get('session_token')
-    
+
     if session_token:
         logout_user(session_token)
-    
+
     response = jsonify({'success': True, 'message': 'Выход выполнен'})
     response.set_cookie('session_token', '', expires=0)
     return response
@@ -1435,14 +1445,14 @@ def profile():
     user = get_current_user()
     if not user:
         return redirect('/login')
-    
+
     # Получаем заказы пользователя
     all_orders = load_orders()
     user_orders = [order for order in all_orders 
                   if (order.get('customer', {}).get('phone') == user['phone'] and 
                       not order.get('deleted_by_user', False))]
     user_orders.sort(key=lambda x: x.get('created_at', ''), reverse=True)
-    
+
     return render_template('profile.html', user=user, orders=user_orders)
 
 if __name__ == '__main__':

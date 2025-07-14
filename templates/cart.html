@@ -393,6 +393,9 @@
                     if (cartCountElement) {
                         cartCountElement.textContent = data.cart_count;
                     }
+
+                    // Проверяем минимальную сумму заказа
+                    updateCheckoutButton(data.total_price);
                 }
             })
             .catch(error => {
@@ -422,6 +425,9 @@
                         document.getElementById('cart-count-text').textContent = 'Количество товаров: ' + data.cart_count;
                         document.querySelector('.cart-count').textContent = data.cart_count;
                     }
+
+                    // Проверяем минимальную сумму заказа
+                    updateCheckoutButton(data.total_price);
                 }
             })
             .catch(error => {
