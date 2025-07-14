@@ -226,11 +226,11 @@
             left: 0;
             right: 0;
             z-index: 999;
-            background: transparent;
-            padding: 20px 16px;
+            background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
+            padding: 16px;
             opacity: 0;
-            transform: translateY(-20px);
-            transition: all 0.3s ease;
+            transform: translateY(-100%);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
             pointer-events: none;
         }
 
@@ -245,12 +245,12 @@
         }
 
         .header-title {
-            transition: all 0.3s ease;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .header-center.search-mode .header-title {
             opacity: 0;
-            transform: translateY(-10px);
+            transform: translateY(-20px);
         }
 
         .search-box-container {
@@ -1141,7 +1141,7 @@
                         <input type="text" 
                                class="search-box" 
                                id="sticky-search-input" 
-                               placeholder="Поиск: молоко, помидоры, кола..." 
+                               placeholder="🔍 Искать в Дучарха" 
                                autocomplete="off">
                         <button class="search-btn" onclick="searchProductsSticky()">🔍</button>
                         <div class="search-suggestions" id="sticky-search-suggestions"></div>
@@ -1743,23 +1743,32 @@
         }
 
         /* Sticky Search Functions */
+        let lastScrollY = 0;
+        let stickySearchVisible = false;
+
         window.addEventListener('scroll', function() {
             const searchSection = document.querySelector('.search-section');
             const stickySearch = document.getElementById('sticky-search');
             const headerCenter = document.querySelector('.header-center');
             const header = document.querySelector('.header');
             
-            // Вычисляем позицию более точно
-            const headerHeight = header.offsetHeight;
-            const searchSectionBottom = searchSection.offsetTop + searchSection.offsetHeight - headerHeight;
-
-            if (window.scrollY >= searchSectionBottom) {
+            const currentScrollY = window.scrollY;
+            const searchSectionBottom = searchSection.offsetTop + searchSection.offsetHeight;
+            
+            // Показываем sticky поиск когда проскроллили за секцию поиска
+            if (currentScrollY > searchSectionBottom && !stickySearchVisible) {
                 stickySearch.classList.add('show');
                 headerCenter.classList.add('search-mode');
-            } else {
+                stickySearchVisible = true;
+            } 
+            // Скрываем когда возвращаемся к верху
+            else if (currentScrollY <= searchSectionBottom && stickySearchVisible) {
                 stickySearch.classList.remove('show');
                 headerCenter.classList.remove('search-mode');
+                stickySearchVisible = false;
             }
+
+            lastScrollY = currentScrollY;
 
             // Sticky back button for categories and search results
             const backButton = document.getElementById('back-to-categories');
