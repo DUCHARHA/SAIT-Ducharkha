@@ -1703,7 +1703,7 @@
             document.getElementById('help-overlay').style.display = 'none';
         }
 
-        // Sticky Search Functions
+        /* Sticky Search Functions */
         window.addEventListener('scroll', function() {
             const searchSection = document.querySelector('.search-section');
             const stickySearch = document.getElementById('sticky-search');
@@ -1716,6 +1716,23 @@
             } else {
                 stickySearch.classList.remove('show');
                 headerCenter.classList.remove('search-mode');
+            }
+
+            // Sticky back button
+            const backButton = document.getElementById('back-to-categories');
+            const productsSection = document.getElementById('products-section');
+
+            if (backButton && productsSection && productsSection.classList.contains('show')) {
+                if (window.scrollY > 200) {
+                    backButton.style.position = 'fixed';
+                    backButton.style.top = '80px';
+                    backButton.style.left = '20px';
+                    backButton.style.zIndex = '999';
+                    backButton.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+                } else {
+                    backButton.style.position = 'static';
+                    backButton.style.boxShadow = 'none';
+                }
             }
         });
 
@@ -1937,11 +1954,11 @@
         function startCourierAnimation() {
             const courierAnimation = document.getElementById('courier-animation');
             const hasSeenCourier = localStorage.getItem('has_seen_courier');
-            
+
             if (!hasSeenCourier) {
                 setTimeout(() => {
                     courierAnimation.classList.add('show');
-                    
+
                     // Автоматически скрываем через 15 секунд
                     setTimeout(() => {
                         courierAnimation.classList.remove('show');
@@ -1954,18 +1971,18 @@
             const courierAnimation = document.getElementById('courier-animation');
             const promoModal = document.getElementById('promo-modal');
             const promoOverlay = document.getElementById('promo-modal-overlay');
-            
+
             courierAnimation.classList.remove('show');
             promoModal.classList.add('show');
             promoOverlay.classList.add('show');
-            
+
             localStorage.setItem('has_seen_courier', 'true');
         }
 
         function closePromoModal() {
             const promoModal = document.getElementById('promo-modal');
             const promoOverlay = document.getElementById('promo-modal-overlay');
-            
+
             promoModal.classList.remove('show');
             promoOverlay.classList.remove('show');
         }
@@ -1995,7 +2012,7 @@
 
                 // Проверяем аутентификацию после загрузки
                 checkAuthentication();
-                
+
                 // Запускаем анимацию курьера
                 startCourierAnimation();
             });

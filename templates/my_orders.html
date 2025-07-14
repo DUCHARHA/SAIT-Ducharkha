@@ -243,12 +243,59 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <a href="/" class="logo">💜 Дучарха</a>
-            <nav class="nav-links">
-                <a href="/">Главная</a>
-                <a href="/my_orders">📋 Мои заказы</a>
-                <a href="/cart">🛒 Корзина</a>
-            </nav>
+            <div class="header-left">
+                <a href="/" class="logo">💜 Дучарха</a>
+            </div>
+            <div class="header-center">
+                <div class="header-title">
+                    <span class="main-title">Свежие продукты с доставкой</span>
+                    <span class="sub-title">Более 1000 товаров • Бесплатная доставка за 10-15 минут</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <a href="/cart" class="cart-link">
+                    🛒 <span class="cart-count" id="cart-count">{{ cart_count or 0 }}</span>
+                </a>
+                <div class="profile-menu">
+                    <button class="profile-btn" onclick="toggleProfileMenu()" id="profile-btn">👤</button>
+                    <div class="profile-dropdown" id="profile-dropdown">
+                        <div id="user-info" style="display: none; padding: 12px 20px; border-bottom: 1px solid #eee; margin-bottom: 8px;">
+                            <div style="font-weight: 600; color: #6f42c1;" id="user-phone"></div>
+                            <div style="font-size: 12px; color: #666;">Авторизован</div>
+                        </div>
+
+                        <a href="/login" class="profile-item" id="login-item">
+                            <span class="profile-item-icon">🔐</span>
+                            <span>Войти</span>
+                        </a>
+
+                        <a href="/my_orders" class="profile-item">
+                            <span class="profile-item-icon">📋</span>
+                            <span>Мои заказы</span>
+                        </a>
+
+                        <a href="#" class="profile-item" onclick="logoutUser()" id="logout-item" style="display: none;">
+                            <span class="profile-item-icon">🚪</span>
+                            <span>Выйти</span>
+                        </a>
+
+                        <div style="border-top: 1px solid #eee; margin: 8px 0;"></div>
+
+                        <a href="#" class="profile-item" onclick="toggleHelpModal()">
+                            <span class="profile-item-icon">❓</span>
+                            <span>Помощь</span>
+                        </a>
+                        <a href="/inventory" class="profile-item">
+                            <span class="profile-item-icon">📦</span>
+                            <span>Панель товароведа</span>
+                        </a>
+                        <a href="/admin" class="profile-item">
+                            <span class="profile-item-icon">⚙️</span>
+                            <span>Админ панель</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 

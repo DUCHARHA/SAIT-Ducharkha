@@ -1,4 +1,3 @@
-
 // Основной JavaScript для Дучарха
 (function() {
     'use strict';
@@ -15,15 +14,29 @@
         // Показать уведомление
         showNotification: function(message, type = 'success', duration = 3000) {
             const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#28a745' : '#dc3545'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+                z-index: 1000;
+                transform: translateY(100px);
+                transition: transform 0.3s ease;
+                max-width: 300px;
+            `;
             notification.textContent = message;
-            
             document.body.appendChild(notification);
-            
-            setTimeout(() => notification.classList.add('show'), 100);
-            
+
             setTimeout(() => {
-                notification.classList.remove('show');
+                notification.style.transform = 'translateY(0)';
+            }, 100);
+
+            setTimeout(() => {
+                notification.style.transform = 'translateY(100px)';
                 setTimeout(() => {
                     if (document.body.contains(notification)) {
                         document.body.removeChild(notification);
@@ -151,7 +164,7 @@
         updateQuantity: async function(productId, change) {
             try {
                 const data = await api.updateCart(productId, change);
-                
+
                 if (data.success) {
                     this.quantities[productId] = data.current_quantity;
                     this.updateDisplay(productId, data.current_quantity);
@@ -198,7 +211,7 @@
         // Инициализация поиска
         init: function() {
             const searchInputs = document.querySelectorAll('#search-input, #sticky-search-input');
-            
+
             searchInputs.forEach(input => {
                 // Поиск при вводе
                 input.addEventListener('input', utils.debounce((e) => {
@@ -284,7 +297,7 @@
         open: function(modalId) {
             const modal = document.getElementById(modalId);
             const overlay = document.getElementById(modalId + '-overlay');
-            
+
             if (modal) modal.classList.add('show');
             if (overlay) overlay.classList.add('show');
         },
@@ -293,7 +306,7 @@
         close: function(modalId) {
             const modal = document.getElementById(modalId);
             const overlay = document.getElementById(modalId + '-overlay');
-            
+
             if (modal) modal.classList.remove('show');
             if (overlay) overlay.classList.remove('show');
         },
@@ -327,10 +340,10 @@
         handleSubmit: function(form, callback) {
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
+
                 const submitBtn = form.querySelector('button[type="submit"]');
                 const originalText = utils.showLoading(submitBtn);
-                
+
                 try {
                     await callback(new FormData(form));
                     utils.showNotification('Форма успешно отправлена!');

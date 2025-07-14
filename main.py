@@ -113,6 +113,16 @@ def load_promocodes():
                     'min_order': 0,
                     'active': True,
                     'created_at': '2025-01-01 00:00:00'
+                },
+                'ЯКУМ': {
+                    'discount': 10,
+                    'type': 'percent',
+                    'usage_limit': float('inf'),
+                    'used_count': 0,
+                    'min_order': 0,
+                    'active': True,
+                    'first_order_only': True,
+                    'created_at': '2025-01-01 00:00:00'
                 }
             }
     return {
@@ -123,6 +133,16 @@ def load_promocodes():
             'used_count': 0,
             'min_order': 0,
             'active': True,
+            'created_at': '2025-01-01 00:00:00'
+        },
+        'ЯКУМ': {
+            'discount': 10,
+            'type': 'percent',
+            'usage_limit': float('inf'),
+            'used_count': 0,
+            'min_order': 0,
+            'active': True,
+            'first_order_only': True,
             'created_at': '2025-01-01 00:00:00'
         }
     }
@@ -521,7 +541,8 @@ def favicon():
 
 @app.route('/')
 def home():
-    cart_count = len(session.get('cart', []))
+    cart_items = session.get('cart', [])
+    cart_count = len([item for item in cart_items if item.get('quantity', 0) > 0])
 
     # Получаем уникальные категории
     categories = {}
@@ -656,8 +677,8 @@ def update_cart_quantity():
 
     session['cart'] = cart
 
-    # Подсчитываем общее количество товаров в корзине
-    total_cart_count = sum(item['quantity'] for item in cart)
+    # Подсчитываем общее количество уникальных товаров в корзине
+    total_cart_count = len([item for item in cart if item.get('quantity', 0) > 0])
 
     return jsonify({
         'success': True,
@@ -689,7 +710,7 @@ def cart():
             cart_products.append(cart_product)
             total_price += cart_product['total']
 
-    cart_count = len(cart_items)
+    cart_count = len([item for item in cart_items if item.get('quantity', 0) > 0])
     return render_template('cart.html', cart_products=cart_products, total_price=total_price, cart_count=cart_count)
 
 @app.route('/checkout')
@@ -759,6 +780,20 @@ def apply_promocode():
             'success': False,
             'message': f'Минимальная сумма заказа для этого промокода: {min_order:.2f} сом'
         })
+
+    # Проверяем промокод только для первого заказа
+    if promo.get('first_order_only', False):
+        phone = session.get('customer_phone') or request.json.get('phone')
+        if phone:
+            orders = load_orders()
+            user_orders = [order for order in orders 
+                          if order.get('customer', {}).get('phone') == phone and 
+                          order.get('status') == 'Доставлен']
+            if user_orders:
+                return jsonify({
+                    'success': False,
+                    'message': 'Этот промокод только на первый заказ. У вас уже был первый заказ'
+                })
 
     # Вычисляем скидку
     if promo['type'] == 'percent':
@@ -1089,8 +1124,8 @@ def create_promocode():
     min_order = data.get('min_order', 0)
 
     # Валидация
-    if not code or not re.match(r'^[A-Z0-9]+$', code):
-        return jsonify({'success': False, 'message': 'Код должен содержать только заглавные буквы и цифры'})
+    if not code or not re.match(r'^[A-ZА-Я0-9]+$', code):
+        return jsonify({'success': False, 'message': 'Код должен содержать только заглавные буквы (английские или русские) и цифры'})
 
     if len(code) < 3 or len(code) > 20:
         return jsonify({'success': False, 'message': 'Код должен быть от 3 до 20 символов'})

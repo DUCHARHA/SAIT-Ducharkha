@@ -21,6 +21,9 @@
             background-color: #6f42c1; /* Фиолетовый цвет */
             padding: 12px 0;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky; /* Make the header sticky */
+            top: 0; /* Stick it to the top */
+            z-index: 100; /* Ensure it's above other elements */
         }
 
         .header-content {
@@ -275,6 +278,20 @@
             font-size: 16px;
         }
 
+        /* Styles for displaying messages at the bottom */
+        .message-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none; /* Hidden by default */
+        }
+
         @media (max-width: 768px) {
             .cart-item {
                 flex-direction: column;
@@ -292,6 +309,21 @@
                 width: 100%;
             }
         }
+
+        /* Styles for sticky "Back to Categories" button */
+        .back-to-categories {
+            position: sticky;
+            bottom: 20px;
+            left: 20px;
+            background-color: #6f42c1;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            z-index: 99; /* Ensure it stays on top */
+            display: none; /* Hidden by default */
+        }
+
     </style>
 </head>
 <body>
@@ -342,8 +374,11 @@
 
             <div class="cart-summary">
                 <div class="total-price" id="total-price">Итого: {{ "%.2f"|format(total_price) }} сом.</div>
+                 {% if total_price < 10 %}
+                    <p style="color: red;">Минимальная сумма заказа 10 сом. Добавьте товары в корзину.</p>
+                 {% endif %}
                 <p id="cart-count-text">Количество товаров: {{ cart_count }}</p>
-                <a href="/checkout" class="checkout-btn">
+                <a href="/checkout" class="checkout-btn" id="checkout-btn" {% if total_price < 10 %} style="pointer-events: none; opacity: 0.5;" {% endif %}>
                     Оформить заказ
                 </a>
                 <br>
@@ -357,6 +392,12 @@
             </div>
         {% endif %}
     </div>
+
+    <div id="message-container" class="message-container"></div>
+
+    <a href="/categories" class="back-to-categories">
+        ❮ К категориям
+    </a>
 
     <script>
         function updateQuantity(productId, newQuantity) {
@@ -450,6 +491,37 @@
                     console.error('Ошибка:', error);
                 });
             }
+        }
+
+        function updateCheckoutButton(totalPrice) {
+            const checkoutButton = document.getElementById('checkout-btn');
+            if (totalPrice < 10) {
+                checkoutButton.style.pointerEvents = 'none';
+                checkoutButton.style.opacity = '0.5';
+            } else {
+                checkoutButton.style.pointerEvents = 'auto';
+                checkoutButton.style.opacity = '1';
+            }
+        }
+
+        // Function to display messages at the bottom
+        function showMessage(message) {
+            const messageContainer = document.getElementById('message-container');
+            messageContainer.textContent = message;
+            messageContainer.style.display = 'block';
+
+            // Hide the message after 3 seconds
+            setTimeout(() => {
+                messageContainer.style.display = 'none';
+            }, 3000);
+        }
+
+        // Show "Back to Categories" button if inside a category
+        const currentUrl = window.location.href;
+        const backToCategoriesButton = document.querySelector('.back-to-categories');
+
+        if (currentUrl.includes('/category/')) {
+            backToCategoriesButton.style.display = 'block';
         }
     </script>
 </body>
