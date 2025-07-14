@@ -224,5 +224,31 @@
     "status": "В пути",
     "created_at": "2025-07-14 00:03:20",
     "status_updated_at": "2025-07-14 00:05:19"
+  },
+  {
+    "customer": {
+      "name": "н",
+      "phone": "552575272",
+      "address": "Джами 44"
+    },
+    "delivery_time": "ASAP",
+    "payment_method": "cash",
+    "comments": "",
+    "courier_comment": "",
+    "promocode": "диловар",
+    "products": [
+      {
+        "name": "Pepsi 0.5л",
+        "price": 7.5,
+        "quantity": 3,
+        "total": 22.5
+      }
+    ],
+    "total_price": 22.5,
+    "final_total": 0.0,
+    "delivery_cost": 0,
+    "number": "1407-2",
+    "status": "Принят",
+    "created_at": "2025-07-14 02:19:31"
   }
 ]
