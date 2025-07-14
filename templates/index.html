@@ -226,15 +226,18 @@
             left: 0;
             right: 0;
             z-index: 999;
-            background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
-            padding: 16px;
-            transform: translateY(-100%);
-            transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-            pointer-events: all;
+            background: transparent;
+            padding: 20px 16px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
         }
 
         .sticky-search.show {
+            opacity: 1;
             transform: translateY(0);
+            pointer-events: all;
         }
 
         .header-center {
@@ -242,7 +245,12 @@
         }
 
         .header-title {
-            transition: none;
+            transition: all 0.3s ease;
+        }
+
+        .header-center.search-mode .header-title {
+            opacity: 0;
+            transform: translateY(-10px);
         }
 
         .search-box-container {
@@ -1133,7 +1141,7 @@
                         <input type="text" 
                                class="search-box" 
                                id="sticky-search-input" 
-                               placeholder="🔍 Искать в Дучарха" 
+                               placeholder="Поиск: молоко, помидоры, кола..." 
                                autocomplete="off">
                         <button class="search-btn" onclick="searchProductsSticky()">🔍</button>
                         <div class="search-suggestions" id="sticky-search-suggestions"></div>
@@ -1735,28 +1743,22 @@
         }
 
         /* Sticky Search Functions */
-        let stickySearchVisible = false;
-
         window.addEventListener('scroll', function() {
             const searchSection = document.querySelector('.search-section');
             const stickySearch = document.getElementById('sticky-search');
+            const headerCenter = document.querySelector('.header-center');
+            const header = document.querySelector('.header');
             
-            const currentScrollY = window.scrollY;
-            const searchSectionBottom = searchSection.offsetTop + searchSection.offsetHeight;
-            
-            // Показываем sticky поиск когда проскроллили за секцию поиска
-            if (currentScrollY > searchSectionBottom) {
-                if (!stickySearchVisible) {
-                    stickySearch.classList.add('show');
-                    stickySearchVisible = true;
-                }
-            } 
-            // Скрываем когда возвращаемся к верху
-            else {
-                if (stickySearchVisible) {
-                    stickySearch.classList.remove('show');
-                    stickySearchVisible = false;
-                }
+            // Вычисляем позицию более точно
+            const headerHeight = header.offsetHeight;
+            const searchSectionBottom = searchSection.offsetTop + searchSection.offsetHeight - headerHeight;
+
+            if (window.scrollY >= searchSectionBottom) {
+                stickySearch.classList.add('show');
+                headerCenter.classList.add('search-mode');
+            } else {
+                stickySearch.classList.remove('show');
+                headerCenter.classList.remove('search-mode');
             }
 
             // Sticky back button for categories and search results
