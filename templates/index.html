@@ -1489,6 +1489,25 @@
             }
         });
 
+        // Закрытие подсказок поиска при клике вне области поиска
+        document.addEventListener('click', function(e) {
+            const searchContainer = document.querySelector('.search-container');
+            const stickySearchContainer = document.querySelector('.sticky-search');
+            
+            if (!searchContainer.contains(e.target) && !stickySearchContainer.contains(e.target)) {
+                hideSearchSuggestions('search-suggestions');
+                hideSearchSuggestions('sticky-search-suggestions');
+            }
+        });
+
+        // Закрытие подсказок при нажатии Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideSearchSuggestions('search-suggestions');
+                hideSearchSuggestions('sticky-search-suggestions');
+            }
+        });
+
         document.getElementById('sticky-search-input').addEventListener('input', function() {
             const query = this.value.trim();
             if (query.length >= 1) {
@@ -1728,9 +1747,13 @@
             const searchSection = document.querySelector('.search-section');
             const stickySearch = document.getElementById('sticky-search');
             const headerCenter = document.querySelector('.header-center');
-            const searchSectionBottom = searchSection.offsetTop + searchSection.offsetHeight;
+            const header = document.querySelector('.header');
+            
+            // Вычисляем позицию более точно
+            const headerHeight = header.offsetHeight;
+            const searchSectionBottom = searchSection.offsetTop + searchSection.offsetHeight - headerHeight;
 
-            if (window.scrollY > searchSectionBottom) {
+            if (window.scrollY >= searchSectionBottom) {
                 stickySearch.classList.add('show');
                 headerCenter.classList.add('search-mode');
             } else {
@@ -1882,7 +1905,22 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    location.reload();
+                    // Удаляем элемент из DOM без перезагрузки
+                    const historyItems = document.querySelectorAll('.history-item');
+                    historyItems.forEach(item => {
+                        if (item.textContent.includes(query)) {
+                            item.remove();
+                        }
+                    });
+                    
+                    // Если история пуста, скрываем весь блок
+                    const remainingItems = document.querySelectorAll('.history-item');
+                    if (remainingItems.length === 0) {
+                        const historyBlock = document.querySelector('.search-history');
+                        if (historyBlock) {
+                            historyBlock.style.display = 'none';
+                        }
+                    }
                 }
             });
         }
@@ -1894,7 +1932,11 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    location.reload();
+                    // Скрываем весь блок истории поиска
+                    const historyBlock = document.querySelector('.search-history');
+                    if (historyBlock) {
+                        historyBlock.style.display = 'none';
+                    }
                 }
             });
         }
