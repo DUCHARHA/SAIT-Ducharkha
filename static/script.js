@@ -256,7 +256,20 @@
             }
 
             if (query.length >= 2) {
-                this.performSearch(query, false);
+                this.performSearchInternal(query, false);
+            }
+        },
+
+        // Внутренний метод поиска без сохранения в историю
+        performSearchInternal: async function(query, saveHistory = false) {
+            if (!query.trim()) return;
+
+            try {
+                const data = await api.search(query, saveHistory);
+                this.displayResults(data.results, data.query, data.count);
+            } catch (error) {
+                console.error('Ошибка поиска:', error);
+                utils.showNotification('Ошибка поиска', 'error');
             }
         },
 
@@ -279,6 +292,22 @@
             console.log('Показать подсказки для:', query);
         },
 
+        // Очистить поиск
+        clearSearch: function() {
+            const searchInputs = document.querySelectorAll('#search-input, #sticky-search-input');
+            searchInputs.forEach(input => {
+                input.value = '';
+            });
+
+            const searchResults = document.getElementById('search-results');
+            const mainProducts = document.getElementById('main-products');
+            
+            if (searchResults) searchResults.style.display = 'none';
+            if (mainProducts) mainProducts.style.display = 'block';
+            
+            this.currentQuery = '';
+        },
+
         // Скрыть подсказки
         hideSuggestions: function(input) {
             const suggestionContainers = document.querySelectorAll('.search-suggestions');
@@ -290,7 +319,57 @@
         // Отобразить результаты
         displayResults: function(results, query, count) {
             console.log(`Результаты поиска для "${query}": ${count} товаров`);
-            // Реализация отображения результатов
+            
+            const searchResults = document.getElementById('search-results');
+            const mainProducts = document.getElementById('main-products');
+            
+            if (!searchResults || !mainProducts) return;
+            
+            if (results.length > 0) {
+                // Показываем результаты поиска
+                searchResults.innerHTML = `
+                    <h3>Результаты поиска "${query}" (${count} товаров)</h3>
+                    <div class="search-products-grid">
+                        ${results.map(product => this.renderProductCard(product)).join('')}
+                    </div>
+                `;
+                searchResults.style.display = 'block';
+                mainProducts.style.display = 'none';
+            } else if (query.length >= 2) {
+                // Показываем "ничего не найдено"
+                searchResults.innerHTML = `
+                    <div class="no-results">
+                        <h3>По запросу "${query}" ничего не найдено</h3>
+                        <p>Попробуйте изменить запрос или посмотрите наш каталог</p>
+                    </div>
+                `;
+                searchResults.style.display = 'block';
+                mainProducts.style.display = 'none';
+            } else {
+                // Показываем основные товары
+                searchResults.style.display = 'none';
+                mainProducts.style.display = 'block';
+            }
+        },
+
+        // Рендер карточки товара
+        renderProductCard: function(product) {
+            const inCart = cart.quantities[product.id] || 0;
+            return `
+                <div class="product-card ${!product.available ? 'out-of-stock' : ''}">
+                    <img src="${product.image}" alt="${product.name}" class="product-image">
+                    <h3 class="product-name">${product.name}</h3>
+                    <p class="product-price">${product.price} сом</p>
+                    <p class="product-stock">В наличии: ${product.stock} шт</p>
+                    ${product.available ? `
+                        <div class="quantity-controls">
+                            <button onclick="changeQuantity(${product.id}, -1)" id="minus-${product.id}" ${inCart <= 0 ? 'disabled' : ''}>-</button>
+                            <span id="qty-${product.id}">${inCart}</span>
+                            <button onclick="changeQuantity(${product.id}, 1)">+</button>
+                        </div>
+                    ` : '<p class="out-of-stock-text">Нет в наличии</p>'}
+                </div>
+            `;
         }
     };
 
@@ -329,8 +408,10 @@
     const forms = {
         // Валидация телефона
         validatePhone: function(phone) {
-            const phoneRegex = /^[0-9]{9,12}$/;
-            return phoneRegex.test(phone.replace(/\D/g, ''));
+            const cleanPhone = phone.replace(/\D/g, '');
+            // Поддерживаем кыргызские номера (+996) и международные
+            return cleanPhone.length >= 9 && cleanPhone.length <= 12 && 
+                   (cleanPhone.startsWith('996') || cleanPhone.startsWith('7') || cleanPhone.length === 9);
         },
 
         // Валидация email

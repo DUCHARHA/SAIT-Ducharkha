@@ -1103,7 +1103,8 @@
         .promo-note {
             font-size: 12px;
             color: #888;
-            margin-bottom: 20px;
+            ```text
+margin-bottom: 20px;
         }
 
         .promo-use-btn {
@@ -1287,7 +1288,8 @@
             </div>
         </div>
 
-        <div class="products-section" id="products-section">
+        <!-- Товары по категориям -->
+        <div id="main-products" class="products-section">
             <button class="back-to-categories" id="back-to-categories" onclick="showCategories()">
                 ← Назад к категориям
             </button>
@@ -1550,10 +1552,10 @@
                             ${product.brand ? `<div class="product-brand">${product.brand}</div>` : ''}
                             <div class="product-name">${product.name}</div>
                             <div class="product-description">${product.description}</div>
-                            
+
                             ${!product.available ? '<div class="out-of-stock"><span>❌ Нет в наличии</span></div>' :
                               product.stock <= 5 ? `<div class="low-stock"><span>⚠️ Осталось ${product.stock} шт.</span></div>` : ''}
-                            
+
                             <div class="product-footer">
                                 <div class="product-price">
                                     ${product.price.toFixed(2)} <span class="currency">сом</span>
@@ -1901,8 +1903,7 @@
 
         // Проверка аутентификации и обновление UI
         function checkAuthentication() {
-            const sessionToken = getCookie('session_token');
-            if (sessionToken) {
+            const sessionToken = getCookie('session_token');            if (sessionToken) {
                 fetch('/auth/check_session', {
                     method: 'POST',
                     headers: {
