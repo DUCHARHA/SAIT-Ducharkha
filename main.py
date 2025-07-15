@@ -1128,3 +1128,54 @@ def admin_panel():
                          total_revenue=total_revenue,
                          total_items_sold=total_items_sold,
                          popular_products=popular_products)
+
+@app.route('/update_order_status', methods=['POST'])
+def update_order_status():
+    if not session.get('admin_authenticated'):
+        return jsonify({'success': False, 'message': 'Не авторизован'})
+    
+    data = request.get_json()
+    order_number = data.get('order_number')
+    new_status = data.get('status')
+    
+    if not order_number or not new_status:
+        return jsonify({'success': False, 'message': 'Неверные параметры'})
+    
+    orders = load_orders()
+    
+    # Находим заказ по номеру
+    order = next((o for o in orders if o.get('number') == order_number), None)
+    
+    if not order:
+        return jsonify({'success': False, 'message': 'Заказ не найден'})
+    
+    # Обновляем статус
+    order['status'] = new_status
+    
+    # Сохраняем изменения
+    with open(ORDERS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(orders, f, ensure_ascii=False, indent=2)
+    
+    # Отправляем push-уведомление
+    customer_phone = order.get('customer', {}).get('phone')
+    if customer_phone:
+        notify_order_status_change(order_number, new_status, customer_phone)
+    
+    return jsonify({'success': True, 'message': 'Статус заказа обновлен'})
+
+# Периодическая очистка истекших SMS-кодов
+def cleanup_codes():
+    while True:
+        try:
+            cleanup_expired_codes()
+            time.sleep(300)  # Очищаем каждые 5 минут
+        except Exception as e:
+            print(f"Ошибка очистки кодов: {e}")
+            time.sleep(300)
+
+# Запускаем фоновый процесс очистки
+cleanup_thread = threading.Thread(target=cleanup_codes, daemon=True)
+cleanup_thread.start()
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)
