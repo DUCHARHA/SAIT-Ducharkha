@@ -1,0 +1,711 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оформление заказа — ДУЧАРХА</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: #0a0a0a;
+            color: #000;
+            line-height: 1.4;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Северное сияние - базовый фон */
+        .aurora-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at bottom, #0a0a2e 0%, #16213e 30%, #0f3460 70%, #0a1a2e 100%);
+            z-index: -10;
+        }
+
+        /* Звездное небо */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -9;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Слои северного сияния */
+        .aurora-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -8;
+            pointer-events: none;
+        }
+
+        .aurora-1 {
+            background: linear-gradient(45deg, 
+                transparent 0%, 
+                rgba(0, 255, 150, 0.4) 20%, 
+                rgba(0, 255, 255, 0.6) 50%, 
+                rgba(100, 255, 100, 0.4) 80%, 
+                transparent 100%);
+            animation: aurora-wave-1 12s ease-in-out infinite;
+            transform: rotate(-5deg);
+        }
+
+        .aurora-2 {
+            background: linear-gradient(135deg, 
+                transparent 0%, 
+                rgba(255, 0, 150, 0.3) 25%, 
+                rgba(150, 0, 255, 0.5) 60%, 
+                rgba(255, 100, 255, 0.3) 85%, 
+                transparent 100%);
+            animation: aurora-wave-2 15s ease-in-out infinite;
+            transform: rotate(3deg);
+        }
+
+        @keyframes aurora-wave-1 {
+            0%, 100% { 
+                transform: translateY(0px) rotate(-5deg) scaleY(1);
+                opacity: 0.8;
+            }
+            33% { 
+                transform: translateY(-20px) rotate(-3deg) scaleY(1.1);
+                opacity: 1;
+            }
+            66% { 
+                transform: translateY(10px) rotate(-7deg) scaleY(0.9);
+                opacity: 0.9;
+            }
+        }
+
+        @keyframes aurora-wave-2 {
+            0%, 100% { 
+                transform: translateY(0px) rotate(3deg) scaleY(1);
+                opacity: 0.7;
+            }
+            25% { 
+                transform: translateY(15px) rotate(5deg) scaleY(1.2);
+                opacity: 0.9;
+            }
+            75% { 
+                transform: translateY(-10px) rotate(1deg) scaleY(0.8);
+                opacity: 0.8;
+            }
+        }
+
+        /* Floating Products Background Animation */
+        .floating-products {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .floating-product {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+        }
+
+        .floating-heart {
+            position: absolute;
+            font-size: 1.5rem;
+            opacity: 0.15;
+            animation: float-heart 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.1;
+            }
+            90% {
+                opacity: 0.1;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes float-heart {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(1);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.15;
+            }
+            50% {
+                transform: translateY(50vh) rotate(180deg) scale(1.2);
+                opacity: 0.2;
+            }
+            90% {
+                opacity: 0.15;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg) scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(240, 240, 240, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            height: 64px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            height: 100%;
+        }
+
+        .logo {
+            margin-right: 32px;
+            text-decoration: none;
+            color: #6f42c1;
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .logo-icon {
+            margin-right: 8px;
+            font-size: 28px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .logo-heart {
+            font-size: 20px;
+            color: #8b5cf6;
+            animation: heartRotate 2s linear infinite;
+        }
+
+        .logo-infinity {
+            font-size: 24px;
+            color: #8b5cf6;
+            animation: infinityCircle 4s linear infinite;
+            transform-origin: center;
+        }
+
+        @keyframes heartRotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes infinityCircle {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .back-to-cart {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6f42c1;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .back-to-cart:hover {
+            text-decoration: underline;
+        }
+
+        .back-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .checkout-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 32px;
+            align-items: start;
+        }
+
+        /* Form Section */
+        .checkout-form {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 32px;
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #6f42c1;
+            box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
+        }
+
+        .payment-methods {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .payment-method {
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .payment-method:hover {
+            border-color: #6f42c1;
+        }
+
+        .payment-method.selected {
+            border-color: #6f42c1;
+            background: rgba(111, 66, 193, 0.1);
+        }
+
+        /* Order Summary */
+        .order-summary {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 16px;
+            padding: 24px;
+            position: sticky;
+            top: 104px;
+        }
+
+        .summary-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 16px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+
+        .order-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 500;
+            color: #000;
+            margin-bottom: 4px;
+        }
+
+        .item-quantity {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .item-price {
+            font-weight: 600;
+            color: #000;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 16px 0;
+            font-size: 16px;
+        }
+
+        .summary-label {
+            color: #6b7280;
+        }
+
+        .summary-value {
+            color: #000;
+            font-weight: 600;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 2px solid #f3f4f6;
+            margin-top: 16px;
+        }
+
+        .total-label {
+            font-size: 18px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .total-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .place-order-button {
+            width: 100%;
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+            margin-top: 16px;
+        }
+
+        .place-order-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
+        }
+
+        .place-order-button:disabled {
+            background: #e5e7eb;
+            color: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .checkout-layout {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .container {
+                padding: 20px 16px;
+            }
+
+            .checkout-form {
+                padding: 24px;
+            }
+
+            .payment-methods {
+                grid-template-columns: 1fr;
+            }
+
+            .order-summary {
+                position: static;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Северное сияние -->
+    <div class="aurora-background"></div>
+    <div class="stars"></div>
+    <div class="aurora-layer aurora-1"></div>
+    <div class="aurora-layer aurora-2"></div>
+
+    <!-- Floating Products -->
+    <div class="floating-products">
+        <div class="floating-product">🍎</div>
+        <div class="floating-product">🥕</div>
+        <div class="floating-product">🥛</div>
+        <div class="floating-product">🍞</div>
+        <div class="floating-product">🧀</div>
+        <div class="floating-product">🥩</div>
+        <div class="floating-product">🍌</div>
+        <div class="floating-product">🍇</div>
+        <div class="floating-product">🥔</div>
+        <div class="floating-product">🍅</div>
+        <div class="floating-product">🥑</div>
+        <div class="floating-product">🌽</div>
+        <div class="floating-product">🥦</div>
+        <div class="floating-product">🥒</div>
+        <div class="floating-product">🍊</div>
+        <div class="floating-product">🍓</div>
+        <div class="floating-heart">💜</div>
+        <div class="floating-heart">💚</div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-heart">💜</div>
+                    <div class="logo-infinity">∞</div>
+                </div>
+                ДУЧАРХА
+            </a>
+
+            <a href="/cart" class="back-to-cart">
+                <svg class="back-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+                Вернуться в корзину
+            </a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Оформление заказа</h1>
+        </div>
+
+        <div class="checkout-layout">
+            <div class="checkout-form">
+                <form id="checkout-form" method="POST" action="/place_order">
+                    <div class="form-section">
+                        <h3 class="section-title">Контактная информация</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="name">Имя *</label>
+                            <input type="text" id="name" name="name" class="form-input" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="phone">Телефон *</label>
+                            <input type="tel" id="phone" name="phone" class="form-input" required placeholder="+992 xxx xxx xxx">
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Адрес доставки</h3>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="address">Адрес *</label>
+                            <input type="text" id="address" name="address" class="form-input" required placeholder="Улица, дом, квартира">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="comment">Комментарий к заказу</label>
+                            <textarea id="comment" name="comment" class="form-input" rows="3" placeholder="Дополнительная информация для доставки"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3 class="section-title">Способ оплаты</h3>
+                        
+                        <div class="payment-methods">
+                            <div class="payment-method selected" onclick="selectPayment('cash')">
+                                <input type="radio" name="payment_method" value="cash" checked style="display: none;">
+                                <div>💵 Наличными</div>
+                            </div>
+                            <div class="payment-method" onclick="selectPayment('card')">
+                                <input type="radio" name="payment_method" value="card" style="display: none;">
+                                <div>💳 Картой</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="order-summary">
+                <h3 class="summary-title">Ваш заказ</h3>
+
+                <div class="order-items">
+                    {% for item in cart_products %}
+                    <div class="order-item">
+                        <div class="item-info">
+                            <div class="item-name">{{ item.name }}</div>
+                            <div class="item-quantity">{{ item.quantity }} шт.</div>
+                        </div>
+                        <div class="item-price">{{ "%.0f"|format(item.total) }} с</div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">Товары ({{ cart_count }})</span>
+                    <span class="summary-value">{{ "%.0f"|format(total_price) }} с</span>
+                </div>
+
+                <div class="summary-row">
+                    <span class="summary-label">Доставка</span>
+                    <span class="summary-value" style="color: #10b981;">Бесплатно</span>
+                </div>
+
+                <div class="summary-total">
+                    <span class="total-label">Итого</span>
+                    <span class="total-value">{{ "%.0f"|format(total_price) }} с</span>
+                </div>
+
+                <button type="submit" form="checkout-form" class="place-order-button">
+                    Оформить заказ за {{ "%.0f"|format(total_price) }} с
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Создание звезд
+        function createStars() {
+            const starsContainer = document.querySelector('.stars');
+            const numStars = 80;
+
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Создание парящих товаров
+        function createFloatingProducts() {
+            const container = document.querySelector('.floating-products');
+            const products = container.querySelectorAll('.floating-product, .floating-heart');
+            
+            products.forEach((product, index) => {
+                product.style.left = Math.random() * 100 + '%';
+                product.style.animationDelay = Math.random() * 20 + 's';
+                product.style.animationDuration = (15 + Math.random() * 10) + 's';
+            });
+        }
+
+        // Выбор способа оплаты
+        function selectPayment(method) {
+            const methods = document.querySelectorAll('.payment-method');
+            methods.forEach(m => m.classList.remove('selected'));
+            
+            event.target.closest('.payment-method').classList.add('selected');
+            document.querySelector(`input[value="${method}"]`).checked = true;
+        }
+
+        // Валидация формы
+        document.getElementById('checkout-form').addEventListener('submit', function(e) {
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const address = document.getElementById('address').value.trim();
+
+            if (!name || !phone || !address) {
+                e.preventDefault();
+                alert('Пожалуйста, заполните все обязательные поля');
+                return;
+            }
+
+            // Простая валидация телефона
+            const phoneRegex = /^[\+]?[0-9]{9,15}$/;
+            if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
+                e.preventDefault();
+                alert('Пожалуйста, введите корректный номер телефона');
+                return;
+            }
+        });
+
+        // Инициализация
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            createFloatingProducts();
+        });
+    </script>
+</body>
+</html>

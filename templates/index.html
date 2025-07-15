@@ -457,13 +457,14 @@
         .logo-heart {
             font-size: 20px;
             color: #8b5cf6;
-            animation: heartSpin 3s linear infinite;
+            animation: heartSpin 2s linear infinite;
         }
 
         .logo-infinity {
             font-size: 24px;
             color: #8b5cf6;
-            animation: infinityFlow 4s ease-in-out infinite;
+            animation: infinityFlow 4s linear infinite;
+            transform-origin: center;
         }
 
         @keyframes heartSpin {
@@ -472,10 +473,8 @@
         }
 
         @keyframes infinityFlow {
-            0%, 100% { transform: scaleX(1) translateX(0px); }
-            25% { transform: scaleX(1.1) translateX(2px); }
-            50% { transform: scaleX(0.9) translateX(-2px); }
-            75% { transform: scaleX(1.05) translateX(1px); }
+            0% { transform: rotate(0deg) translateX(8px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(8px) rotate(-360deg); }
         }
 
         .search-container {
@@ -1822,6 +1821,34 @@
             allCards.forEach(card => {
                 const cardCategory = card.dataset.category;
                 if (cardCategory === categoryName) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            const productsTitle = document.getElementById('products-title');
+            if (productsTitle) {
+                productsTitle.textContent = `${categoryName} (${visibleCount})`;
+            }
+
+            const categoryLinks = document.querySelectorAll('.category-link');
+            categoryLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.textContent.trim() === categoryName) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        function showCategoryProducts(categoryName) {
+            const allCards = document.querySelectorAll('.product-card');
+            let visibleCount = 0;
+
+            allCards.forEach(card => {
+                const productCategory = card.getAttribute('data-category');
+                if (productCategory === categoryName || categoryName === 'Все') {
                     card.style.display = 'block';
                     visibleCount++;
                 } else {
