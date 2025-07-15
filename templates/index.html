@@ -1020,6 +1020,9 @@
         let searchTimeout;
         let searchHistory = {{ search_history|tojson if search_history else '[]' }};
 
+        // Трекинг количества товаров в корзине
+        const cartQuantities = {};
+
         // Функция для изменения количества товаров в корзине
         function changeQuantity(productId, change) {
             fetch('/update_cart_quantity', {
@@ -1035,10 +1038,19 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // Сохраняем актуальное количество
+                    cartQuantities[productId] = data.current_quantity;
+                    
                     // Обновляем отображение количества
                     const qtyDisplay = document.getElementById(`qty-${productId}`);
                     if (qtyDisplay) {
                         qtyDisplay.textContent = data.current_quantity;
+                    }
+
+                    // Обновляем кнопку минус
+                    const minusBtn = document.getElementById(`minus-${productId}`);
+                    if (minusBtn) {
+                        minusBtn.disabled = data.current_quantity <= 0;
                     }
 
                     // Обновляем счетчик корзины
@@ -1236,11 +1248,28 @@
             }
         });
 
-        // Инициализация истории поиска
+        // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
             updateHistoryDisplay();
             checkUserAuth();
+            initializeQuantities();
         });
+
+        // Инициализация количеств товаров
+        function initializeQuantities() {
+            const quantityDisplays = document.querySelectorAll('.quantity-display');
+            quantityDisplays.forEach(display => {
+                const productId = display.id.replace('qty-', '');
+                const quantity = parseInt(display.textContent) || 0;
+                cartQuantities[productId] = quantity;
+                
+                // Обновляем состояние кнопки минус
+                const minusBtn = document.getElementById(`minus-${productId}`);
+                if (minusBtn) {
+                    minusBtn.disabled = quantity <= 0;
+                }
+            });
+        }
 
         // Проверка авторизации пользователя
         function checkUserAuth() {
@@ -1270,9 +1299,12 @@
 
         // Обновление интерфейса для авторизованного пользователя
         function updateAuthUI(user) {
+            const headerActions = document.querySelector('.header-actions');
             const loginButton = document.querySelector('.login-button');
-            if (loginButton) {
-                loginButton.innerHTML = `
+            
+            if (loginButton && headerActions) {
+                // Создаем новый элемент профиля
+                const profileHTML = `
                     <div class="profile-menu">
                         <div class="profile-btn" onclick="toggleProfileMenu()">
                             <span class="profile-icon">👤</span>
@@ -1302,6 +1334,9 @@
                         </div>
                     </div>
                 `;
+                
+                // Полностью заменяем кнопку "Войти" на профиль
+                loginButton.outerHTML = profileHTML;
             }
         }
 

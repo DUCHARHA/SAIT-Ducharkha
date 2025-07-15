@@ -696,7 +696,7 @@ def update_cart_quantity():
     item = next((item for item in cart if item['id'] == product_id), None)
 
     current_in_cart = item['quantity'] if item else 0
-    new_quantity = current_in_cart + change
+    new_quantity = max(0, current_in_cart + change)
 
     # Проверяем, не превышает ли новое количество остаток на складе
     if new_quantity > stock_info['stock']:
@@ -709,26 +709,21 @@ def update_cart_quantity():
     if item:
         if new_quantity <= 0:
             cart = [cart_item for cart_item in cart if cart_item['id'] != product_id]
-            current_quantity = 0
         else:
             item['quantity'] = new_quantity
-            current_quantity = new_quantity
-    elif change > 0:
-        cart.append({'id': product_id, 'quantity': change})
-        current_quantity = change
-    else:
-        current_quantity = 0
+    elif new_quantity > 0:
+        cart.append({'id': product_id, 'quantity': new_quantity})
 
     session['cart'] = cart
 
-    # Подсчитываем общее количество уникальных товаров в корзине (не общее количество)
+    # Подсчитываем общее количество уникальных товаров в корзине
     total_cart_count = len(cart)
 
     return jsonify({
         'success': True,
         'cart_count': total_cart_count,
-        'current_quantity': current_quantity,
-        'stock_remaining': stock_info['stock'] - current_quantity
+        'current_quantity': new_quantity,
+        'stock_remaining': stock_info['stock'] - new_quantity
     })
 
 @app.route('/cart')
