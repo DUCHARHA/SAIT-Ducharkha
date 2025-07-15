@@ -219,38 +219,31 @@
             text-align: center;
         }
 
-        /* Sticky Search Box */
-        .sticky-search {
-            position: absolute;
+        /* Search Section для sticky эффекта */
+        .search-section.sticky {
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
-            z-index: 999;
-            background: transparent;
-            padding: 20px 16px;
-            opacity: 0;
-            transform: translateY(-20px);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: none;
+            z-index: 1001;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
+            box-shadow: 0 2px 20px rgba(111, 66, 193, 0.3);
+            transition: all 0.3s ease;
         }
 
-        .sticky-search.show {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: all;
+        .search-section.sticky .search-container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .header-center {
-            position: relative;
+        .search-section.sticky .search-box-container {
+            max-width: 500px;
+            margin: 0 auto;
         }
 
-        .header-title {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .header-center.search-mode .header-title {
-            opacity: 0;
-            transform: translateY(-10px);
+        .search-section.sticky .search-history {
+            display: none;
         }
 
         .search-box-container {
@@ -812,20 +805,12 @@
                 background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
             }
 
-            .header.scrolled {
-                padding: 0;
-                box-shadow: none;
-                background: transparent;
+            .header.hidden {
+                transform: translateY(-100%);
             }
 
-            .header.scrolled .header-content {
-                display: none;
-            }
-
-            .header.scrolled .mobile-search-only {
-                display: block;
+            .search-section.sticky {
                 padding: 8px 12px;
-                background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
             }
 
             .mobile-search-only {
@@ -1304,22 +1289,10 @@
             <div class="header-left">
                 <a href="/" class="logo">💜 Дучарха</a>
             </div>
-            <div class="header-center">
-                <div class="header-title">
+            <div class="header-center" id="header-center">
+                <div class="header-title" id="header-title">
                     <span class="main-title">Свежие продукты с доставкой</span>
                     <span class="sub-title">Более 1000 товаров • Бесплатная доставка за 10-15 минут</span>
-                </div>
-                <!-- Sticky Search Bar -->
-                <div class="sticky-search" id="sticky-search">
-                    <div class="search-box-container">
-                        <input type="text" 
-                               class="search-box" 
-                               id="sticky-search-input" 
-                               placeholder="Искать в Дучарха" 
-                               autocomplete="off">
-                        <button class="search-btn" onclick="searchProductsSticky()">🔍</button>
-                        <div class="search-suggestions" id="sticky-search-suggestions"></div>
-                    </div>
                 </div>
             </div>
             <div class="header-right">
@@ -1382,9 +1355,9 @@
         </div>
     </div>
 
-    <div class="search-section">
+    <div class="search-section" id="search-section">
         <div class="search-container">
-            <div class="search-box-container">
+            <div class="search-box-container" id="main-search-container">
                 <input type="text" 
                        class="search-box" 
                        id="search-input" 
@@ -1395,7 +1368,7 @@
             </div>
 
             {% if search_history %}
-            <div class="search-history">
+            <div class="search-history" id="search-history">
                 <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 8px;">
                     <span style="opacity: 0.7; font-size: 12px;">Недавние:</span>
                     <span style="opacity: 0.8; font-size: 11px; cursor: pointer; background: rgba(255,255,255,0.2); padding: 2px 6px; border-radius: 8px;" onclick="clearAllHistory()">✕ Очистить</span>
@@ -1679,11 +1652,9 @@
         // Закрытие подсказок поиска при клике вне области поиска
         document.addEventListener('click', function(e) {
             const searchContainer = document.querySelector('.search-container');
-            const stickySearchContainer = document.querySelector('.sticky-search');
 
-            if (!searchContainer.contains(e.target) && !stickySearchContainer.contains(e.target)) {
+            if (!searchContainer.contains(e.target)) {
                 hideSearchSuggestions('search-suggestions');
-                hideSearchSuggestions('sticky-search-suggestions');
             }
         });
 
@@ -1691,18 +1662,10 @@
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 hideSearchSuggestions('search-suggestions');
-                hideSearchSuggestions('sticky-search-suggestions');
             }
         });
 
-        document.getElementById('sticky-search-input').addEventListener('input', function() {
-            const query = this.value.trim();
-            if (query.length >= 1) {
-                showSearchSuggestions(query, 'sticky-search-suggestions');
-            } else {
-                hideSearchSuggestions('sticky-search-suggestions');
-            }
-        });
+        
 
         // Mobile search input handling
         document.getElementById('mobile-search-input').addEventListener('input', function() {
@@ -1958,32 +1921,39 @@
             document.getElementById('help-overlay').style.display = 'none';
         }
 
-        /* Sticky Search Functions */
+        /* Scroll behavior как в Самокате */
         window.addEventListener('scroll', function() {
             const header = document.querySelector('.header');
             const searchSection = document.querySelector('.search-section');
+            const mainContent = document.querySelector('.main-content');
+            
+            // Получаем позицию поисковой секции
+            const searchSectionRect = searchSection.getBoundingClientRect();
             const headerHeight = header.offsetHeight;
             
             // Для мобильных устройств
             if (window.innerWidth <= 768) {
-                // Показываем только поиск при скролле как в Самокате
-                if (window.scrollY > 50) {
-                    header.classList.add('scrolled');
+                if (searchSectionRect.top <= 0) {
+                    // Скрываем основной хедер и делаем поиск sticky
+                    header.classList.add('hidden');
+                    searchSection.classList.add('sticky');
+                    mainContent.style.marginTop = searchSection.offsetHeight + 'px';
                 } else {
-                    header.classList.remove('scrolled');
+                    // Показываем основной хедер и убираем sticky
+                    header.classList.remove('hidden');
+                    searchSection.classList.remove('sticky');
+                    mainContent.style.marginTop = '0';
                 }
             } else {
-                // Для десктопа - старая логика
-                const stickySearch = document.getElementById('sticky-search');
-                const headerCenter = document.querySelector('.header-center');
-                const searchSectionBottom = searchSection.offsetTop + searchSection.offsetHeight - headerHeight;
-
-                if (window.scrollY >= searchSectionBottom) {
-                    stickySearch.classList.add('show');
-                    headerCenter.classList.add('search-mode');
+                // Для десктопа
+                if (searchSectionRect.top <= headerHeight) {
+                    searchSection.classList.add('sticky');
+                    searchSection.style.top = headerHeight + 'px';
+                    mainContent.style.marginTop = searchSection.offsetHeight + 'px';
                 } else {
-                    stickySearch.classList.remove('show');
-                    headerCenter.classList.remove('search-mode');
+                    searchSection.classList.remove('sticky');
+                    searchSection.style.top = 'auto';
+                    mainContent.style.marginTop = '0';
                 }
             }
 
@@ -1996,7 +1966,11 @@
                                    (searchResults && searchResults.style.display === 'block');
 
             if (shouldShowSticky) {
-                const topOffset = window.innerWidth <= 768 ? '90px' : '80px';
+                const isSearchSticky = searchSection.classList.contains('sticky');
+                const topOffset = isSearchSticky ? 
+                    (window.innerWidth <= 768 ? '70px' : '100px') : 
+                    (window.innerWidth <= 768 ? '150px' : '180px');
+                    
                 if (window.scrollY > 100) {
                     backButton.style.position = 'fixed';
                     backButton.style.top = topOffset;
@@ -2022,7 +1996,7 @@
 
             if (filteredProducts.length > 0) {
                 container.innerHTML = filteredProducts.map(product => `
-                    <div class="suggestion-item" onclick="selectSuggestion('${product.name}', '${containerId}')">
+                    <div class="suggestion-item" onclick="selectSuggestion('${product.name}')">
                         <div class="suggestion-name">${product.name}</div>
                         <div class="suggestion-category">${product.category}</div>
                     </div>
@@ -2038,18 +2012,10 @@
             container.classList.remove('show');
         }
 
-        function selectSuggestion(productName, containerId) {
-            const isSticky = containerId.includes('sticky');
-            const inputId = isSticky ? 'sticky-search-input' : 'search-input';
-
-            document.getElementById(inputId).value = productName;
-            hideSearchSuggestions(containerId);
-
-            if (isSticky) {
-                searchProductsSticky();
-            } else {
-                searchProducts();
-            }
+        function selectSuggestion(productName) {
+            document.getElementById('search-input').value = productName;
+            hideSearchSuggestions('search-suggestions');
+            searchProducts();
         }
 
         // Product Modal Functions
@@ -2105,27 +2071,7 @@
             }
         });
 
-        function searchProductsSticky() {
-            const query = document.getElementById('sticky-search-input').value.trim();
-            document.getElementById('search-input').value = query;
-            searchProducts();
-        }
-
-        // Синхронизация поисковых строк
-        document.getElementById('sticky-search-input').addEventListener('input', function() {
-            document.getElementById('search-input').value = this.value;
-            document.getElementById('mobile-search-input').value = this.value;
-        });
-
-        document.getElementById('search-input').addEventListener('input', function() {
-            document.getElementById('sticky-search-input').value = this.value;
-            document.getElementById('mobile-search-input').value = this.value;
-        });
-
-        document.getElementById('mobile-search-input').addEventListener('input', function() {
-            document.getElementById('search-input').value = this.value;
-            document.getElementById('sticky-search-input').value = this.value;
-        });
+        
 
         // Search History Functions
         function removeFromHistory(query) {
