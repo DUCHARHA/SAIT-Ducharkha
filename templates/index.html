@@ -55,8 +55,7 @@
 
         .search-container {
             flex: 1;
-            max-width: 400px;
-            margin-right: 24px;
+            margin-right: 16px;
             position: relative;
         }
 
@@ -94,6 +93,7 @@
             display: flex;
             align-items: center;
             gap: 16px;
+            margin-left: auto; /* Push actions to the right */
         }
 
         .login-button {
@@ -160,6 +160,8 @@
             background: #fff;
             padding: 24px 0;
             flex-shrink: 0;
+            order: 2;
+            border-left: 1px solid #f0f0f0;
         }
 
         .sidebar-title {
@@ -210,6 +212,7 @@
         .content {
             flex: 1;
             padding: 24px 0;
+            order: 1;
         }
 
         /* Hero Section */
@@ -564,6 +567,8 @@
                 padding: 16px 0;
                 border-bottom: 1px solid #f0f0f0;
                 overflow-x: auto;
+                order: 2;
+                border-left: none; /* Remove border on mobile */
             }
 
             .sidebar-title {
@@ -613,6 +618,7 @@
 
             .content {
                 padding: 16px 0;
+                order: 1;
             }
 
             .hero-section {
@@ -811,29 +817,6 @@
 
     <!-- Main Layout -->
     <div class="main-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-title">Категории</div>
-            <ul class="category-list">
-                {% for category in categories %}
-                <li class="category-item">
-                    <a href="#" class="category-link" onclick="showCategoryProducts('{{ category.name }}')">
-                        <span class="category-icon">
-                            {% if category.name == 'Молочные продукты' %}🥛
-                            {% elif category.name == 'Мясо и птица' %}🥩
-                            {% elif category.name == 'Овощи' %}🥕
-                            {% elif category.name == 'Фрукты' %}🍎
-                            {% elif category.name == 'Хлебобулочные' %}🍞
-                            {% elif category.name == 'Напитки' %}🥤
-                            {% else %}📦{% endif %}
-                        </span>
-                        {{ category.name }}
-                    </a>
-                </li>
-                {% endfor %}
-            </ul>
-        </aside>
-
         <!-- Main Content -->
         <main class="content">
             <!-- Products Section -->
@@ -864,6 +847,29 @@
                 </div>
             </section>
         </main>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-title">Категории</div>
+            <ul class="category-list">
+                {% for category in categories %}
+                <li class="category-item">
+                    <a href="#" class="category-link" onclick="showCategoryProducts('{{ category.name }}')">
+                        <span class="category-icon">
+                            {% if category.name == 'Молочные продукты' %}🥛
+                            {% elif category.name == 'Мясо и птица' %}🥩
+                            {% elif category.name == 'Овощи' %}🥕
+                            {% elif category.name == 'Фрукты' %}🍎
+                            {% elif category.name == 'Хлебобулочные' %}🍞
+                            {% elif category.name == 'Напитки' %}🥤
+                            {% else %}📦{% endif %}
+                        </span>
+                        {{ category.name }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </aside>
     </div>
 
     <script>
