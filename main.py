@@ -1535,5 +1535,14 @@ def profile():
 
     return render_template('profile.html', user=user, orders=user_orders)
 
+@app.route('/favorites')
+def favorites():
+    """Страница любимых товаров"""
+    user = get_current_user()
+    if not user:
+        return redirect('/login')
+
+    return render_template('favorites.html', user=user)
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

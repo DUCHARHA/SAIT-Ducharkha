@@ -97,20 +97,109 @@
         }
 
         .login-button {
-            background: #6f42c1;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
+            background: white;
+            color: #6f42c1;
+            border: 2px solid #6f42c1;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
             text-decoration: none;
-            transition: background-color 0.2s;
+            transition: all 0.3s ease;
         }
 
         .login-button:hover {
-            background: #5a369e;
+            background: #6f42c1;
+            color: white;
+        }
+
+        /* Profile Menu Styles */
+        .profile-menu {
+            position: relative;
+        }
+
+        .profile-btn {
+            background: white;
+            color: #6f42c1;
+            border: 2px solid #6f42c1;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .profile-btn:hover {
+            background: #6f42c1;
+            color: white;
+        }
+
+        .profile-icon {
+            font-size: 16px;
+        }
+
+        .profile-phone {
+            font-size: 12px;
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 16px;
+            padding: 16px 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            min-width: 250px;
+            display: none;
+            z-index: 1001;
+            margin-top: 8px;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .profile-header {
+            padding: 12px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 8px;
+        }
+
+        .profile-phone-full {
+            font-weight: 600;
+            color: #6f42c1;
+            font-size: 14px;
+        }
+
+        .profile-status {
+            font-size: 12px;
+            color: #10b981;
+            margin-top: 4px;
+        }
+
+        .profile-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .profile-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .profile-item-icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
         }
 
         .cart-button {
@@ -928,29 +1017,10 @@
     </div>
 
     <script>
-        const products = {{ products | tojson }};
+        let searchTimeout;
+        let searchHistory = {{ search_history|tojson if search_history else '[]' }};
 
-        // Store current quantities
-        const quantities = {};
-
-        function showCategoryProducts(category) {
-            document.getElementById('products-section').classList.add('active');
-
-            const productCards = document.querySelectorAll('.product-card');
-            productCards.forEach(card => {
-                const cardCategory = card.dataset.category;
-                card.style.display = (cardCategory === category) ? 'block' : 'none';
-            });
-
-            document.getElementById('products-title').textContent = category;
-
-             // Update active category
-            document.querySelectorAll('.category-link').forEach(link => {
-                link.classList.remove('active');
-            });
-            event.target.classList.add('active');
-        }
-
+        // Функция для изменения количества товаров в корзине
         function changeQuantity(productId, change) {
             fetch('/update_cart_quantity', {
                 method: 'POST',
@@ -958,76 +1028,330 @@
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    'product_id': productId,
-                    'change': change
+                    product_id: productId,
+                    change: change
                 })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Update local quantity
-                    quantities[productId] = data.current_quantity;
-                    
-                    // Update display
+                    // Обновляем отображение количества
                     const qtyDisplay = document.getElementById(`qty-${productId}`);
-                    const minusBtn = document.getElementById(`minus-${productId}`);
-                    
                     if (qtyDisplay) {
                         qtyDisplay.textContent = data.current_quantity;
                     }
-                    
-                    if (minusBtn) {
-                        minusBtn.disabled = data.current_quantity <= 0;
+
+                    // Обновляем счетчик корзины
+                    const cartCount = document.getElementById('cart-count');
+                    if (cartCount) {
+                        cartCount.textContent = data.cart_count;
                     }
-                    
-                    // Update cart count
-                    document.getElementById('cart-count').textContent = data.cart_count;
-                    
+
+                    // Показываем уведомление
                     if (change > 0) {
-                        // Show success feedback for additions
-                        const plusBtn = event.target;
-                        const originalText = plusBtn.textContent;
-                        plusBtn.textContent = '✓';
-                        plusBtn.style.background = '#28a745';
-                        setTimeout(() => {
-                            plusBtn.textContent = originalText;
-                            plusBtn.style.background = '#6f42c1';
-                        }, 1000);
+                        showNotification('Товар добавлен в корзину!', 'success');
                     }
                 } else {
-                    alert(data.error || 'Ошибка при обновлении корзины');
+                    showNotification(data.error || 'Ошибка при добавлении товара', 'error');
                 }
             })
             .catch(error => {
-                console.error('Error:', error);
-                alert('Ошибка соединения');
+                console.error('Ошибка:', error);
+                showNotification('Ошибка соединения', 'error');
             });
         }
 
-        function addToCart(productId) {
-            changeQuantity(productId, 1);
+        // Функция для показа уведомлений
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${type === 'success' ? '#28a745' : '#dc3545'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+                z-index: 1000;
+                max-width: 300px;
+                text-align: center;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 3000);
         }
 
-        // Search functionality
-        document.getElementById('search-input').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
+        function searchProducts() {
+            const query = document.getElementById('search-input').value;
+            if (query.length >= 2) {
+                performSearch(query, true);
+            }
+        }
+
+        function performSearch(query, saveToHistory = false) {
+            if (searchTimeout) {
+                clearTimeout(searchTimeout);
+            }
+
+            searchTimeout = setTimeout(() => {
+                fetch(`/search?q=${encodeURIComponent(query)}&save_history=${saveToHistory}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        displaySearchResults(data.results, data.query);
+                        if (saveToHistory && data.count > 0) {
+                            updateSearchHistory(query);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Ошибка поиска:', error);
+                    });
+            }, 300);
+        }
+
+        function displaySearchResults(results, query) {
+            const container = document.getElementById('products-section');
+
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🔍</div>
+                        <h3>Товары не найдены</h3>
+                        <p>По запросу "${query}" ничего не найдено</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = `<h2 class="section-title">Результаты поиска: "${query}" (${results.length})</h2>`;
+            html += '<div class="products-grid">';
+
+            results.forEach(product => {
+                const stockStatus = product.stock <= 0 ? 'Нет в наличии' : 
+                                  product.stock <= 5 ? `Осталось: ${product.stock}` : 
+                                  'В наличии';
+
+                const stockClass = product.stock <= 0 ? 'out-of-stock' : 
+                                 product.stock <= 5 ? 'low-stock' : 
+                                 'in-stock';
+
+                html += `
+                    <div class="product-card ${!product.available ? 'unavailable' : ''}">
+                        <div class="product-image">
+                            ${product.image.startsWith('http') ? 
+                                `<img src="${product.image}" alt="${product.name}" loading="lazy">` : 
+                                `<div class="product-emoji">${product.image}</div>`
+                            }
+                        </div>
+                        <div class="product-info">
+                            <h3 class="product-name">${product.name}</h3>
+                            <div class="product-price">${product.price.toFixed(2)} сом</div>
+                            <div class="stock-status ${stockClass}">${stockStatus}</div>
+                            <div class="product-actions">
+                                <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)" ${product.stock <= 0 ? 'disabled' : ''}>−</button>
+                                <span class="quantity-display" id="qty-${product.id}">0</span>
+                                <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)" ${product.stock <= 0 ? 'disabled' : ''}>+</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function updateSearchHistory(query) {
+            if (!searchHistory.includes(query)) {
+                searchHistory.unshift(query);
+                searchHistory = searchHistory.slice(0, 5);
+
+                const historyContainer = document.getElementById('search-history');
+                if (historyContainer) {
+                    updateHistoryDisplay();
+                }
+            }
+        }
+
+        function updateHistoryDisplay() {
+            const historyContainer = document.getElementById('search-history');
+            if (!historyContainer || searchHistory.length === 0) return;
+
+            let html = '<div class="history-title">Недавние поиски:</div>';
+            searchHistory.forEach(query => {
+                html += `
+                    <div class="history-item">
+                        <span onclick="performSearch('${query}')" class="history-query">${query}</span>
+                        <button onclick="removeFromHistory('${query}')" class="remove-history">×</button>
+                    </div>
+                `;
+            });
+
+            historyContainer.innerHTML = html;
+        }
+
+        function removeFromHistory(query) {
+            fetch('/remove_search_history', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({query: query})
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    searchHistory = searchHistory.filter(q => q !== query);
+                    updateHistoryDisplay();
+                }
+            });
+        }
+
+        function clearSearchHistory() {
+            fetch('/clear_search_history', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    searchHistory = [];
+                    updateHistoryDisplay();
+                }
+            });
+        }
+
+        // Обработка ввода в поисковую строку
+        document.getElementById('search-input').addEventListener('input', function(e) {
+            const query = e.target.value;
+            if (query.length >= 2) {
+                performSearch(query, false);
+            } else if (query.length === 0) {
+                location.reload();
             }
         });
 
-        function performSearch() {
-            const query = document.getElementById('search-input').value.trim();
-            if (!query) return;
+        // Инициализация истории поиска
+        document.addEventListener('DOMContentLoaded', function() {
+            updateHistoryDisplay();
+            checkUserAuth();
+        });
 
-            fetch(`/search?q=${encodeURIComponent(query)}`)
+        // Проверка авторизации пользователя
+        function checkUserAuth() {
+            const sessionToken = localStorage.getItem('session_token');
+            if (sessionToken) {
+                fetch('/auth/check_session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({session_token: sessionToken})
+                })
                 .then(response => response.json())
                 .then(data => {
-                    // Implement search results display
-                    console.log('Search results:', data);
+                    if (data.success) {
+                        updateAuthUI(data.user);
+                    } else {
+                        localStorage.removeItem('session_token');
+                        localStorage.removeItem('user_phone');
+                    }
                 })
                 .catch(error => {
-                    console.error('Search error:', error);
+                    console.log('Ошибка проверки сессии:', error);
                 });
+            }
+        }
+
+        // Обновление интерфейса для авторизованного пользователя
+        function updateAuthUI(user) {
+            const loginButton = document.querySelector('.login-button');
+            if (loginButton) {
+                loginButton.innerHTML = `
+                    <div class="profile-menu">
+                        <div class="profile-btn" onclick="toggleProfileMenu()">
+                            <span class="profile-icon">👤</span>
+                            <span class="profile-phone">${formatPhone(user.phone)}</span>
+                        </div>
+                        <div class="profile-dropdown" id="profile-dropdown">
+                            <div class="profile-header">
+                                <div class="profile-phone-full">${formatPhone(user.phone)}</div>
+                                <div class="profile-status">✅ Авторизован</div>
+                            </div>
+                            <a href="/profile" class="profile-item">
+                                <span class="profile-item-icon">👤</span>
+                                <span>Мои данные</span>
+                            </a>
+                            <a href="/my_orders" class="profile-item">
+                                <span class="profile-item-icon">📋</span>
+                                <span>Мои заказы</span>
+                            </a>
+                            <a href="/favorites" class="profile-item">
+                                <span class="profile-item-icon">❤️</span>
+                                <span>Любимые товары</span>
+                            </a>
+                            <a href="#" class="profile-item" onclick="logoutUser()">
+                                <span class="profile-item-icon">🚪</span>
+                                <span>Выйти</span>
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Переключение меню профиля
+        function toggleProfileMenu() {
+            const dropdown = document.getElementById('profile-dropdown');
+            dropdown.classList.toggle('show');
+        }
+
+        // Закрытие меню профиля при клике вне его
+        document.addEventListener('click', function(e) {
+            const profileMenu = document.querySelector('.profile-menu');
+            if (profileMenu && !profileMenu.contains(e.target)) {
+                const dropdown = document.getElementById('profile-dropdown');
+                if (dropdown) {
+                    dropdown.classList.remove('show');
+                }
+            }
+        });
+
+        // Выход из системы
+        function logoutUser() {
+            if (confirm('Вы уверены, что хотите выйти?')) {
+                fetch('/auth/logout', {
+                    method: 'POST'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        localStorage.removeItem('session_token');
+                        localStorage.removeItem('user_phone');
+                        location.reload();
+                    }
+                })
+                .catch(error => {
+                    console.error('Ошибка при выходе:', error);
+                });
+            }
+        }
+
+        // Форматирование телефона
+        function formatPhone(phone) {
+            if (phone.length >= 12) {
+                return '+' + phone.substring(0, 3) + ' ' + 
+                       phone.substring(3, 6) + ' ' + 
+                       phone.substring(6, 8) + ' ' + 
+                       phone.substring(8, 10) + ' ' + 
+                       phone.substring(10, 12);
+            }
+            return phone;
         }
     </script>
 </body>
