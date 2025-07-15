@@ -735,6 +735,205 @@
             }
         }
 
+        /* Плавающая кнопка выбора адреса */
+        .floating-address-btn {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            cursor: pointer;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            max-width: 200px;
+        }
+
+        .floating-address-btn:hover {
+            box-shadow: 0 6px 24px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .address-icon {
+            font-size: 16px;
+            color: #6f42c1;
+        }
+
+        .address-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Модальное окно с картой */
+        .address-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .address-modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            height: 80%;
+            max-height: 600px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .address-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .address-modal-header h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .address-search-container {
+            display: flex;
+            gap: 8px;
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .address-search-input {
+            flex: 1;
+            padding: 10px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .address-search-input:focus {
+            border-color: #6f42c1;
+        }
+
+        .address-search-btn {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .address-search-btn:hover {
+            background: #5a369e;
+        }
+
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+
+        #yandex-map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .selected-address-info {
+            padding: 20px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .selected-address-text {
+            flex: 1;
+            font-size: 14px;
+            color: #333;
+        }
+
+        .confirm-address-btn {
+            background: #6f42c1;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .confirm-address-btn:hover:not(:disabled) {
+            background: #5a369e;
+        }
+
+        .confirm-address-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            z-index: 9999;
+            opacity: 0;
+            transform: translateX(100%);
+            transition: all 0.3s ease;
+            max-width: 300px;
+        }
+
+        .notification.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
         /* Очень маленькие экраны */
         @media (max-width: 480px) {
             .header-content {
@@ -782,6 +981,41 @@
             .products-grid {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 8px;
+            }
+
+            .floating-address-btn {
+                top: 70px;
+                right: 10px;
+                padding: 8px 12px;
+                max-width: 150px;
+            }
+
+            .address-text {
+                font-size: 12px;
+            }
+
+            .address-modal-content {
+                width: 95%;
+                height: 85%;
+            }
+
+            .address-modal-header {
+                padding: 16px;
+            }
+
+            .address-modal-header h2 {
+                font-size: 18px;
+            }
+
+            .selected-address-info {
+                padding: 16px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .confirm-address-btn {
+                width: 100%;
+                margin-top: 8px;
             }
         }
     </style>
@@ -866,8 +1100,193 @@
         </main>
     </div>
 
+    <!-- Яндекс Карты API -->
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=YOUR_API_KEY&lang=ru_RU" type="text/javascript"></script>
+
+    <!-- Модальное окно с картой -->
+    <div class="address-modal" id="address-modal">
+        <div class="address-modal-content">
+            <div class="address-modal-header">
+                <h2>Выберите адрес доставки</h2>
+                <button class="close-modal" onclick="closeAddressModal()">×</button>
+            </div>
+            
+            <div class="address-search-container">
+                <input type="text" id="address-search" placeholder="Поиск по адресу..." class="address-search-input">
+                <button onclick="searchAddress()" class="address-search-btn">🔍</button>
+            </div>
+            
+            <div class="map-container">
+                <div id="yandex-map"></div>
+            </div>
+            
+            <div class="selected-address-info">
+                <div class="selected-address-text" id="selected-address-text">
+                    Выберите точку на карте
+                </div>
+                <button class="confirm-address-btn" id="confirm-address-btn" onclick="confirmAddress()" disabled>
+                    Подтвердить адрес
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Плавающая кнопка выбора адреса -->
+    <div class="floating-address-btn" onclick="openAddressModal()">
+        <span class="address-icon">📍</span>
+        <span class="address-text" id="current-address">Душанбе</span>
+    </div>
+
     <script>
         const products = {{ products | tojson }};
+        let myMap;
+        let selectedCoordinates = null;
+        let selectedAddress = '';
+        let placemark;
+
+        // Инициализация карты
+        function initMap() {
+            myMap = new ymaps.Map("yandex-map", {
+                center: [38.5598, 68.7870], // Координаты Душанбе
+                zoom: 12,
+                controls: ['zoomControl', 'fullscreenControl']
+            });
+
+            // Слушатель клика по карте
+            myMap.events.add('click', function(e) {
+                const coords = e.get('coords');
+                selectLocation(coords);
+            });
+
+            // Добавляем контролы
+            myMap.controls.add('typeSelector');
+            myMap.controls.add('trafficControl');
+        }
+
+        // Выбор локации на карте
+        function selectLocation(coords) {
+            selectedCoordinates = coords;
+            
+            // Удаляем предыдущую метку
+            if (placemark) {
+                myMap.geoObjects.remove(placemark);
+            }
+            
+            // Добавляем новую метку
+            placemark = new ymaps.Placemark(coords, {
+                hintContent: 'Выбранный адрес',
+                balloonContent: 'Адрес доставки'
+            }, {
+                preset: 'islands#redDotIcon',
+                draggable: true
+            });
+            
+            myMap.geoObjects.add(placemark);
+            
+            // Получаем адрес по координатам
+            ymaps.geocode(coords).then(function(res) {
+                const firstGeoObject = res.geoObjects.get(0);
+                const address = firstGeoObject.getAddressLine();
+                selectedAddress = address;
+                
+                document.getElementById('selected-address-text').textContent = address;
+                document.getElementById('confirm-address-btn').disabled = false;
+                
+                // Обновляем balloon метки
+                placemark.properties.set('balloonContent', address);
+            });
+            
+            // Обработчик перетаскивания метки
+            placemark.events.add('dragend', function(e) {
+                const newCoords = placemark.geometry.getCoordinates();
+                selectLocation(newCoords);
+            });
+        }
+
+        // Открытие модального окна с картой
+        function openAddressModal() {
+            document.getElementById('address-modal').style.display = 'flex';
+            
+            // Инициализируем карту если еще не инициализирована
+            if (!myMap) {
+                ymaps.ready(initMap);
+            }
+        }
+
+        // Закрытие модального окна
+        function closeAddressModal() {
+            document.getElementById('address-modal').style.display = 'none';
+        }
+
+        // Подтверждение выбранного адреса
+        function confirmAddress() {
+            if (selectedAddress) {
+                document.getElementById('current-address').textContent = selectedAddress;
+                
+                // Сохраняем адрес в localStorage
+                localStorage.setItem('selectedAddress', selectedAddress);
+                localStorage.setItem('selectedCoordinates', JSON.stringify(selectedCoordinates));
+                
+                closeAddressModal();
+                
+                // Показываем уведомление
+                showNotification('Адрес доставки выбран: ' + selectedAddress);
+            }
+        }
+
+        // Поиск адреса
+        function searchAddress() {
+            const query = document.getElementById('address-search').value.trim();
+            if (!query) return;
+            
+            ymaps.geocode(query + ', Душанбе').then(function(res) {
+                const firstGeoObject = res.geoObjects.get(0);
+                if (firstGeoObject) {
+                    const coords = firstGeoObject.geometry.getCoordinates();
+                    myMap.setCenter(coords, 15);
+                    selectLocation(coords);
+                } else {
+                    alert('Адрес не найден');
+                }
+            });
+        }
+
+        // Поиск по Enter
+        document.addEventListener('DOMContentLoaded', function() {
+            const addressSearch = document.getElementById('address-search');
+            if (addressSearch) {
+                addressSearch.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        searchAddress();
+                    }
+                });
+            }
+            
+            // Загружаем сохраненный адрес
+            const savedAddress = localStorage.getItem('selectedAddress');
+            if (savedAddress) {
+                document.getElementById('current-address').textContent = savedAddress;
+            }
+        });
+
+        // Уведомления
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
 
         function showCategoryProducts(category) {
             document.getElementById('products-section').classList.add('active');
