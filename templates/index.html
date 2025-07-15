@@ -432,6 +432,8 @@
             display: flex;
             align-items: center;
             height: 100%;
+            justify-content: center;
+            position: relative;
         }
 
         .logo {
@@ -441,46 +443,18 @@
             color: #6f42c1;
             font-size: 24px;
             font-weight: 700;
-            margin-right: 32px;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
         }
 
-        .logo-icon {
-            margin-right: 8px;
-            font-size: 28px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 2px;
-        }
-
-        .logo-heart {
-            font-size: 20px;
-            color: #8b5cf6;
-            animation: heartSpin 2s linear infinite;
-        }
-
-        .logo-infinity {
-            font-size: 24px;
-            color: #8b5cf6;
-            animation: infinityFlow 4s linear infinite;
-            transform-origin: center;
-        }
-
-        @keyframes heartSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes infinityFlow {
-            0% { transform: rotate(0deg) translateX(8px) rotate(0deg); }
-            100% { transform: rotate(360deg) translateX(8px) rotate(-360deg); }
-        }
+        
 
         .search-container {
             flex: 1;
             margin-right: 16px;
             position: relative;
+            max-width: 400px;
         }
 
         .search-input {
@@ -517,7 +491,8 @@
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-left: auto;
+            position: absolute;
+            right: 16px;
         }
 
         .login-button {
@@ -1473,10 +1448,6 @@
     <header class="header">
         <div class="header-content">
             <a href="/" class="logo">
-                <div class="logo-icon">
-                    <div class="logo-heart">💜</div>
-                    <div class="logo-infinity">∞</div>
-                </div>
                 ДУЧАРХА
             </a>
 
