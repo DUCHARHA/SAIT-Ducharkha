@@ -1,4 +1,3 @@
-
 <!-- Кнопка переключения производительности -->
 <div class="performance-toggle" style="position: fixed; top: 80px; right: 20px; z-index: 1001;">
     <button id="performance-btn" class="btn btn-secondary" onclick="togglePerformanceMode()">
@@ -42,28 +41,28 @@ let isLowPerformanceMode = false;
 
 function togglePerformanceMode() {
     isLowPerformanceMode = !isLowPerformanceMode;
-    
+
     if (isLowPerformanceMode) {
         document.body.classList.add('low-performance');
         document.getElementById('performance-icon').textContent = '🐌';
         document.getElementById('performance-text').textContent = 'Эконом';
-        
+
         // Отключаем анимации
         document.querySelectorAll('.aurora-layer, .floating-products, .light-rays, .light-particles, .sparkles').forEach(el => {
             el.style.display = 'none';
         });
-        
+
         localStorage.setItem('performanceMode', 'low');
     } else {
         document.body.classList.remove('low-performance');
         document.getElementById('performance-icon').textContent = '⚡';
         document.getElementById('performance-text').textContent = 'Турбо';
-        
+
         // Включаем анимации
         document.querySelectorAll('.aurora-layer, .floating-products, .light-rays, .light-particles, .sparkles').forEach(el => {
             el.style.display = 'block';
         });
-        
+
         localStorage.setItem('performanceMode', 'high');
     }
 }
@@ -562,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function() {
             text-decoration: none;
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
-            margin-left: 100px;
+            margin-left: 150px;
         }
 
         .login-button:hover {
@@ -824,7 +823,8 @@ document.addEventListener('DOMContentLoaded', function() {
             background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
         }
 
-        .promo-card-title {
+        .promo-card```text
+-title {
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 8px;
@@ -1822,7 +1822,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function clearSearchHistory() {
             fetch('/clear_search_history', {
-                method: 'POST'
+                ```text
+method: 'POST'
             })
             .then(response => response.json())
             .then(data => {
@@ -2123,14 +2124,14 @@ document.addEventListener('DOMContentLoaded', function() {
             const isLowPerformance = window.navigator.hardwareConcurrency < 4 || 
                                     window.navigator.deviceMemory < 4 || 
                                     /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            
+
             if (isLowPerformance) {
                 // Уменьшаем количество анимаций для слабых устройств
                 createStars(50); // Вместо 100
                 createLightRays(3); // Вместо 6
                 createLightParticles(10); // Вместо 20
                 createSparkles(12); // Вместо 25
-                
+
                 // Отключаем северное сияние на слабых устройствах
                 document.querySelectorAll('.aurora-layer').forEach(layer => {
                     layer.style.display = 'none';
