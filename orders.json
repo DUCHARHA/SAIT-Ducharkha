@@ -292,7 +292,8 @@
     "final_total": 201.0,
     "delivery_cost": 0,
     "number": "1507-1",
-    "status": "Принят",
-    "created_at": "2025-07-15 05:48:39"
+    "status": "Отменен",
+    "created_at": "2025-07-15 05:48:39",
+    "cancelled_at": "2025-07-15 15:47:00"
   }
 ]
