@@ -13,9 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            background: #0a0a0a;
             color: #000;
             line-height: 1.4;
             min-height: 100vh;
@@ -23,15 +21,250 @@
             overflow-x: hidden;
         }
 
-        @keyframes gradientBG {
-            0% {
-                background-position: 0% 50%;
+        /* Северное сияние - базовый фон */
+        .aurora-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            z-index: -10;
+        }
+
+        /* Звездное небо */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -9;
+        }
+
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Северное сияние - основные слои */
+        .aurora-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -8;
+            pointer-events: none;
+        }
+
+        .aurora-1 {
+            background: linear-gradient(45deg, 
+                transparent 0%, 
+                rgba(0, 255, 150, 0.1) 25%, 
+                rgba(0, 255, 255, 0.15) 50%, 
+                rgba(100, 255, 100, 0.1) 75%, 
+                transparent 100%);
+            animation: aurora-wave-1 12s ease-in-out infinite;
+            transform: rotate(-5deg);
+        }
+
+        .aurora-2 {
+            background: linear-gradient(135deg, 
+                transparent 0%, 
+                rgba(255, 0, 150, 0.08) 30%, 
+                rgba(150, 0, 255, 0.12) 60%, 
+                transparent 100%);
+            animation: aurora-wave-2 15s ease-in-out infinite;
+            transform: rotate(3deg);
+        }
+
+        .aurora-3 {
+            background: linear-gradient(225deg, 
+                transparent 0%, 
+                rgba(0, 150, 255, 0.06) 40%, 
+                rgba(100, 255, 200, 0.1) 70%, 
+                transparent 100%);
+            animation: aurora-wave-3 18s ease-in-out infinite;
+            transform: rotate(-2deg);
+        }
+
+        .aurora-4 {
+            background: linear-gradient(315deg, 
+                transparent 0%, 
+                rgba(255, 200, 0, 0.05) 35%, 
+                rgba(255, 100, 150, 0.08) 65%, 
+                transparent 100%);
+            animation: aurora-wave-4 20s ease-in-out infinite;
+            transform: rotate(1deg);
+        }
+
+        /* Анимации северного сияния */
+        @keyframes aurora-wave-1 {
+            0%, 100% { 
+                transform: translateY(0px) rotate(-5deg) scaleY(1);
+                opacity: 0.6;
             }
-            50% {
-                background-position: 100% 50%;
+            33% { 
+                transform: translateY(-20px) rotate(-3deg) scaleY(1.1);
+                opacity: 0.8;
+            }
+            66% { 
+                transform: translateY(10px) rotate(-7deg) scaleY(0.9);
+                opacity: 0.7;
+            }
+        }
+
+        @keyframes aurora-wave-2 {
+            0%, 100% { 
+                transform: translateY(0px) rotate(3deg) scaleY(1);
+                opacity: 0.5;
+            }
+            25% { 
+                transform: translateY(15px) rotate(5deg) scaleY(1.2);
+                opacity: 0.7;
+            }
+            75% { 
+                transform: translateY(-10px) rotate(1deg) scaleY(0.8);
+                opacity: 0.6;
+            }
+        }
+
+        @keyframes aurora-wave-3 {
+            0%, 100% { 
+                transform: translateY(0px) rotate(-2deg) scaleY(1);
+                opacity: 0.4;
+            }
+            40% { 
+                transform: translateY(-15px) rotate(-4deg) scaleY(1.3);
+                opacity: 0.6;
+            }
+            80% { 
+                transform: translateY(5px) rotate(0deg) scaleY(0.7);
+                opacity: 0.5;
+            }
+        }
+
+        @keyframes aurora-wave-4 {
+            0%, 100% { 
+                transform: translateY(0px) rotate(1deg) scaleY(1);
+                opacity: 0.3;
+            }
+            30% { 
+                transform: translateY(8px) rotate(3deg) scaleY(1.1);
+                opacity: 0.5;
+            }
+            70% { 
+                transform: translateY(-12px) rotate(-1deg) scaleY(0.9);
+                opacity: 0.4;
+            }
+        }
+
+        /* Дополнительные световые эффекты */
+        .light-rays {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -7;
+            pointer-events: none;
+        }
+
+        .light-ray {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background: linear-gradient(to bottom, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0.1) 20%, 
+                rgba(0, 255, 200, 0.15) 40%, 
+                rgba(100, 255, 100, 0.1) 60%, 
+                transparent 100%);
+            animation: light-shimmer 8s ease-in-out infinite;
+        }
+
+        @keyframes light-shimmer {
+            0%, 100% { opacity: 0.2; transform: scaleY(0.8); }
+            50% { opacity: 0.6; transform: scaleY(1.2); }
+        }
+
+        /* Частицы света */
+        .light-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -6;
+            pointer-events: none;
+        }
+
+        .light-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(0, 255, 200, 0.4) 50%, transparent 100%);
+            border-radius: 50%;
+            animation: float-particle 25s linear infinite;
+        }
+
+        @keyframes float-particle {
+            0% {
+                transform: translateY(100vh) translateX(0px) scale(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+                transform: translateY(90vh) translateX(20px) scale(1);
+            }
+            90% {
+                opacity: 1;
+                transform: translateY(10vh) translateX(-20px) scale(1);
             }
             100% {
-                background-position: 0% 50%;
+                transform: translateY(0vh) translateX(0px) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Мерцающие точки */
+        .sparkles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -5;
+            pointer-events: none;
+        }
+
+        .sparkle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(0, 255, 255, 0.8) 40%, transparent 100%);
+            border-radius: 50%;
+            animation: sparkle-twinkle 4s ease-in-out infinite;
+        }
+
+        @keyframes sparkle-twinkle {
+            0%, 100% { 
+                opacity: 0; 
+                transform: scale(0.5) rotate(0deg);
+            }
+            50% { 
+                opacity: 1; 
+                transform: scale(1.2) rotate(180deg);
             }
         }
 
@@ -1047,6 +1280,27 @@
     </style>
 </head>
 <body>
+    <!-- Северное сияние - потрясающий фон -->
+    <div class="aurora-background"></div>
+    
+    <!-- Звездное небо -->
+    <div class="stars"></div>
+    
+    <!-- Слои северного сияния -->
+    <div class="aurora-layer aurora-1"></div>
+    <div class="aurora-layer aurora-2"></div>
+    <div class="aurora-layer aurora-3"></div>
+    <div class="aurora-layer aurora-4"></div>
+    
+    <!-- Световые лучи -->
+    <div class="light-rays"></div>
+    
+    <!-- Светящиеся частицы -->
+    <div class="light-particles"></div>
+    
+    <!-- Мерцающие точки -->
+    <div class="sparkles"></div>
+    
     <!-- Floating Products Background Animation -->
     <div class="floating-products">
         <div class="floating-product">🍎</div>
@@ -1545,6 +1799,84 @@
             }
             return phone;
         }
+
+        // Создание звездного неба
+        function createStars() {
+            const starsContainer = document.querySelector('.stars');
+            const numStars = 150;
+            
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Создание световых лучей
+        function createLightRays() {
+            const raysContainer = document.querySelector('.light-rays');
+            const numRays = 8;
+            
+            for (let i = 0; i < numRays; i++) {
+                const ray = document.createElement('div');
+                ray.className = 'light-ray';
+                ray.style.left = (i * 12.5) + '%';
+                ray.style.animationDelay = (i * 0.5) + 's';
+                ray.style.animationDuration = (8 + Math.random() * 4) + 's';
+                raysContainer.appendChild(ray);
+            }
+        }
+
+        // Создание светящихся частиц
+        function createLightParticles() {
+            const particlesContainer = document.querySelector('.light-particles');
+            const numParticles = 30;
+            
+            for (let i = 0; i < numParticles; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'light-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 25 + 's';
+                particle.style.animationDuration = (20 + Math.random() * 10) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Создание мерцающих точек
+        function createSparkles() {
+            const sparklesContainer = document.querySelector('.sparkles');
+            const numSparkles = 40;
+            
+            for (let i = 0; i < numSparkles; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                sparkle.style.left = Math.random() * 100 + '%';
+                sparkle.style.top = Math.random() * 100 + '%';
+                sparkle.style.animationDelay = Math.random() * 4 + 's';
+                sparkle.style.animationDuration = (3 + Math.random() * 2) + 's';
+                sparklesContainer.appendChild(sparkle);
+            }
+        }
+
+        // Инициализация всех эффектов
+        function initializeAuroraEffects() {
+            createStars();
+            createLightRays();
+            createLightParticles();
+            createSparkles();
+        }
+
+        // Запуск при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAuroraEffects();
+            updateHistoryDisplay();
+            checkUserAuth();
+            initializeQuantities();
+        });
     </script>
 </body>
 </html>
