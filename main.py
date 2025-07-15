@@ -407,6 +407,20 @@ def smart_search(query, products):
     # Возвращаем только топ результаты
     return [product for product, score in results[:50]]
 
+# Создаем индекс для быстрого поиска
+def create_search_index():
+    search_index = {}
+    for product in products:
+        words = (product['name'] + ' ' + product['description'] + ' ' + product['category']).lower().split()
+        for word in words:
+            if word not in search_index:
+                search_index[word] = []
+            search_index[word].append(product['id'])
+    return search_index
+
+# Глобальный индекс поиска
+SEARCH_INDEX = create_search_index()
+
 # Группируем товары по брендам и названиям
 def group_products(products):
     grouped = {}
@@ -1113,186 +1127,3 @@ def admin_panel():
                          orders=orders, 
                          total_revenue=total_revenue,
                          total_items_sold=total_items_sold,
-                         popular_products=popular_products)
-
-@app.route('/admin_logout')
-def admin_logout():
-    session.pop('admin_authenticated', None)
-    return redirect('/')
-
-@app.route('/admin/update_order_status', methods=['POST'])
-def update_order_status():
-    data = request.get_json()
-    order_number = data.get('order_number')
-    new_status = data.get('status')
-
-    orders = load_orders()
-    order_found = False
-
-    for order in orders:
-        if order.get('number') == order_number:
-            old_status = order.get('status')
-            order['status'] = new_status
-            order_found = True
-
-            # Отправляем уведомление при смене статуса
-            customer_phone = order.get('customer', {}).get('phone')
-            if customer_phone and old_status != new_status:
-                notify_order_status_change(order_number, new_status, customer_phone)
-            break
-
-    if order_found:
-        with open(ORDERS_FILE, 'w', encoding='utf-8') as f:
-            json.dump(orders, f, ensure_ascii=False, indent=2)
-        return jsonify({'success': True})
-    else:
-        return jsonify({'success': False, 'error': 'Заказ не найден'})
-
-@app.route('/inventory')
-def inventory():
-    return render_template('inventory_login.html')
-
-@app.route('/inventory_login', methods=['POST'])
-def inventory_login():
-    password = request.form.get('password')
-    if password == INVENTORY_PASSWORD:
-        session['inventory_authenticated'] = True
-        return redirect('/inventory_panel')
-    else:
-        return render_template('inventory_login.html', error='Неверный пароль')
-
-@app.route('/inventory_panel')
-def inventory_panel():
-    if not session.get('inventory_authenticated'):
-        return redirect('/inventory')
-
-    inventory = load_inventory()
-    
-    # Добавляем информацию о товарах из каталога
-    inventory_with_products = []
-    for product in products:
-        product_id = str(product['id'])
-        stock_info = inventory.get(product_id, {'stock': 50, 'active': True})
-        
-        inventory_with_products.append({
-            'id': product['id'],
-            'name': product['name'],
-            'category': product['category'],
-            'price': product['price'],
-            'stock': stock_info['stock'],
-            'active': stock_info['active']
-        })
-
-    return render_template('inventory_panel.html', products=inventory_with_products)
-
-@app.route('/inventory_logout')
-def inventory_logout():
-    session.pop('inventory_authenticated', None)
-    return redirect('/')
-
-@app.route('/update_stock', methods=['POST'])
-def update_stock():
-    if not session.get('inventory_authenticated'):
-        return jsonify({'success': False, 'error': 'Не авторизован'})
-
-    data = request.get_json()
-    product_id = str(data.get('product_id'))
-    new_stock = int(data.get('stock', 0))
-    active = data.get('active', True)
-
-    inventory = load_inventory()
-    inventory[product_id] = {
-        'stock': max(0, new_stock),
-        'active': active
-    }
-    
-    save_inventory(inventory)
-    return jsonify({'success': True})
-
-# SMS авторизация
-@app.route('/login')
-def login():
-    cart_count = len(session.get('cart', []))
-    return render_template('login.html', cart_count=cart_count)
-
-@app.route('/send_sms', methods=['POST'])
-def send_sms():
-    data = request.get_json()
-    phone = data.get('phone', '').strip()
-    
-    if not phone:
-        return jsonify({'success': False, 'error': 'Номер телефона обязателен'})
-    
-    # Нормализуем номер телефона
-    phone = re.sub(r'[^\d+]', '', phone)
-    
-    if not phone.startswith('+992'):
-        if phone.startswith('992'):
-            phone = '+' + phone
-        elif phone.startswith('0'):
-            phone = '+992' + phone[1:]
-        else:
-            phone = '+992' + phone
-    
-    success, message = send_sms_code(phone)
-    return jsonify({'success': success, 'message': message})
-
-@app.route('/verify_sms', methods=['POST'])
-def verify_sms():
-    data = request.get_json()
-    phone = data.get('phone', '').strip()
-    code = data.get('code', '').strip()
-    
-    # Нормализуем номер телефона
-    phone = re.sub(r'[^\d+]', '', phone)
-    if not phone.startswith('+992'):
-        if phone.startswith('992'):
-            phone = '+' + phone
-        elif phone.startswith('0'):
-            phone = '+992' + phone[1:]
-        else:
-            phone = '+992' + phone
-    
-    success, message, session_token = verify_sms_code(phone, code)
-    
-    if success:
-        # Устанавливаем сессию в куки
-        response = jsonify({'success': True, 'message': message})
-        response.set_cookie('session_token', session_token, 
-                          max_age=30*24*60*60, httponly=True, secure=False)
-        return response
-    else:
-        return jsonify({'success': False, 'error': message})
-
-@app.route('/logout')
-def logout():
-    session_token = request.cookies.get('session_token')
-    if session_token:
-        logout_user(session_token)
-    
-    response = redirect('/')
-    response.set_cookie('session_token', '', expires=0)
-    return response
-
-@app.route('/profile')
-def profile():
-    user = get_current_user()
-    if not user:
-        return redirect('/login')
-    
-    cart_count = len(session.get('cart', []))
-    return render_template('profile.html', user=user, cart_count=cart_count)
-
-# Очистка истекших кодов каждые 10 минут
-def start_cleanup_thread():
-    def cleanup_loop():
-        while True:
-            time.sleep(600)  # 10 минут
-            cleanup_expired_codes()
-    
-    cleanup_thread = threading.Thread(target=cleanup_loop, daemon=True)
-    cleanup_thread.start()
-
-if __name__ == '__main__':
-    start_cleanup_thread()
-    app.run(host='0.0.0.0', port=5000, debug=True)

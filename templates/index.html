@@ -1,3 +1,82 @@
+
+<!-- Кнопка переключения производительности -->
+<div class="performance-toggle" style="position: fixed; top: 80px; right: 20px; z-index: 1001;">
+    <button id="performance-btn" class="btn btn-secondary" onclick="togglePerformanceMode()">
+        <span id="performance-icon">⚡</span>
+        <span id="performance-text">Турбо</span>
+    </button>
+</div>
+
+<style>
+.performance-toggle {
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.performance-toggle:hover {
+    opacity: 1;
+}
+
+#performance-btn {
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.low-performance #performance-icon::before {
+    content: "🐌";
+}
+
+.low-performance #performance-text::before {
+    content: "Эконом";
+}
+</style>
+
+<script>
+let isLowPerformanceMode = false;
+
+function togglePerformanceMode() {
+    isLowPerformanceMode = !isLowPerformanceMode;
+    
+    if (isLowPerformanceMode) {
+        document.body.classList.add('low-performance');
+        document.getElementById('performance-icon').textContent = '🐌';
+        document.getElementById('performance-text').textContent = 'Эконом';
+        
+        // Отключаем анимации
+        document.querySelectorAll('.aurora-layer, .floating-products, .light-rays, .light-particles, .sparkles').forEach(el => {
+            el.style.display = 'none';
+        });
+        
+        localStorage.setItem('performanceMode', 'low');
+    } else {
+        document.body.classList.remove('low-performance');
+        document.getElementById('performance-icon').textContent = '⚡';
+        document.getElementById('performance-text').textContent = 'Турбо';
+        
+        // Включаем анимации
+        document.querySelectorAll('.aurora-layer, .floating-products, .light-rays, .light-particles, .sparkles').forEach(el => {
+            el.style.display = 'block';
+        });
+        
+        localStorage.setItem('performanceMode', 'high');
+    }
+}
+
+// Восстанавливаем настройки при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    const savedMode = localStorage.getItem('performanceMode');
+    if (savedMode === 'low') {
+        togglePerformanceMode();
+    }
+});
+</script>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -66,6 +145,9 @@
             height: 100%;
             z-index: -8;
             pointer-events: none;
+            will-change: transform, opacity;
+            transform-style: preserve-3d;
+            backface-visibility: hidden;
         }
 
         .aurora-1 {
@@ -133,94 +215,70 @@
             transform: rotate(2deg);
         }
 
-        /* Анимации северного сияния */
+        /* Оптимизированные анимации северного сияния */
         @keyframes aurora-wave-1 {
             0%, 100% { 
-                transform: translateY(0px) rotate(-5deg) scaleY(1);
+                transform: translate3d(0, 0, 0) rotate(-5deg) scaleY(1);
                 opacity: 0.8;
             }
-            33% { 
-                transform: translateY(-20px) rotate(-3deg) scaleY(1.1);
+            50% { 
+                transform: translate3d(0, -10px, 0) rotate(-3deg) scaleY(1.05);
                 opacity: 1;
-            }
-            66% { 
-                transform: translateY(10px) rotate(-7deg) scaleY(0.9);
-                opacity: 0.9;
             }
         }
 
         @keyframes aurora-wave-2 {
             0%, 100% { 
-                transform: translateY(0px) rotate(3deg) scaleY(1);
+                transform: translate3d(0, 0, 0) rotate(3deg) scaleY(1);
                 opacity: 0.7;
             }
-            25% { 
-                transform: translateY(15px) rotate(5deg) scaleY(1.2);
+            50% { 
+                transform: translate3d(0, 8px, 0) rotate(5deg) scaleY(1.1);
                 opacity: 0.9;
-            }
-            75% { 
-                transform: translateY(-10px) rotate(1deg) scaleY(0.8);
-                opacity: 0.8;
             }
         }
 
         @keyframes aurora-wave-3 {
             0%, 100% { 
-                transform: translateY(0px) rotate(-2deg) scaleY(1);
+                transform: translate3d(0, 0, 0) rotate(-2deg) scaleY(1);
                 opacity: 0.6;
             }
-            40% { 
-                transform: translateY(-15px) rotate(-4deg) scaleY(1.3);
+            50% { 
+                transform: translate3d(0, -8px, 0) rotate(-4deg) scaleY(1.15);
                 opacity: 0.8;
-            }
-            80% { 
-                transform: translateY(5px) rotate(0deg) scaleY(0.7);
-                opacity: 0.7;
             }
         }
 
         @keyframes aurora-wave-4 {
             0%, 100% { 
-                transform: translateY(0px) rotate(1deg) scaleY(1);
+                transform: translate3d(0, 0, 0) rotate(1deg) scaleY(1);
                 opacity: 0.6;
             }
-            30% { 
-                transform: translateY(8px) rotate(3deg) scaleY(1.1);
+            50% { 
+                transform: translate3d(0, 5px, 0) rotate(3deg) scaleY(1.05);
                 opacity: 0.8;
-            }
-            70% { 
-                transform: translateY(-12px) rotate(-1deg) scaleY(0.9);
-                opacity: 0.7;
             }
         }
 
         @keyframes aurora-wave-5 {
             0%, 100% { 
-                transform: translateY(0px) rotate(-1deg) scaleY(1);
+                transform: translate3d(0, 0, 0) rotate(-1deg) scaleY(1);
                 opacity: 0.5;
             }
-            35% { 
-                transform: translateY(-10px) rotate(-3deg) scaleY(1.2);
+            50% { 
+                transform: translate3d(0, -5px, 0) rotate(-3deg) scaleY(1.1);
                 opacity: 0.7;
-            }
-            65% { 
-                transform: translateY(15px) rotate(1deg) scaleY(0.8);
-                opacity: 0.6;
             }
         }
 
         @keyframes aurora-wave-6 {
             0%, 100% { 
-                transform: translateY(0px) rotate(2deg) scaleY(1);
+                transform: translate3d(0, 0, 0) rotate(2deg) scaleY(1);
                 opacity: 0.4;
             }
-            25% { 
-                transform: translateY(12px) rotate(4deg) scaleY(1.3);
+            50% { 
+                transform: translate3d(0, 6px, 0) rotate(4deg) scaleY(1.15);
                 opacity: 0.6;
-            }
-            75% { 
-                transform: translateY(-8px) rotate(0deg) scaleY(0.7);
-                opacity: 0.5;
             }
         }
 
@@ -336,6 +394,7 @@
             pointer-events: none;
             z-index: -1;
             overflow: hidden;
+            will-change: transform;
         }
 
         .floating-product {
@@ -343,6 +402,8 @@
             font-size: 3rem;
             opacity: 0.1;
             animation: float 20s infinite linear;
+            will-change: transform;
+            transform-style: preserve-3d;
         }
 
         .floating-heart {
@@ -350,6 +411,8 @@
             font-size: 2.5rem;
             opacity: 0.15;
             animation: float-heart 15s infinite linear;
+            will-change: transform;
+            transform-style: preserve-3d;
         }
 
         @keyframes float {
@@ -1472,7 +1535,11 @@
                     <div class="product-card" data-category="{{ product.category }}" data-product-id="{{ product.id }}">
                         <div class="product-image">
                             {% if product.image.startswith('http') %}
-                                <img src="{{ product.image }}" alt="{{ product.name }}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <img src="{{ product.image }}" alt="{{ product.name }}" 
+                                     style="width:100%;height:100%;object-fit:cover;" 
+                                     loading="lazy" 
+                                     decoding="async"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                 <div style="display: none;">🛒</div>
                             {% else %}
                                 {{ product.image }}
@@ -1979,69 +2046,99 @@
             return phone;
         }
 
-        function createStars() {
+        function createStars(count = 100) {
             const starsContainer = document.querySelector('.stars');
-            const numStars = 100;
+            const fragment = document.createDocumentFragment();
 
-            for (let i = 0; i < numStars; i++) {
+            for (let i = 0; i < count; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
-                star.style.left = Math.random() * 100 + '%';
-                star.style.top = Math.random() * 100 + '%';
-                star.style.animationDelay = Math.random() * 3 + 's';
-                star.style.animationDuration = (Math.random() * 2 + 2) + 's';
-                starsContainer.appendChild(star);
+                star.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                    animation-delay: ${Math.random() * 3}s;
+                    animation-duration: ${Math.random() * 2 + 2}s;
+                `;
+                fragment.appendChild(star);
             }
+            starsContainer.appendChild(fragment);
         }
 
-        function createLightRays() {
+        function createLightRays(count = 6) {
             const raysContainer = document.querySelector('.light-rays');
-            const numRays = 6;
+            const fragment = document.createDocumentFragment();
 
-            for (let i = 0; i < numRays; i++) {
+            for (let i = 0; i < count; i++) {
                 const ray = document.createElement('div');
                 ray.className = 'light-ray';
-                ray.style.left = (i * 16.66) + '%';
-                ray.style.animationDelay = (i * 0.5) + 's';
-                ray.style.animationDuration = (8 + Math.random() * 4) + 's';
-                raysContainer.appendChild(ray);
+                ray.style.cssText = `
+                    left: ${i * (100 / count)}%;
+                    animation-delay: ${i * 0.5}s;
+                    animation-duration: ${8 + Math.random() * 4}s;
+                `;
+                fragment.appendChild(ray);
             }
+            raysContainer.appendChild(fragment);
         }
 
-        function createLightParticles() {
+        function createLightParticles(count = 20) {
             const particlesContainer = document.querySelector('.light-particles');
-            const numParticles = 20;
+            const fragment = document.createDocumentFragment();
 
-            for (let i = 0; i < numParticles; i++) {
+            for (let i = 0; i < count; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'light-particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.animationDelay = Math.random() * 25 + 's';
-                particle.style.animationDuration = (20 + Math.random() * 10) + 's';
-                particlesContainer.appendChild(particle);
+                particle.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    animation-delay: ${Math.random() * 25}s;
+                    animation-duration: ${20 + Math.random() * 10}s;
+                `;
+                fragment.appendChild(particle);
             }
+            particlesContainer.appendChild(fragment);
         }
 
-        function createSparkles() {
+        function createSparkles(count = 25) {
             const sparklesContainer = document.querySelector('.sparkles');
-            const numSparkles = 25;
+            const fragment = document.createDocumentFragment();
 
-            for (let i = 0; i < numSparkles; i++) {
+            for (let i = 0; i < count; i++) {
                 const sparkle = document.createElement('div');
                 sparkle.className = 'sparkle';
-                sparkle.style.left = Math.random() * 100 + '%';
-                sparkle.style.top = Math.random() * 100 + '%';
-                sparkle.style.animationDelay = Math.random() * 4 + 's';
-                sparkle.style.animationDuration = (3 + Math.random() * 2) + 's';
-                sparklesContainer.appendChild(sparkle);
+                sparkle.style.cssText = `
+                    left: ${Math.random() * 100}%;
+                    top: ${Math.random() * 100}%;
+                    animation-delay: ${Math.random() * 4}s;
+                    animation-duration: ${3 + Math.random() * 2}s;
+                `;
+                fragment.appendChild(sparkle);
             }
+            sparklesContainer.appendChild(fragment);
         }
 
         function initializeAuroraEffects() {
-            createStars();
-            createLightRays();
-            createLightParticles();
-            createSparkles();
+            // Проверяем производительность устройства
+            const isLowPerformance = window.navigator.hardwareConcurrency < 4 || 
+                                    window.navigator.deviceMemory < 4 || 
+                                    /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            if (isLowPerformance) {
+                // Уменьшаем количество анимаций для слабых устройств
+                createStars(50); // Вместо 100
+                createLightRays(3); // Вместо 6
+                createLightParticles(10); // Вместо 20
+                createSparkles(12); // Вместо 25
+                
+                // Отключаем северное сияние на слабых устройствах
+                document.querySelectorAll('.aurora-layer').forEach(layer => {
+                    layer.style.display = 'none';
+                });
+            } else {
+                createStars(100);
+                createLightRays(6);
+                createLightParticles(20);
+                createSparkles(25);
+            }
         }
     </script>
 </body>
