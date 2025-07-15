@@ -813,9 +813,7 @@
                 padding: 8px 12px;
             }
 
-            .mobile-search-only {
-                display: none;
-            }
+            
 
             .header-content {
                 padding: 0 12px;
@@ -854,6 +852,10 @@
 
             .header-title {
                 transition: all 0.3s ease;
+            }
+
+            .main-title, .sub-title {
+                transition: opacity 0.3s ease, transform 0.3s ease;
             }
 
             .search-section {
@@ -1341,18 +1343,7 @@
             </div>
         </div>
         
-        <!-- Mobile-only search bar that appears on scroll -->
-        <div class="mobile-search-only">
-            <div class="search-box-container">
-                <input type="text" 
-                       class="search-box" 
-                       id="mobile-search-input" 
-                       placeholder="Искать в Дучарха" 
-                       autocomplete="off">
-                <button class="search-btn" onclick="searchProductsMobile()">🔍</button>
-                <div class="search-suggestions" id="mobile-search-suggestions"></div>
-            </div>
-        </div>
+        
     </div>
 
     <div class="search-section" id="search-section">
@@ -1667,34 +1658,7 @@
 
         
 
-        // Mobile search input handling
-        document.getElementById('mobile-search-input').addEventListener('input', function() {
-            const query = this.value.trim();
-            if (query.length >= 1) {
-                showSearchSuggestions(query, 'mobile-search-suggestions');
-                if (query.length >= 2) {
-                    setTimeout(() => {
-                        fetch(`/search?q=${encodeURIComponent(query)}`)
-                            .then(response => response.json())
-                            .then(data => {
-                                displaySearchResults(data.results, data.query, data.count);
-                            })
-                            .catch(error => {
-                                console.error('Ошибка поиска:', error);
-                            });
-                    }, 300);
-                }
-            } else {
-                hideSearchSuggestions('mobile-search-suggestions');
-                hideSearchResults();
-            }
-        });
-
-        function searchProductsMobile() {
-            const query = document.getElementById('mobile-search-input').value.trim();
-            document.getElementById('search-input').value = query;
-            searchProducts();
-        }
+        
 
         function searchProducts() {
             const query = document.getElementById('search-input').value.trim();
@@ -1922,42 +1886,76 @@
         }
 
         /* Scroll behavior как в Самокате */
+        let lastScrollTop = 0;
+        let originalSearchSectionTop = 0;
+        
+        window.addEventListener('load', function() {
+            const searchSection = document.querySelector('.search-section');
+            const header = document.querySelector('.header');
+            originalSearchSectionTop = searchSection.offsetTop - header.offsetHeight;
+        });
+
         window.addEventListener('scroll', function() {
             const header = document.querySelector('.header');
             const searchSection = document.querySelector('.search-section');
             const mainContent = document.querySelector('.main-content');
+            const headerCenter = document.getElementById('header-center');
+            const headerTitle = document.getElementById('header-title');
             
-            // Получаем позицию поисковой секции
-            const searchSectionRect = searchSection.getBoundingClientRect();
+            const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const headerHeight = header.offsetHeight;
             
             // Для мобильных устройств
             if (window.innerWidth <= 768) {
-                if (searchSectionRect.top <= 0) {
-                    // Скрываем основной хедер и делаем поиск sticky
+                if (currentScrollTop > originalSearchSectionTop) {
+                    // Прокрутка вниз - скрываем хедер, показываем sticky поиск
                     header.classList.add('hidden');
                     searchSection.classList.add('sticky');
                     mainContent.style.marginTop = searchSection.offsetHeight + 'px';
+                    
+                    // Скрываем заголовок в центре хедера
+                    if (headerCenter && headerTitle) {
+                        headerTitle.style.opacity = '0';
+                        headerTitle.style.transform = 'scale(0.8)';
+                    }
                 } else {
-                    // Показываем основной хедер и убираем sticky
+                    // Прокрутка вверх - показываем хедер, убираем sticky поиск
                     header.classList.remove('hidden');
                     searchSection.classList.remove('sticky');
                     mainContent.style.marginTop = '0';
+                    
+                    // Показываем заголовок в центре хедера
+                    if (headerCenter && headerTitle) {
+                        headerTitle.style.opacity = '1';
+                        headerTitle.style.transform = 'scale(1)';
+                    }
                 }
             } else {
-                // Для десктопа
-                if (searchSectionRect.top <= headerHeight) {
+                // Для десктопа - такая же логика
+                if (currentScrollTop > originalSearchSectionTop) {
                     searchSection.classList.add('sticky');
                     searchSection.style.top = headerHeight + 'px';
                     mainContent.style.marginTop = searchSection.offsetHeight + 'px';
+                    
+                    // Скрываем заголовок
+                    if (headerCenter && headerTitle) {
+                        headerTitle.style.opacity = '0';
+                        headerTitle.style.transform = 'scale(0.8)';
+                    }
                 } else {
                     searchSection.classList.remove('sticky');
                     searchSection.style.top = 'auto';
                     mainContent.style.marginTop = '0';
+                    
+                    // Показываем заголовок
+                    if (headerCenter && headerTitle) {
+                        headerTitle.style.opacity = '1';
+                        headerTitle.style.transform = 'scale(1)';
+                    }
                 }
             }
 
-            // Sticky back button for categories and search results
+            // Sticky back button
             const backButton = document.getElementById('back-to-categories');
             const productsSection = document.getElementById('products-section');
             const searchResults = document.getElementById('search-results');
@@ -1971,7 +1969,7 @@
                     (window.innerWidth <= 768 ? '70px' : '100px') : 
                     (window.innerWidth <= 768 ? '150px' : '180px');
                     
-                if (window.scrollY > 100) {
+                if (currentScrollTop > 100) {
                     backButton.style.position = 'fixed';
                     backButton.style.top = topOffset;
                     backButton.style.left = '20px';
@@ -1983,6 +1981,8 @@
                     backButton.style.boxShadow = 'none';
                 }
             }
+            
+            lastScrollTop = currentScrollTop;
         });
 
         // Search Suggestions
