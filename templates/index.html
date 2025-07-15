@@ -198,6 +198,8 @@
             background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
             padding: 20px 16px;
             color: white;
+            transition: all 0.1s ease-out;
+            will-change: transform;
         }
 
         .search-container {
@@ -228,8 +230,8 @@
             z-index: 1001;
             padding: 8px 16px;
             background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
-            box-shadow: 0 2px 20px rgba(111, 66, 193, 0.3);
-            transition: all 0.3s ease;
+            box-shadow: 0 2px 20px rgba(111, 66, 193, 0.4);
+            transform: translateY(0) !important;
         }
 
         .search-section.sticky .search-container {
@@ -855,7 +857,7 @@
             }
 
             .main-title, .sub-title {
-                transition: opacity 0.3s ease, transform 0.3s ease;
+                transition: opacity 0.1s ease-out, transform 0.1s ease-out;
             }
 
             .search-section {
@@ -1885,14 +1887,16 @@
             document.getElementById('help-overlay').style.display = 'none';
         }
 
-        /* Scroll behavior как в Самокате */
+        /* Плавное поднятие поиска как в Самокате */
         let lastScrollTop = 0;
         let originalSearchSectionTop = 0;
+        let maxSearchOffset = 0;
         
         window.addEventListener('load', function() {
             const searchSection = document.querySelector('.search-section');
             const header = document.querySelector('.header');
-            originalSearchSectionTop = searchSection.offsetTop - header.offsetHeight;
+            originalSearchSectionTop = searchSection.offsetTop;
+            maxSearchOffset = originalSearchSectionTop - header.offsetHeight;
         });
 
         window.addEventListener('scroll', function() {
@@ -1905,49 +1909,77 @@
             const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
             const headerHeight = header.offsetHeight;
             
+            // Рассчитываем прогресс прокрутки (0 - начало, 1 - полностью прокручено)
+            const scrollProgress = Math.min(currentScrollTop / maxSearchOffset, 1);
+            
             // Для мобильных устройств
             if (window.innerWidth <= 768) {
-                if (currentScrollTop > originalSearchSectionTop) {
-                    // Прокрутка вниз - скрываем хедер, показываем sticky поиск
-                    header.classList.add('hidden');
-                    searchSection.classList.add('sticky');
-                    mainContent.style.marginTop = searchSection.offsetHeight + 'px';
+                if (currentScrollTop > 0) {
+                    // Плавно поднимаем поиск
+                    const translateY = -currentScrollTop * 0.8; // Поиск поднимается медленнее скролла
+                    searchSection.style.transform = `translateY(${Math.max(translateY, -maxSearchOffset)}px)`;
                     
-                    // Скрываем заголовок в центре хедера
-                    if (headerCenter && headerTitle) {
-                        headerTitle.style.opacity = '0';
-                        headerTitle.style.transform = 'scale(0.8)';
+                    // Когда поиск достиг верха - делаем его sticky
+                    if (currentScrollTop >= maxSearchOffset) {
+                        searchSection.classList.add('sticky');
+                        searchSection.style.transform = 'translateY(0)';
+                        searchSection.style.top = headerHeight + 'px';
+                        
+                        // Скрываем заголовок в хедере
+                        if (headerCenter && headerTitle) {
+                            headerTitle.style.opacity = '0';
+                            headerTitle.style.transform = 'scale(0.8)';
+                        }
+                    } else {
+                        searchSection.classList.remove('sticky');
+                        searchSection.style.top = 'auto';
+                        
+                        // Плавно скрываем заголовок
+                        if (headerCenter && headerTitle) {
+                            headerTitle.style.opacity = 1 - scrollProgress;
+                            headerTitle.style.transform = `scale(${1 - scrollProgress * 0.2})`;
+                        }
                     }
                 } else {
-                    // Прокрутка вверх - показываем хедер, убираем sticky поиск
-                    header.classList.remove('hidden');
+                    // В начале страницы - возвращаем все в исходное состояние
                     searchSection.classList.remove('sticky');
-                    mainContent.style.marginTop = '0';
+                    searchSection.style.transform = 'translateY(0)';
+                    searchSection.style.top = 'auto';
                     
-                    // Показываем заголовок в центре хедера
                     if (headerCenter && headerTitle) {
                         headerTitle.style.opacity = '1';
                         headerTitle.style.transform = 'scale(1)';
                     }
                 }
             } else {
-                // Для десктопа - такая же логика
-                if (currentScrollTop > originalSearchSectionTop) {
-                    searchSection.classList.add('sticky');
-                    searchSection.style.top = headerHeight + 'px';
-                    mainContent.style.marginTop = searchSection.offsetHeight + 'px';
+                // Для десктопа - аналогичная логика
+                if (currentScrollTop > 0) {
+                    const translateY = -currentScrollTop * 0.7;
+                    searchSection.style.transform = `translateY(${Math.max(translateY, -maxSearchOffset)}px)`;
                     
-                    // Скрываем заголовок
-                    if (headerCenter && headerTitle) {
-                        headerTitle.style.opacity = '0';
-                        headerTitle.style.transform = 'scale(0.8)';
+                    if (currentScrollTop >= maxSearchOffset) {
+                        searchSection.classList.add('sticky');
+                        searchSection.style.transform = 'translateY(0)';
+                        searchSection.style.top = headerHeight + 'px';
+                        
+                        if (headerCenter && headerTitle) {
+                            headerTitle.style.opacity = '0';
+                            headerTitle.style.transform = 'scale(0.8)';
+                        }
+                    } else {
+                        searchSection.classList.remove('sticky');
+                        searchSection.style.top = 'auto';
+                        
+                        if (headerCenter && headerTitle) {
+                            headerTitle.style.opacity = 1 - scrollProgress;
+                            headerTitle.style.transform = `scale(${1 - scrollProgress * 0.2})`;
+                        }
                     }
                 } else {
                     searchSection.classList.remove('sticky');
+                    searchSection.style.transform = 'translateY(0)';
                     searchSection.style.top = 'auto';
-                    mainContent.style.marginTop = '0';
                     
-                    // Показываем заголовок
                     if (headerCenter && headerTitle) {
                         headerTitle.style.opacity = '1';
                         headerTitle.style.transform = 'scale(1)';
