@@ -816,6 +816,13 @@
                 box-shadow: 0 4px 20px rgba(111, 66, 193, 0.15);
             }
 
+            .header.scrolled .header-left,
+            .header.scrolled .header-right {
+                opacity: 0;
+                transform: translateY(-10px);
+                pointer-events: none;
+            }
+
             .header.scrolled .header-title {
                 opacity: 0;
                 transform: translateY(-10px);
@@ -834,6 +841,7 @@
 
             .header-left {
                 flex: 0 0 auto;
+                transition: all 0.3s ease;
             }
 
             .header-center {
@@ -844,6 +852,7 @@
 
             .header-right {
                 flex: 0 0 auto;
+                transition: all 0.3s ease;
             }
 
             .logo {
@@ -872,14 +881,18 @@
             .sticky-search {
                 position: absolute;
                 top: 50%;
-                left: 8px;
-                right: 8px;
+                left: 0;
+                right: 0;
                 transform: translateY(-50%);
                 opacity: 0;
                 pointer-events: none;
                 transition: all 0.3s ease;
-                padding: 0;
+                padding: 0 12px;
                 background: transparent;
+            }
+
+            .header.scrolled .header-center {
+                margin: 0;
             }
 
             .search-box {
@@ -1310,7 +1323,7 @@
                         <input type="text" 
                                class="search-box" 
                                id="sticky-search-input" 
-                               placeholder="Поиск: молоко, помидоры, кола..." 
+                               placeholder="Искать в Дучарха" 
                                autocomplete="off">
                         <button class="search-btn" onclick="searchProductsSticky()">🔍</button>
                         <div class="search-suggestions" id="sticky-search-suggestions"></div>
@@ -1370,7 +1383,7 @@
                 <input type="text" 
                        class="search-box" 
                        id="search-input" 
-                       placeholder="Поиск: молоко, помидоры, кола..." 
+                       placeholder="Искать в Дучарха" 
                        autocomplete="off">
                 <button class="search-btn" onclick="searchProducts()">🔍</button>
                 <div class="search-suggestions" id="search-suggestions"></div>
