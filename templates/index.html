@@ -809,29 +809,27 @@
                 right: 0;
                 z-index: 1000;
                 transition: all 0.3s ease;
+                background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
             }
 
             .header.scrolled {
-                padding: 8px 0;
-                box-shadow: 0 4px 20px rgba(111, 66, 193, 0.15);
+                padding: 0;
+                box-shadow: none;
+                background: transparent;
             }
 
-            .header.scrolled .header-left,
-            .header.scrolled .header-right {
-                opacity: 0;
-                transform: translateY(-10px);
-                pointer-events: none;
+            .header.scrolled .header-content {
+                display: none;
             }
 
-            .header.scrolled .header-title {
-                opacity: 0;
-                transform: translateY(-10px);
+            .header.scrolled .mobile-search-only {
+                display: block;
+                padding: 8px 12px;
+                background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
             }
 
-            .header.scrolled .sticky-search {
-                opacity: 1;
-                transform: translateY(0);
-                pointer-events: all;
+            .mobile-search-only {
+                display: none;
             }
 
             .header-content {
@@ -874,25 +872,12 @@
             }
 
             .search-section {
-                padding: 120px 12px 20px 12px;
+                padding: 90px 12px 20px 12px;
                 margin-top: 0;
             }
 
             .sticky-search {
-                position: absolute;
-                top: 50%;
-                left: 0;
-                right: 0;
-                transform: translateY(-50%);
-                opacity: 0;
-                pointer-events: none;
-                transition: all 0.3s ease;
-                padding: 0 12px;
-                background: transparent;
-            }
-
-            .header.scrolled .header-center {
-                margin: 0;
+                display: none;
             }
 
             .search-box {
@@ -902,33 +887,40 @@
             }
 
             .categories-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 12px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
                 padding: 0 4px;
             }
 
             .category-card {
-                padding: 20px 8px;
-                min-height: 120px;
-                border-radius: 16px;
+                padding: 24px 16px;
+                min-height: 160px;
+                border-radius: 20px;
                 position: relative;
                 overflow: hidden;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
             }
 
             .category-card::before {
-                height: 3px;
+                height: 4px;
             }
 
             .category-icon {
-                font-size: 32px;
-                margin-bottom: 8px;
+                font-size: 48px;
+                margin-bottom: 12px;
+                display: block;
             }
 
             .category-name {
-                font-size: 13px;
+                font-size: 14px;
                 text-align: center;
                 line-height: 1.3;
                 font-weight: 600;
+                color: #333;
             }
 
             .products-grid {
@@ -1375,6 +1367,19 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Mobile-only search bar that appears on scroll -->
+        <div class="mobile-search-only">
+            <div class="search-box-container">
+                <input type="text" 
+                       class="search-box" 
+                       id="mobile-search-input" 
+                       placeholder="Искать в Дучарха" 
+                       autocomplete="off">
+                <button class="search-btn" onclick="searchProductsMobile()">🔍</button>
+                <div class="search-suggestions" id="mobile-search-suggestions"></div>
+            </div>
+        </div>
     </div>
 
     <div class="search-section">
@@ -1699,6 +1704,35 @@
             }
         });
 
+        // Mobile search input handling
+        document.getElementById('mobile-search-input').addEventListener('input', function() {
+            const query = this.value.trim();
+            if (query.length >= 1) {
+                showSearchSuggestions(query, 'mobile-search-suggestions');
+                if (query.length >= 2) {
+                    setTimeout(() => {
+                        fetch(`/search?q=${encodeURIComponent(query)}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                displaySearchResults(data.results, data.query, data.count);
+                            })
+                            .catch(error => {
+                                console.error('Ошибка поиска:', error);
+                            });
+                    }, 300);
+                }
+            } else {
+                hideSearchSuggestions('mobile-search-suggestions');
+                hideSearchResults();
+            }
+        });
+
+        function searchProductsMobile() {
+            const query = document.getElementById('mobile-search-input').value.trim();
+            document.getElementById('search-input').value = query;
+            searchProducts();
+        }
+
         function searchProducts() {
             const query = document.getElementById('search-input').value.trim();
 
@@ -1932,8 +1966,8 @@
             
             // Для мобильных устройств
             if (window.innerWidth <= 768) {
-                // Показываем липкий поиск сразу при скролле
-                if (window.scrollY > 80) {
+                // Показываем только поиск при скролле как в Самокате
+                if (window.scrollY > 50) {
                     header.classList.add('scrolled');
                 } else {
                     header.classList.remove('scrolled');
@@ -2080,9 +2114,16 @@
         // Синхронизация поисковых строк
         document.getElementById('sticky-search-input').addEventListener('input', function() {
             document.getElementById('search-input').value = this.value;
+            document.getElementById('mobile-search-input').value = this.value;
         });
 
         document.getElementById('search-input').addEventListener('input', function() {
+            document.getElementById('sticky-search-input').value = this.value;
+            document.getElementById('mobile-search-input').value = this.value;
+        });
+
+        document.getElementById('mobile-search-input').addEventListener('input', function() {
+            document.getElementById('search-input').value = this.value;
             document.getElementById('sticky-search-input').value = this.value;
         });
 
