@@ -858,9 +858,9 @@
                         <div class="item-name">{{ item.name }}</div>
                         <div class="item-weight">{{ item.description }}</div>
                         <div class="item-price">
-                            {{ "%.0f"|format(item.price) }} ₽
+                            {{ "%.0f"|format(item.price) }} с
                             {% if item.old_price %}
-                            <span class="item-old-price">{{ "%.0f"|format(item.old_price) }} ₽</span>
+                            <span class="item-old-price">{{ "%.0f"|format(item.old_price) }} с</span>
                             {% endif %}
                         </div>
                     </div>
@@ -883,7 +883,7 @@
 
                 <div class="summary-row">
                     <span class="summary-label">Товары ({{ cart_count }})</span>
-                    <span class="summary-value" id="subtotal">{{ "%.0f"|format(total_price) }} ₽</span>
+                    <span class="summary-value" id="subtotal">{{ "%.0f"|format(total_price) }} с</span>
                 </div>
 
                 <div class="summary-row">
@@ -893,23 +893,23 @@
 
                 <div class="summary-total">
                     <span class="total-label">Итого</span>
-                    <span class="total-value" id="total-price">{{ "%.0f"|format(total_price) }} ₽</span>
+                    <span class="total-value" id="total-price">{{ "%.0f"|format(total_price) }} с</span>
                 </div>
 
-                {% if total_price < 200 %}
+                {% if total_price < 20 %}
                 <div class="minimum-order-warning" id="minimum-order-warning">
                     <svg class="warning-icon" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/>
                     </svg>
                     <div class="warning-text">
-                        Минимальная сумма заказа 200 ₽. Добавьте товаров на {{ "%.0f"|format(200 - total_price) }} ₽.
+                        Минимальная сумма заказа 20 с. Добавьте товаров на {{ "%.0f"|format(20 - total_price) }} с.
                     </div>
                 </div>
                 {% endif %}
 
-                <a href="/checkout" class="checkout-button" id="checkout-button" {% if total_price < 200 %} style="pointer-events: none; background: #e5e7eb; color: #9ca3af;" {% endif %}>
-                    {% if total_price < 200 %}
-                        Минимум 200 ₽
+                <a href="/checkout" class="checkout-button" id="checkout-button" {% if total_price < 20 %} style="pointer-events: none; background: #e5e7eb; color: #9ca3af;" {% endif %}>
+                    {% if total_price < 20 %}
+                        Минимум 20 с
                     {% else %}
                         Перейти к оформлению
                     {% endif %}
