@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Дучарха — доставка продуктов за 15 минут</title>
+    <title>ДУЧАРХА — доставка продуктов за 15 минут</title>
     <style>
         * {
             margin: 0;
@@ -345,6 +346,13 @@
             animation: float 20s infinite linear;
         }
 
+        .floating-heart {
+            position: absolute;
+            font-size: 2.5rem;
+            opacity: 0.15;
+            animation: float-heart 15s infinite linear;
+        }
+
         @keyframes float {
             0% {
                 transform: translateY(100vh) rotate(0deg);
@@ -362,16 +370,48 @@
             }
         }
 
-        .floating-product:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 25s; }
-        .floating-product:nth-child(2) { left: 20%; animation-delay: 2s; animation-duration: 30s; }
-        .floating-product:nth-child(3) { left: 30%; animation-delay: 4s; animation-duration: 22s; }
-        .floating-product:nth-child(4) { left: 40%; animation-delay: 6s; animation-duration: 28s; }
-        .floating-product:nth-child(5) { left: 50%; animation-delay: 8s; animation-duration: 26s; }
-        .floating-product:nth-child(6) { left: 60%; animation-delay: 10s; animation-duration: 24s; }
-        .floating-product:nth-child(7) { left: 70%; animation-delay: 12s; animation-duration: 32s; }
-        .floating-product:nth-child(8) { left: 80%; animation-delay: 14s; animation-duration: 27s; }
-        .floating-product:nth-child(9) { left: 90%; animation-delay: 16s; animation-duration: 29s; }
-        .floating-product:nth-child(10) { left: 15%; animation-delay: 18s; animation-duration: 23s; }
+        @keyframes float-heart {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(1);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.15;
+            }
+            50% {
+                transform: translateY(50vh) rotate(180deg) scale(1.2);
+                opacity: 0.2;
+            }
+            90% {
+                opacity: 0.15;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg) scale(0.8);
+                opacity: 0;
+            }
+        }
+
+        .floating-product:nth-child(1) { left: 5%; animation-delay: 0s; animation-duration: 25s; }
+        .floating-product:nth-child(2) { left: 15%; animation-delay: 2s; animation-duration: 30s; }
+        .floating-product:nth-child(3) { left: 25%; animation-delay: 4s; animation-duration: 22s; }
+        .floating-product:nth-child(4) { left: 35%; animation-delay: 6s; animation-duration: 28s; }
+        .floating-product:nth-child(5) { left: 45%; animation-delay: 8s; animation-duration: 26s; }
+        .floating-product:nth-child(6) { left: 55%; animation-delay: 10s; animation-duration: 24s; }
+        .floating-product:nth-child(7) { left: 65%; animation-delay: 12s; animation-duration: 32s; }
+        .floating-product:nth-child(8) { left: 75%; animation-delay: 14s; animation-duration: 27s; }
+        .floating-product:nth-child(9) { left: 85%; animation-delay: 16s; animation-duration: 29s; }
+        .floating-product:nth-child(10) { left: 95%; animation-delay: 18s; animation-duration: 23s; }
+        .floating-product:nth-child(11) { left: 10%; animation-delay: 20s; animation-duration: 31s; }
+        .floating-product:nth-child(12) { left: 20%; animation-delay: 22s; animation-duration: 25s; }
+        .floating-product:nth-child(13) { left: 30%; animation-delay: 24s; animation-duration: 28s; }
+        .floating-product:nth-child(14) { left: 40%; animation-delay: 26s; animation-duration: 27s; }
+        .floating-product:nth-child(15) { left: 50%; animation-delay: 28s; animation-duration: 26s; }
+        .floating-product:nth-child(16) { left: 60%; animation-delay: 30s; animation-duration: 29s; }
+        .floating-product:nth-child(17) { left: 70%; animation-delay: 32s; animation-duration: 24s; }
+        .floating-product:nth-child(18) { left: 80%; animation-delay: 34s; animation-duration: 23s; }
+
+        .floating-heart:nth-child(19) { left: 12%; animation-delay: 5s; animation-duration: 18s; color: #8b5cf6; }
+        .floating-heart:nth-child(20) { left: 77%; animation-delay: 15s; animation-duration: 20s; color: #10b981; }
 
         /* Header точно как у Самоката */
         .header {
@@ -404,10 +444,38 @@
             margin-right: 32px;
         }
 
-        .logo::before {
-            content: "🛒";
+        .logo-icon {
             margin-right: 8px;
             font-size: 28px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .logo-heart {
+            font-size: 20px;
+            color: #8b5cf6;
+            animation: heartSpin 3s linear infinite;
+        }
+
+        .logo-infinity {
+            font-size: 24px;
+            color: #8b5cf6;
+            animation: infinityFlow 4s ease-in-out infinite;
+        }
+
+        @keyframes heartSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes infinityFlow {
+            0%, 100% { transform: scaleX(1) translateX(0px); }
+            25% { transform: scaleX(1.1) translateX(2px); }
+            50% { transform: scaleX(0.9) translateX(-2px); }
+            75% { transform: scaleX(1.05) translateX(1px); }
         }
 
         .search-container {
@@ -450,7 +518,7 @@
             display: flex;
             align-items: center;
             gap: 16px;
-            margin-left: auto; /* Push actions to the right */
+            margin-left: auto;
         }
 
         .login-button {
@@ -640,6 +708,7 @@
             font-size: 14px;
             transition: background-color 0.2s;
             border-radius: 0;
+            cursor: pointer;
         }
 
         .category-link:hover {
@@ -1078,7 +1147,7 @@
                 margin-right: 16px;
             }
 
-            .logo::before {
+            .logo-icon {
                 font-size: 22px;
                 margin-right: 6px;
             }
@@ -1122,7 +1191,7 @@
                 border-bottom: 1px solid #f0f0f0;
                 overflow-x: auto;
                 order: 2;
-                border-right: none; /* Remove border on mobile */
+                border-right: none;
                 position: static;
                 height: auto;
                 top: auto;
@@ -1389,18 +1458,34 @@
         <div class="floating-product">🍅</div>
         <div class="floating-product">🥬</div>
         <div class="floating-product">🍌</div>
+        <div class="floating-product">🥖</div>
+        <div class="floating-product">🥒</div>
+        <div class="floating-product">🍊</div>
+        <div class="floating-product">🥪</div>
+        <div class="floating-product">🥓</div>
+        <div class="floating-product">🍔</div>
+        <div class="floating-product">🌭</div>
+        <div class="floating-product">🥨</div>
+        <div class="floating-heart">💜</div>
+        <div class="floating-heart">💚</div>
     </div>
 
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <a href="/" class="logo">Дучарха</a>
+            <a href="/" class="logo">
+                <div class="logo-icon">
+                    <div class="logo-heart">💜</div>
+                    <div class="logo-infinity">∞</div>
+                </div>
+                ДУЧАРХА
+            </a>
 
             <div class="search-container">
                 <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                 </svg>
-                <input type="text" class="search-input" placeholder="Искать в Дучарха" id="search-input">
+                <input type="text" class="search-input" placeholder="Искать в ДУЧАРХА" id="search-input">
             </div>
 
             <div class="header-actions">
@@ -1506,48 +1591,40 @@
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    // Сохраняем актуальное количество
                     cartQuantities[productId] = data.current_quantity;
 
-                    // Обновляем отображение количества
                     const qtyDisplay = document.getElementById(`qty-${productId}`);
                     if (qtyDisplay) {
                         qtyDisplay.textContent = data.current_quantity;
                     }
 
-                    // Обновляем кнопку минус
                     const minusBtn = document.getElementById(`minus-${productId}`);
                     if (minusBtn) {
                         minusBtn.disabled = data.current_quantity <= 0;
                     }
 
-                    // Обновляем счетчик корзины
                     const cartCount = document.getElementById('cart-count');
                     if (cartCount) {
                         cartCount.textContent = data.cart_count;
                     }
 
-                    // Обновляем статус остатка товара
                     if (stockStatus && data.stock_remaining !== undefined) {
                         const remaining = data.stock_remaining;
                         if (remaining === 0) {
                             stockStatus.textContent = 'Товар закончился';
                             stockStatus.className = 'stock-status out-of-stock';
-                            // Деактивируем кнопку плюс
                             const plusBtn = productCard.querySelector('.plus-btn');
                             if (plusBtn) plusBtn.disabled = true;
                         } else if (remaining <= 5) {
                             stockStatus.textContent = `Осталось: ${remaining} шт`;
                             stockStatus.className = 'stock-status low-stock';
                         } else {
-                            // Убираем статус если больше 5
                             if (stockStatus.classList.contains('low-stock') || stockStatus.classList.contains('out-of-stock')) {
                                 stockStatus.style.display = 'none';
                             }
                         }
                     }
 
-                    // Показываем уведомление
                     if (change > 0) {
                         showNotification('Товар добавлен в корзину!', 'success');
                     }
@@ -1726,7 +1803,6 @@
             });
         }
 
-        // Обработка ввода в поисковую строку
         document.getElementById('search-input').addEventListener('input', function(e) {
             const query = e.target.value;
             if (query.length >= 2) {
@@ -1740,8 +1816,6 @@
         function showCategoryProducts(categoryName) {
             const productsSection = document.getElementById('products-section');
             const productsGrid = document.getElementById('products-grid');
-
-            // Показываем только товары выбранной категории
             const allCards = document.querySelectorAll('.product-card');
             let visibleCount = 0;
 
@@ -1755,13 +1829,11 @@
                 }
             });
 
-            // Обновляем заголовок
             const productsTitle = document.getElementById('products-title');
             if (productsTitle) {
                 productsTitle.textContent = `${categoryName} (${visibleCount})`;
             }
 
-            // Подсвечиваем активную категорию
             const categoryLinks = document.querySelectorAll('.category-link');
             categoryLinks.forEach(link => {
                 link.classList.remove('active');
@@ -1771,7 +1843,6 @@
             });
         }
 
-        // Функция для показа всех товаров
         function showAllProducts() {
             const allCards = document.querySelectorAll('.product-card');
             allCards.forEach(card => {
@@ -1783,14 +1854,12 @@
                 productsTitle.textContent = 'Популярные товары';
             }
 
-            // Убираем выделение с категорий
             const categoryLinks = document.querySelectorAll('.category-link');
             categoryLinks.forEach(link => {
                 link.classList.remove('active');
             });
         }
 
-        // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
             initializeAuroraEffects();
             updateHistoryDisplay();
@@ -1798,7 +1867,6 @@
             initializeQuantities();
         });
 
-        // Инициализация количеств товаров
         function initializeQuantities() {
             const quantityDisplays = document.querySelectorAll('.quantity-display');
             quantityDisplays.forEach(display => {
@@ -1806,7 +1874,6 @@
                 const quantity = parseInt(display.textContent) || 0;
                 cartQuantities[productId] = quantity;
 
-                // Обновляем состояние кнопки минус
                 const minusBtn = document.getElementById(`minus-${productId}`);
                 if (minusBtn) {
                     minusBtn.disabled = quantity <= 0;
@@ -1814,7 +1881,6 @@
             });
         }
 
-        // Проверка авторизации пользователя
         function checkUserAuth() {
             const sessionToken = localStorage.getItem('session_token');
             if (sessionToken) {
@@ -1840,13 +1906,11 @@
             }
         }
 
-        // Обновление интерфейса для авторизованного пользователя
         function updateAuthUI(user) {
             const headerActions = document.querySelector('.header-actions');
             const loginButton = document.querySelector('.login-button');
 
             if (loginButton && headerActions) {
-                // Создаем новый элемент профиля
                 const profileHTML = `
                     <div class="profile-menu">
                         <button class="profile-btn" onclick="toggleProfileMenu()">
@@ -1870,24 +1934,22 @@
                                 <span>Любимые товары</span>
                             </a>
                             <a href="#" class="profile-item" onclick="logoutUser()">
-                                <span class="profile-item-icon">🚪</span>The code adds a function to show products by category and fixes category logic.                                <span>Выйти</span>
+                                <span class="profile-item-icon">🚪</span>
+                                <span>Выйти</span>
                             </a>
                         </div>
                     </div>
                 `;
 
-                // Полностью заменяем кнопку "Войти" на профиль
                 loginButton.outerHTML = profileHTML;
             }
         }
 
-        // Переключение меню профиля
         function toggleProfileMenu() {
             const dropdown = document.getElementById('profile-dropdown');
             dropdown.classList.toggle('show');
         }
 
-        // Закрытие меню профиля при клике вне его
         document.addEventListener('click', function(e) {
             const profileMenu = document.querySelector('.profile-menu');
             if (profileMenu && !profileMenu.contains(e.target)) {
@@ -1898,7 +1960,6 @@
             }
         });
 
-        // Выход из системы
         function logoutUser() {
             if (confirm('Вы уверены, что хотите выйти?')) {
                 fetch('/auth/logout', {
@@ -1918,7 +1979,6 @@
             }
         }
 
-        // Форматирование телефона
         function formatPhone(phone) {
             if (phone.length >= 12) {
                 return '+' + phone.substring(0, 3) + ' ' + 
@@ -1930,10 +1990,9 @@
             return phone;
         }
 
-        // Создание звездного неба
         function createStars() {
             const starsContainer = document.querySelector('.stars');
-            const numStars = 150;
+            const numStars = 100;
 
             for (let i = 0; i < numStars; i++) {
                 const star = document.createElement('div');
@@ -1946,25 +2005,23 @@
             }
         }
 
-        // Создание световых лучей
         function createLightRays() {
             const raysContainer = document.querySelector('.light-rays');
-            const numRays = 8;
+            const numRays = 6;
 
             for (let i = 0; i < numRays; i++) {
                 const ray = document.createElement('div');
                 ray.className = 'light-ray';
-                ray.style.left = (i * 12.5) + '%';
+                ray.style.left = (i * 16.66) + '%';
                 ray.style.animationDelay = (i * 0.5) + 's';
                 ray.style.animationDuration = (8 + Math.random() * 4) + 's';
                 raysContainer.appendChild(ray);
             }
         }
 
-        // Создание светящихся частиц
         function createLightParticles() {
             const particlesContainer = document.querySelector('.light-particles');
-            const numParticles = 30;
+            const numParticles = 20;
 
             for (let i = 0; i < numParticles; i++) {
                 const particle = document.createElement('div');
@@ -1976,10 +2033,9 @@
             }
         }
 
-        // Создание мерцающих точек
         function createSparkles() {
             const sparklesContainer = document.querySelector('.sparkles');
-            const numSparkles = 40;
+            const numSparkles = 25;
 
             for (let i = 0; i < numSparkles; i++) {
                 const sparkle = document.createElement('div');
@@ -1992,21 +2048,12 @@
             }
         }
 
-        // Инициализация всех эффектов
         function initializeAuroraEffects() {
             createStars();
             createLightRays();
             createLightParticles();
             createSparkles();
         }
-
-        // Запуск при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeAuroraEffects();
-            updateHistoryDisplay();
-            checkUserAuth();
-            initializeQuantities();
-        });
     </script>
 </body>
 </html>
