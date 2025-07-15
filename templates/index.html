@@ -160,8 +160,8 @@
             background: #fff;
             padding: 24px 0;
             flex-shrink: 0;
-            order: 2;
-            border-left: 1px solid #f0f0f0;
+            order: 1;
+            border-right: 1px solid #f0f0f0;
         }
 
         .sidebar-title {
@@ -212,7 +212,7 @@
         .content {
             flex: 1;
             padding: 24px 0;
-            order: 1;
+            order: 2;
         }
 
         /* Hero Section */
@@ -431,7 +431,7 @@
 
         /* Products Section */
         .products-section {
-            display: none;
+            display: block;
         }
 
         .products-section.active {
@@ -509,6 +509,57 @@
             margin-top: 8px;
         }
 
+        .product-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .quantity-btn {
+            width: 28px;
+            height: 28px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .quantity-btn:hover:not(:disabled) {
+            border-color: #6f42c1;
+            color: #6f42c1;
+        }
+
+        .quantity-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .plus-btn {
+            background: #6f42c1;
+            color: white;
+            border-color: #6f42c1;
+        }
+
+        .plus-btn:hover {
+            background: #5a369e;
+        }
+
+        .quantity-display {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            min-width: 20px;
+            text-align: center;
+        }
+
         /* Mobile Адаптация */
         @media (max-width: 768px) {
             .header {
@@ -568,7 +619,7 @@
                 border-bottom: 1px solid #f0f0f0;
                 overflow-x: auto;
                 order: 2;
-                border-left: none; /* Remove border on mobile */
+                border-right: none; /* Remove border on mobile */
             }
 
             .sidebar-title {
@@ -806,11 +857,11 @@
             </div>
 
             <div class="header-actions">
-                <a href="/login" class="login-button">Войти</a>
                 <a href="/cart" class="cart-button">
                     🛒 Корзина
                     <span class="cart-count" id="cart-count">{{ cart_count or 0 }}</span>
                 </a>
+                <a href="/login" class="login-button">Войти</a>
             </div>
         </div>
     </header>
@@ -821,11 +872,11 @@
         <main class="content">
             <!-- Products Section -->
             <section class="products-section" id="products-section">
-                <h2 id="products-title">Товары</h2>
+                <h2 id="products-title">Популярные товары</h2>
 
                 <div class="products-grid" id="products-grid">
-                    {% for product in products %}
-                    <div class="product-card" data-category="{{ product.category }}">
+                    {% for product in products[:20] %}
+                    <div class="product-card" data-category="{{ product.category }}" data-product-id="{{ product.id }}">
                         <div class="product-image">
                             {% if product.image.startswith('http') %}
                                 <img src="{{ product.image }}" alt="{{ product.name }}" style="width:100%;height:100%;object-fit:cover;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -839,7 +890,11 @@
                             <div class="product-name">{{ product.name }}</div>
                             <div class="product-price">{{ "%.0f"|format(product.price) }} ₽</div>
                             {% if product.available %}
-                            <button class="add-to-cart" onclick="addToCart({{ product.id }})">В корзину</button>
+                            <div class="product-controls">
+                                <button class="quantity-btn minus-btn" id="minus-{{ product.id }}" onclick="changeQuantity({{ product.id }}, -1)" disabled>−</button>
+                                <span class="quantity-display" id="qty-{{ product.id }}">0</span>
+                                <button class="quantity-btn plus-btn" onclick="changeQuantity({{ product.id }}, 1)">+</button>
+                            </div>
                             {% endif %}
                         </div>
                     </div>
@@ -875,6 +930,9 @@
     <script>
         const products = {{ products | tojson }};
 
+        // Store current quantities
+        const quantities = {};
+
         function showCategoryProducts(category) {
             document.getElementById('products-section').classList.add('active');
 
@@ -893,7 +951,7 @@
             event.target.classList.add('active');
         }
 
-        function addToCart(productId) {
+        function changeQuantity(productId, change) {
             fetch('/update_cart_quantity', {
                 method: 'POST',
                 headers: {
@@ -901,25 +959,53 @@
                 },
                 body: JSON.stringify({
                     'product_id': productId,
-                    'change': 1
+                    'change': change
                 })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
+                    // Update local quantity
+                    quantities[productId] = data.current_quantity;
+                    
+                    // Update display
+                    const qtyDisplay = document.getElementById(`qty-${productId}`);
+                    const minusBtn = document.getElementById(`minus-${productId}`);
+                    
+                    if (qtyDisplay) {
+                        qtyDisplay.textContent = data.current_quantity;
+                    }
+                    
+                    if (minusBtn) {
+                        minusBtn.disabled = data.current_quantity <= 0;
+                    }
+                    
+                    // Update cart count
                     document.getElementById('cart-count').textContent = data.cart_count;
-                    // Show success feedback
-                    event.target.textContent = '✓ Добавлено';
-                    event.target.style.background = '#28a745';
-                    setTimeout(() => {
-                        event.target.textContent = 'В корзину';
-                        event.target.style.background = '#6f42c1';
-                    }, 2000);
+                    
+                    if (change > 0) {
+                        // Show success feedback for additions
+                        const plusBtn = event.target;
+                        const originalText = plusBtn.textContent;
+                        plusBtn.textContent = '✓';
+                        plusBtn.style.background = '#28a745';
+                        setTimeout(() => {
+                            plusBtn.textContent = originalText;
+                            plusBtn.style.background = '#6f42c1';
+                        }, 1000);
+                    }
+                } else {
+                    alert(data.error || 'Ошибка при обновлении корзины');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
+                alert('Ошибка соединения');
             });
+        }
+
+        function addToCart(productId) {
+            changeQuantity(productId, 1);
         }
 
         // Search functionality
