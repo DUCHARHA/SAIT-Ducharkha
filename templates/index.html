@@ -1356,10 +1356,10 @@
 <body>
     <!-- Северное сияние - потрясающий фон -->
     <div class="aurora-background"></div>
-    
+
     <!-- Звездное небо -->
     <div class="stars"></div>
-    
+
     <!-- Слои северного сияния -->
     <div class="aurora-layer aurora-1"></div>
     <div class="aurora-layer aurora-2"></div>
@@ -1367,16 +1367,16 @@
     <div class="aurora-layer aurora-4"></div>
     <div class="aurora-layer aurora-5"></div>
     <div class="aurora-layer aurora-6"></div>
-    
+
     <!-- Световые лучи -->
     <div class="light-rays"></div>
-    
+
     <!-- Светящиеся частицы -->
     <div class="light-particles"></div>
-    
+
     <!-- Мерцающие точки -->
     <div class="sparkles"></div>
-    
+
     <!-- Floating Products Background Animation -->
     <div class="floating-products">
         <div class="floating-product">🍎</div>
@@ -1436,13 +1436,13 @@
                         <div class="product-info">
                             <div class="product-name">{{ product.name }}</div>
                             <div class="product-price">{{ "%.0f"|format(product.price) }} ₽</div>
-                            
+
                             {% if product.stock == 0 %}
                                 <div class="stock-status out-of-stock">Товар закончился</div>
                             {% elif product.stock <= 5 %}
                                 <div class="stock-status low-stock">Осталось: {{ product.stock }} шт</div>
                             {% endif %}
-                            
+
                             {% if product.available and product.stock > 0 %}
                             <div class="product-controls">
                                 <button class="quantity-btn minus-btn" id="minus-{{ product.id }}" onclick="changeQuantity({{ product.id }}, -1)" disabled>−</button>
@@ -1492,7 +1492,7 @@
         function changeQuantity(productId, change) {
             const productCard = document.querySelector(`[data-product-id="${productId}"]`);
             const stockStatus = productCard ? productCard.querySelector('.stock-status') : null;
-            
+
             fetch('/update_cart_quantity', {
                 method: 'POST',
                 headers: {
@@ -1508,7 +1508,7 @@
                 if (data.success) {
                     // Сохраняем актуальное количество
                     cartQuantities[productId] = data.current_quantity;
-                    
+
                     // Обновляем отображение количества
                     const qtyDisplay = document.getElementById(`qty-${productId}`);
                     if (qtyDisplay) {
@@ -1736,8 +1736,63 @@
             }
         });
 
+        // Функция для показа товаров категории
+        function showCategoryProducts(categoryName) {
+            const productsSection = document.getElementById('products-section');
+            const productsGrid = document.getElementById('products-grid');
+
+            // Показываем только товары выбранной категории
+            const allCards = document.querySelectorAll('.product-card');
+            let visibleCount = 0;
+
+            allCards.forEach(card => {
+                const cardCategory = card.dataset.category;
+                if (cardCategory === categoryName) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Обновляем заголовок
+            const productsTitle = document.getElementById('products-title');
+            if (productsTitle) {
+                productsTitle.textContent = `${categoryName} (${visibleCount})`;
+            }
+
+            // Подсвечиваем активную категорию
+            const categoryLinks = document.querySelectorAll('.category-link');
+            categoryLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.textContent.trim() === categoryName) {
+                    link.classList.add('active');
+                }
+            });
+        }
+
+        // Функция для показа всех товаров
+        function showAllProducts() {
+            const allCards = document.querySelectorAll('.product-card');
+            allCards.forEach(card => {
+                card.style.display = 'block';
+            });
+
+            const productsTitle = document.getElementById('products-title');
+            if (productsTitle) {
+                productsTitle.textContent = 'Популярные товары';
+            }
+
+            // Убираем выделение с категорий
+            const categoryLinks = document.querySelectorAll('.category-link');
+            categoryLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+        }
+
         // Инициализация при загрузке страницы
         document.addEventListener('DOMContentLoaded', function() {
+            initializeAuroraEffects();
             updateHistoryDisplay();
             checkUserAuth();
             initializeQuantities();
@@ -1750,7 +1805,7 @@
                 const productId = display.id.replace('qty-', '');
                 const quantity = parseInt(display.textContent) || 0;
                 cartQuantities[productId] = quantity;
-                
+
                 // Обновляем состояние кнопки минус
                 const minusBtn = document.getElementById(`minus-${productId}`);
                 if (minusBtn) {
@@ -1789,7 +1844,7 @@
         function updateAuthUI(user) {
             const headerActions = document.querySelector('.header-actions');
             const loginButton = document.querySelector('.login-button');
-            
+
             if (loginButton && headerActions) {
                 // Создаем новый элемент профиля
                 const profileHTML = `
@@ -1815,13 +1870,12 @@
                                 <span>Любимые товары</span>
                             </a>
                             <a href="#" class="profile-item" onclick="logoutUser()">
-                                <span class="profile-item-icon">🚪</span>
-                                <span>Выйти</span>
+                                <span class="profile-item-icon">🚪</span>The code adds a function to show products by category and fixes category logic.                                <span>Выйти</span>
                             </a>
                         </div>
                     </div>
                 `;
-                
+
                 // Полностью заменяем кнопку "Войти" на профиль
                 loginButton.outerHTML = profileHTML;
             }
@@ -1880,7 +1934,7 @@
         function createStars() {
             const starsContainer = document.querySelector('.stars');
             const numStars = 150;
-            
+
             for (let i = 0; i < numStars; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
@@ -1896,7 +1950,7 @@
         function createLightRays() {
             const raysContainer = document.querySelector('.light-rays');
             const numRays = 8;
-            
+
             for (let i = 0; i < numRays; i++) {
                 const ray = document.createElement('div');
                 ray.className = 'light-ray';
@@ -1911,7 +1965,7 @@
         function createLightParticles() {
             const particlesContainer = document.querySelector('.light-particles');
             const numParticles = 30;
-            
+
             for (let i = 0; i < numParticles; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'light-particle';
@@ -1926,7 +1980,7 @@
         function createSparkles() {
             const sparklesContainer = document.querySelector('.sparkles');
             const numSparkles = 40;
-            
+
             for (let i = 0; i < numSparkles; i++) {
                 const sparkle = document.createElement('div');
                 sparkle.className = 'sparkle';
