@@ -1127,3 +1127,4 @@ def admin_panel():
                          orders=orders, 
                          total_revenue=total_revenue,
                          total_items_sold=total_items_sold,
+                         popular_products=popular_products)
