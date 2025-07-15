@@ -418,9 +418,6 @@ def create_search_index():
             search_index[word].append(product['id'])
     return search_index
 
-# Глобальный индекс поиска
-SEARCH_INDEX = create_search_index()
-
 # Группируем товары по брендам и названиям
 def group_products(products):
     grouped = {}
@@ -592,6 +589,9 @@ products = [
     {'id': 99, 'name': 'Изюм', 'price': 7.00, 'description': 'Изюм без косточек, 500г', 'category': 'Орехи и сухофрукты', 'subcategory': 'Сухофрукты', 'image': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=200&h=200&fit=crop', 'brand': 'Узбекские', 'composition': 'Виноград сушеный', 'expiry': '1 год'},
     {'id': 100, 'name': 'Курага', 'price': 11.25, 'description': 'Курага сушеная, 500г', 'category': 'Орехи и сухофрукты', 'subcategory': 'Сухофрукты', 'image': 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=200&h=200&fit=crop', 'brand': 'Таджикские', 'composition': 'Абрикосы сушеные', 'expiry': '1 год'},
 ]
+
+# Глобальный индекс поиска (создаем после определения products)
+SEARCH_INDEX = create_search_index()
 
 @app.route('/favicon.ico')
 def favicon():
