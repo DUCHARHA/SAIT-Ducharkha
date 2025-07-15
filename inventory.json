@@ -4,7 +4,7 @@
     "active": true
   },
   "29": {
-    "stock": 49,
+    "stock": 46,
     "active": true
   },
   "1": {
@@ -12,7 +12,7 @@
     "active": true
   },
   "31": {
-    "stock": 49,
+    "stock": 43,
     "active": true
   },
   "42": {
@@ -24,7 +24,7 @@
     "active": false
   },
   "30": {
-    "stock": 50,
+    "stock": 47,
     "active": true
   },
   "40": {
@@ -57,6 +57,10 @@
   },
   "4": {
     "stock": 19,
+    "active": true
+  },
+  "41": {
+    "stock": 38,
     "active": true
   }
 }
