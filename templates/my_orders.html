@@ -13,17 +13,80 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: #f5f7fa;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             color: #333;
+            position: relative;
+            overflow-x: hidden;
+            min-height: 100vh;
         }
 
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* Анимация продуктов на фоне */
+        .floating-products {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .floating-product {
+            position: absolute;
+            font-size: 2rem;
+            opacity: 0.08;
+            animation: float 25s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.08;
+            }
+            90% {
+                opacity: 0.08;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .floating-product:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 30s; }
+        .floating-product:nth-child(2) { left: 25%; animation-delay: 3s; animation-duration: 35s; }
+        .floating-product:nth-child(3) { left: 40%; animation-delay: 6s; animation-duration: 28s; }
+        .floating-product:nth-child(4) { left: 55%; animation-delay: 9s; animation-duration: 32s; }
+        .floating-product:nth-child(5) { left: 70%; animation-delay: 12s; animation-duration: 29s; }
+        .floating-product:nth-child(6) { left: 85%; animation-delay: 15s; animation-duration: 33s; }
+
         .header {
-            background: linear-gradient(135deg, #6f42c1 0%, #8b5cf6 100%);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(240, 240, 240, 0.3);
             padding: 12px 0;
-            box-shadow: 0 2px 20px rgba(111, 66, 193, 0.3);
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
             position: sticky;
             top: 0;
             z-index: 1000;
+            height: 64px;
         }
 
         .header-content {
@@ -68,12 +131,17 @@
 
         .logo {
             font-size: 24px;
-            font-weight: bold;
-            color: white;
+            font-weight: 700;
+            color: #6f42c1;
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+
+        .logo::before {
+            content: "🛒";
+            font-size: 28px;
         }
 
         .header-right {
@@ -85,33 +153,34 @@
         }
 
         .cart-link {
-            background-color: rgba(255,255,255,0.15);
-            color: white;
+            background: transparent;
+            color: #333;
             text-decoration: none;
             padding: 8px 12px;
-            border-radius: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
             display: flex;
             align-items: center;
             gap: 6px;
             transition: all 0.3s ease;
             position: relative;
+            font-size: 14px;
         }
 
         .cart-link:hover {
-            background-color: rgba(255,255,255,0.25);
+            background: #f8f8f8;
         }
 
         .cart-count {
-            background-color: #ff6b35;
+            background: #6f42c1;
             color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 10px;
+            padding: 2px 6px;
             font-size: 12px;
-            font-weight: bold;
+            font-weight: 600;
+            margin-left: 8px;
+            min-width: 18px;
+            text-align: center;
         }
 
         .profile-menu {
@@ -119,12 +188,12 @@
         }
 
         .profile-btn {
-            background-color: rgba(255,255,255,0.15);
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
             color: white;
             border: none;
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 24px;
+            padding: 12px;
+            border-radius: 50%;
+            font-size: 20px;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
@@ -132,10 +201,12 @@
             justify-content: center;
             width: 44px;
             height: 44px;
+            box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
         }
 
         .profile-btn:hover {
-            background-color: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
         }
 
         .profile-dropdown {
@@ -191,11 +262,13 @@
         }
 
         .phone-input {
-            background: white;
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
             padding: 25px;
             margin-bottom: 30px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             text-align: center;
         }
 
@@ -208,6 +281,13 @@
             font-size: 16px;
             margin-bottom: 15px;
             text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .phone-input input:focus {
+            outline: none;
+            border-color: #6f42c1;
+            box-shadow: 0 0 0 0.2rem rgba(111, 66, 193, 0.25);
         }
 
         .search-btn {
@@ -217,19 +297,33 @@
             padding: 12px 24px;
             border-radius: 12px;
             font-size: 16px;
-            font-weight: 500;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
         }
 
         .order-card {
-            background: white;
-            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
             padding: 25px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
             position: relative;
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            border-color: #6f42c1;
+            box-shadow: 0 15px 40px rgba(111, 66, 193, 0.2);
         }
 
         .order-header {
@@ -363,6 +457,16 @@
     </style>
 </head>
 <body>
+    <!-- Floating Products Background Animation -->
+    <div class="floating-products">
+        <div class="floating-product">🍎</div>
+        <div class="floating-product">🥕</div>
+        <div class="floating-product">🥛</div>
+        <div class="floating-product">🍞</div>
+        <div class="floating-product">🧀</div>
+        <div class="floating-product">🥩</div>
+    </div>
+
     <div class="header">
         <div class="header-content">
             <div class="header-left">

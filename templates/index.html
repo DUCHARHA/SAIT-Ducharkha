@@ -19,6 +19,8 @@
             color: #000;
             line-height: 1.4;
             min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
         }
 
         @keyframes gradientBG {
@@ -32,6 +34,53 @@
                 background-position: 0% 50%;
             }
         }
+
+        /* Анимация продуктов на фоне */
+        .floating-products {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .floating-product {
+            position: absolute;
+            font-size: 3rem;
+            opacity: 0.1;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.1;
+            }
+            90% {
+                opacity: 0.1;
+            }
+            100% {
+                transform: translateY(-10vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        .floating-product:nth-child(1) { left: 10%; animation-delay: 0s; animation-duration: 25s; }
+        .floating-product:nth-child(2) { left: 20%; animation-delay: 2s; animation-duration: 30s; }
+        .floating-product:nth-child(3) { left: 30%; animation-delay: 4s; animation-duration: 22s; }
+        .floating-product:nth-child(4) { left: 40%; animation-delay: 6s; animation-duration: 28s; }
+        .floating-product:nth-child(5) { left: 50%; animation-delay: 8s; animation-duration: 26s; }
+        .floating-product:nth-child(6) { left: 60%; animation-delay: 10s; animation-duration: 24s; }
+        .floating-product:nth-child(7) { left: 70%; animation-delay: 12s; animation-duration: 32s; }
+        .floating-product:nth-child(8) { left: 80%; animation-delay: 14s; animation-duration: 27s; }
+        .floating-product:nth-child(9) { left: 90%; animation-delay: 16s; animation-duration: 29s; }
+        .floating-product:nth-child(10) { left: 15%; animation-delay: 18s; animation-duration: 23s; }
 
         /* Header точно как у Самоката */
         .header {
@@ -140,30 +189,23 @@
             background: linear-gradient(135deg, #6f42c1, #8b5cf6);
             color: white;
             border: none;
-            padding: 10px 18px;
-            border-radius: 25px;
-            font-size: 14px;
+            padding: 12px;
+            border-radius: 50%;
+            font-size: 20px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
             box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
         }
 
         .profile-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
-        }
-
-        .profile-icon {
-            font-size: 16px;
-            color: #6f42c1;
-        }
-
-        .profile-phone {
-            font-size: 12px;
         }
 
         .profile-dropdown {
@@ -1005,6 +1047,20 @@
     </style>
 </head>
 <body>
+    <!-- Floating Products Background Animation -->
+    <div class="floating-products">
+        <div class="floating-product">🍎</div>
+        <div class="floating-product">🥕</div>
+        <div class="floating-product">🥛</div>
+        <div class="floating-product">🍞</div>
+        <div class="floating-product">🧀</div>
+        <div class="floating-product">🥩</div>
+        <div class="floating-product">🥤</div>
+        <div class="floating-product">🍅</div>
+        <div class="floating-product">🥬</div>
+        <div class="floating-product">🍌</div>
+    </div>
+
     <!-- Header -->
     <header class="header">
         <div class="header-content">
@@ -1408,10 +1464,9 @@
                 // Создаем новый элемент профиля
                 const profileHTML = `
                     <div class="profile-menu">
-                        <div class="profile-btn" onclick="toggleProfileMenu()">
-                            <span class="profile-icon">👨‍💼</span>
-                            <span class="profile-phone">${formatPhone(user.phone)}</span>
-                        </div>
+                        <button class="profile-btn" onclick="toggleProfileMenu()">
+                            👤
+                        </button>
                         <div class="profile-dropdown" id="profile-dropdown">
                             <div class="profile-header">
                                 <div class="profile-phone-full">${formatPhone(user.phone)}</div>
