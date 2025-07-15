@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Дучарха</title>
+    <title>Дучарха - Доставка продуктов</title>
     <style>
         * {
             margin: 0;
@@ -13,19 +14,28 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #ffffff;
+            background-color: #f8f9fa;
             color: #1a1a1a;
             line-height: 1.5;
         }
 
-        /* Header в стиле Самоката */
+        /* Header как у Самоката */
         .header {
-            background: #6633cc;
+            background: #ffffff;
             padding: 0;
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 8px rgba(102, 51, 204, 0.15);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .header-top {
+            background: #6c5ce7;
+            color: white;
+            text-align: center;
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
         }
 
         .header-content {
@@ -37,12 +47,37 @@
             justify-content: space-between;
         }
 
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
         .logo {
-            font-size: 28px;
+            font-size: 32px;
             font-weight: 800;
-            color: white;
+            color: #6c5ce7;
             text-decoration: none;
-            letter-spacing: -0.5px;
+            letter-spacing: -1px;
+        }
+
+        .location-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f8f9fa;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .location-btn:hover {
+            background: #e9ecef;
         }
 
         .header-search {
@@ -54,17 +89,18 @@
 
         .search-input {
             width: 100%;
-            padding: 14px 50px 14px 20px;
-            border: none;
-            border-radius: 12px;
+            padding: 16px 50px 16px 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 16px;
             font-size: 16px;
             background: white;
             outline: none;
-            transition: box-shadow 0.2s;
+            transition: all 0.2s;
         }
 
         .search-input:focus {
-            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
         }
 
         .search-btn {
@@ -72,17 +108,18 @@
             right: 12px;
             top: 50%;
             transform: translateY(-50%);
-            background: none;
+            background: #6c5ce7;
             border: none;
-            font-size: 20px;
+            font-size: 18px;
             cursor: pointer;
-            padding: 8px;
-            border-radius: 8px;
-            transition: background 0.2s;
+            padding: 10px;
+            border-radius: 10px;
+            color: white;
+            transition: all 0.2s;
         }
 
         .search-btn:hover {
-            background: rgba(0, 0, 0, 0.05);
+            background: #5b4cdb;
         }
 
         .header-actions {
@@ -92,11 +129,11 @@
         }
 
         .cart-btn {
-            background: rgba(255, 255, 255, 0.15);
+            background: #6c5ce7;
             color: white;
             border: none;
-            padding: 12px 16px;
-            border-radius: 12px;
+            padding: 16px 20px;
+            border-radius: 16px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
@@ -108,33 +145,34 @@
         }
 
         .cart-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
+            background: #5b4cdb;
+            transform: translateY(-1px);
         }
 
         .cart-count {
             background: #ff3366;
             color: white;
             border-radius: 12px;
-            padding: 2px 8px;
+            padding: 4px 8px;
             font-size: 12px;
             font-weight: 700;
-            min-width: 18px;
+            min-width: 20px;
             text-align: center;
         }
 
         .profile-btn {
-            background: rgba(255, 255, 255, 0.15);
-            color: white;
-            border: none;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
             padding: 12px;
-            border-radius: 12px;
+            border-radius: 16px;
             font-size: 20px;
             cursor: pointer;
             transition: all 0.2s;
         }
 
         .profile-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
+            border-color: #6c5ce7;
+            background: white;
         }
 
         /* Main Content */
@@ -144,101 +182,143 @@
             padding: 32px 20px;
         }
 
-        /* Hero секция как у Самоката */
-        .hero {
-            background: linear-gradient(135deg, #6633cc 0%, #8844ff 100%);
+        /* Hero Banner как у Самоката */
+        .hero-banner {
+            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
             border-radius: 24px;
-            padding: 40px;
-            margin-bottom: 40px;
+            padding: 48px;
+            margin-bottom: 48px;
             color: white;
-            text-align: center;
             position: relative;
             overflow: hidden;
         }
 
-        .hero::before {
+        .hero-banner::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="1.5" fill="white" opacity="0.1"/><circle cx="40" cy="80" r="1" fill="white" opacity="0.1"/></svg>');
-            pointer-events: none;
+            top: -50%;
+            right: -20%;
+            width: 100%;
+            height: 200%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="3" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="2" fill="white" opacity="0.1"/><circle cx="40" cy="80" r="1.5" fill="white" opacity="0.1"/></svg>');
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% { transform: translateX(-100px); }
+            100% { transform: translateX(100px); }
         }
 
         .hero-content {
             position: relative;
             z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .hero h1 {
+        .hero-text {
+            flex: 1;
+        }
+
+        .hero-title {
             font-size: 48px;
             font-weight: 800;
             margin-bottom: 16px;
-            letter-spacing: -1px;
+            line-height: 1.1;
         }
 
-        .hero p {
+        .hero-subtitle {
             font-size: 20px;
             opacity: 0.9;
             margin-bottom: 24px;
         }
 
-        .delivery-time {
-            background: rgba(255, 255, 255, 0.2);
-            display: inline-block;
-            padding: 12px 20px;
+        .delivery-info {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 16px 20px;
             border-radius: 16px;
-            font-weight: 600;
-            font-size: 16px;
+            backdrop-filter: blur(10px);
         }
 
-        /* Categories Grid в стиле Самоката */
-        .categories-section {
+        .delivery-time {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .hero-image {
+            flex: 0 0 200px;
+            text-align: center;
+            font-size: 120px;
+        }
+
+        /* Quick Categories как у Самоката */
+        .quick-categories {
             margin-bottom: 48px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
         }
 
         .section-title {
             font-size: 32px;
             font-weight: 800;
             color: #1a1a1a;
-            margin-bottom: 24px;
-            letter-spacing: -0.5px;
         }
 
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        .view-all-btn {
+            background: #6c5ce7;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .view-all-btn:hover {
+            background: #5b4cdb;
+        }
+
+        .categories-scroll {
+            display: flex;
             gap: 16px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+
+        .categories-scroll::-webkit-scrollbar {
+            display: none;
         }
 
         .category-card {
+            flex: 0 0 160px;
             background: white;
-            border: 2px solid #f5f5f5;
+            border: 2px solid #f1f3f4;
             border-radius: 20px;
             padding: 24px 16px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             position: relative;
-            min-height: 160px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
         }
 
         .category-card:hover {
-            border-color: #6633cc;
+            border-color: #6c5ce7;
             transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(102, 51, 204, 0.15);
-        }
-
-        .category-card.active {
-            border-color: #6633cc;
-            background: #6633cc;
-            color: white;
+            box-shadow: 0 12px 32px rgba(108, 92, 231, 0.15);
         }
 
         .category-icon {
@@ -250,11 +330,57 @@
         .category-name {
             font-size: 14px;
             font-weight: 600;
+            color: #333;
             line-height: 1.3;
-            color: inherit;
         }
 
-        /* Products Grid в стиле Самоката */
+        /* Main Categories Grid */
+        .main-categories {
+            margin-bottom: 48px;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .main-category-card {
+            background: white;
+            border: 2px solid #f1f3f4;
+            border-radius: 20px;
+            padding: 32px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-category-card:hover {
+            border-color: #6c5ce7;
+            transform: translateY(-6px);
+            box-shadow: 0 16px 40px rgba(108, 92, 231, 0.15);
+        }
+
+        .main-category-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .main-category-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            line-height: 1.3;
+        }
+
+        /* Products Section */
         .products-section {
             display: none;
         }
@@ -264,8 +390,8 @@
         }
 
         .back-btn {
-            background: #f5f5f5;
-            border: none;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
             padding: 12px 20px;
             border-radius: 12px;
             font-size: 14px;
@@ -274,11 +400,15 @@
             cursor: pointer;
             margin-bottom: 24px;
             transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .back-btn:hover {
-            background: #eaeaea;
-            color: #333;
+            background: white;
+            border-color: #6c5ce7;
+            color: #6c5ce7;
         }
 
         .products-grid {
@@ -289,23 +419,24 @@
 
         .product-card {
             background: white;
-            border: 2px solid #f5f5f5;
+            border: 2px solid #f1f3f4;
             border-radius: 20px;
             overflow: hidden;
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
             position: relative;
         }
 
         .product-card:hover {
-            border-color: #6633cc;
-            box-shadow: 0 8px 24px rgba(102, 51, 204, 0.1);
+            border-color: #6c5ce7;
+            box-shadow: 0 12px 32px rgba(108, 92, 231, 0.1);
+            transform: translateY(-2px);
         }
 
         .product-image {
             width: 100%;
             height: 200px;
-            background: #f8f8f8;
+            background: #f8f9fa;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -327,9 +458,9 @@
         }
 
         .product-brand {
-            color: #666;
+            color: #6c5ce7;
             font-size: 12px;
-            font-weight: 500;
+            font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 8px;
@@ -337,7 +468,7 @@
 
         .product-name {
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             color: #1a1a1a;
             margin-bottom: 8px;
             line-height: 1.3;
@@ -358,7 +489,7 @@
 
         .product-price {
             font-size: 20px;
-            font-weight: 700;
+            font-weight: 800;
             color: #1a1a1a;
         }
 
@@ -375,14 +506,14 @@
         }
 
         .quantity-btn {
-            width: 36px;
-            height: 36px;
+            width: 40px;
+            height: 40px;
             border-radius: 12px;
-            border: 2px solid #6633cc;
+            border: 2px solid #6c5ce7;
             background: white;
-            color: #6633cc;
+            color: #6c5ce7;
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -391,7 +522,7 @@
         }
 
         .quantity-btn:hover {
-            background: #6633cc;
+            background: #6c5ce7;
             color: white;
         }
 
@@ -408,7 +539,7 @@
 
         .quantity-display {
             font-size: 16px;
-            font-weight: 600;
+            font-weight: 700;
             color: #1a1a1a;
             min-width: 24px;
             text-align: center;
@@ -450,7 +581,7 @@
 
         .no-results {
             text-align: center;
-            padding: 60px 20px;
+            padding: 80px 20px;
             color: #666;
         }
 
@@ -468,12 +599,12 @@
             background: #28a745;
             color: white;
             padding: 16px 24px;
-            border-radius: 12px;
+            border-radius: 16px;
             font-weight: 600;
             z-index: 1000;
             transform: translateX(400px);
             transition: transform 0.3s ease;
-            box-shadow: 0 8px 24px rgba(40, 167, 69, 0.2);
+            box-shadow: 0 8px 32px rgba(40, 167, 69, 0.2);
         }
 
         .notification.show {
@@ -482,145 +613,6 @@
 
         .notification.error {
             background: #dc3545;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .header-content {
-                padding: 12px 16px;
-                flex-wrap: wrap;
-                gap: 12px;
-            }
-
-            .header-search {
-                order: 3;
-                flex-basis: 100%;
-                margin: 0;
-                max-width: none;
-            }
-
-            .search-input {
-                padding: 12px 40px 12px 16px;
-                font-size: 16px;
-            }
-
-            .hero {
-                padding: 32px 24px;
-                margin-bottom: 32px;
-            }
-
-            .hero h1 {
-                font-size: 32px;
-            }
-
-            .hero p {
-                font-size: 16px;
-            }
-
-            .main-content {
-                padding: 24px 16px;
-            }
-
-            .section-title {
-                font-size: 24px;
-            }
-
-            .categories-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 12px;
-            }
-
-            .category-card {
-                padding: 20px 12px;
-                min-height: 120px;
-            }
-
-            .category-icon {
-                font-size: 36px;
-                margin-bottom: 8px;
-            }
-
-            .category-name {
-                font-size: 12px;
-            }
-
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-
-            .product-card {
-                border-radius: 16px;
-            }
-
-            .product-image {
-                height: 160px;
-            }
-
-            .product-emoji {
-                font-size: 60px;
-            }
-
-            .product-info {
-                padding: 16px;
-            }
-
-            .product-name {
-                font-size: 14px;
-            }
-
-            .product-description {
-                font-size: 12px;
-                margin-bottom: 12px;
-            }
-
-            .product-price {
-                font-size: 18px;
-            }
-
-            .quantity-btn {
-                width: 32px;
-                height: 32px;
-                font-size: 16px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero h1 {
-                font-size: 28px;
-            }
-
-            .categories-grid {
-                grid-template-columns: repeat(3, 1fr);
-                gap: 8px;
-            }
-
-            .category-card {
-                padding: 16px 8px;
-                min-height: 100px;
-                border-radius: 16px;
-            }
-
-            .category-icon {
-                font-size: 28px;
-                margin-bottom: 6px;
-            }
-
-            .category-name {
-                font-size: 11px;
-            }
-
-            .product-image {
-                height: 140px;
-            }
-
-            .product-emoji {
-                font-size: 50px;
-            }
-
-            .product-info {
-                padding: 12px;
-            }
         }
 
         /* Profile Dropdown */
@@ -640,6 +632,7 @@
             display: none;
             z-index: 1001;
             margin-top: 8px;
+            border: 2px solid #f1f3f4;
         }
 
         .profile-dropdown.show {
@@ -707,29 +700,217 @@
             cursor: pointer;
             color: #666;
         }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 12px 16px;
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            .logo-section {
+                gap: 12px;
+            }
+
+            .location-btn {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+
+            .header-search {
+                order: 3;
+                flex-basis: 100%;
+                margin: 0;
+                max-width: none;
+            }
+
+            .search-input {
+                padding: 14px 40px 14px 16px;
+                font-size: 16px;
+            }
+
+            .hero-banner {
+                padding: 32px 24px;
+                margin-bottom: 32px;
+            }
+
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 24px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .hero-subtitle {
+                font-size: 16px;
+            }
+
+            .hero-image {
+                font-size: 80px;
+            }
+
+            .main-content {
+                padding: 24px 16px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .categories-scroll {
+                gap: 12px;
+            }
+
+            .category-card {
+                flex: 0 0 120px;
+                padding: 20px 12px;
+            }
+
+            .category-icon {
+                font-size: 36px;
+                margin-bottom: 8px;
+            }
+
+            .category-name {
+                font-size: 12px;
+            }
+
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .main-category-card {
+                padding: 24px 16px;
+                min-height: 140px;
+            }
+
+            .main-category-icon {
+                font-size: 48px;
+                margin-bottom: 12px;
+            }
+
+            .main-category-name {
+                font-size: 16px;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .product-card {
+                border-radius: 16px;
+            }
+
+            .product-image {
+                height: 160px;
+            }
+
+            .product-emoji {
+                font-size: 60px;
+            }
+
+            .product-info {
+                padding: 16px;
+            }
+
+            .product-name {
+                font-size: 14px;
+            }
+
+            .product-description {
+                font-size: 12px;
+                margin-bottom: 12px;
+            }
+
+            .product-price {
+                font-size: 18px;
+            }
+
+            .quantity-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 28px;
+            }
+
+            .hero-image {
+                font-size: 60px;
+            }
+
+            .categories-grid {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .main-category-card {
+                padding: 20px 16px;
+                min-height: 120px;
+            }
+
+            .main-category-icon {
+                font-size: 40px;
+                margin-bottom: 8px;
+            }
+
+            .main-category-name {
+                font-size: 14px;
+            }
+
+            .product-image {
+                height: 140px;
+            }
+
+            .product-emoji {
+                font-size: 50px;
+            }
+
+            .product-info {
+                padding: 12px;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
+        <div class="header-top">
+            ⚡ Доставка за 10-15 минут • Минимальный заказ 200 сом
+        </div>
         <div class="header-content">
-            <a href="/" class="logo">Дучарха</a>
+            <div class="logo-section">
+                <a href="/" class="logo">Дучарха</a>
+                <button class="location-btn">
+                    <span>📍</span>
+                    <span>Душанбе</span>
+                </button>
+            </div>
 
             <div class="header-search">
-                <input type="text" class="search-input" id="search-input" placeholder="Найти товары" autocomplete="off">
+                <input type="text" class="search-input" id="search-input" placeholder="Найти товары..." autocomplete="off">
                 <button class="search-btn" onclick="searchProducts()">🔍</button>
             </div>
 
             <div class="header-actions">
                 <a href="/cart" class="cart-btn">
-                    🛒 Корзина <span class="cart-count" id="cart-count">{{ cart_count }}</span>
+                    🛒 <span class="cart-count" id="cart-count">{{ cart_count }}</span>
                 </a>
 
                 <div class="profile-menu">
                     <button class="profile-btn" onclick="toggleProfileMenu()">👤</button>
                     <div class="profile-dropdown" id="profile-dropdown">
                         <div id="user-info" style="display: none; padding: 12px 20px; border-bottom: 1px solid #eee; margin-bottom: 8px;">
-                            <div style="font-weight: 600; color: #6633cc;" id="user-phone"></div>
+                            <div style="font-weight: 600; color: #6c5ce7;" id="user-phone"></div>
                             <div style="font-size: 12px; color: #666;">Авторизован</div>
                         </div>
 
@@ -770,22 +951,56 @@
 
     <!-- Main Content -->
     <main class="main-content">
-        <!-- Hero Section -->
-        <section class="hero">
+        <!-- Hero Banner -->
+        <section class="hero-banner">
             <div class="hero-content">
-                <h1>Доставка продуктов</h1>
-                <p>Свежие продукты к вашему столу</p>
-                <div class="delivery-time">⚡ Доставка за 10-15 минут</div>
+                <div class="hero-text">
+                    <h1 class="hero-title">Доставка продуктов в Душанбе</h1>
+                    <p class="hero-subtitle">Свежие продукты к вашему столу каждый день</p>
+                    <div class="delivery-info">
+                        <span>⚡</span>
+                        <span class="delivery-time">Доставка за 10-15 минут</span>
+                    </div>
+                </div>
+                <div class="hero-image">🛒</div>
             </div>
         </section>
 
-        <!-- Categories Section -->
-        <section class="categories-section" id="categories-section">
-            <h2 class="section-title">Категории</h2>
+        <!-- Quick Categories -->
+        <section class="quick-categories" id="categories-section">
+            <div class="section-header">
+                <h2 class="section-title">Популярные категории</h2>
+                <a href="#" class="view-all-btn">Все категории</a>
+            </div>
+            <div class="categories-scroll">
+                {% set popular_categories = [
+                    ('Молочные продукты', '🥛'),
+                    ('Овощи', '🥕'),
+                    ('Фрукты', '🍎'),
+                    ('Мясо и птица', '🥩'),
+                    ('Напитки', '🥤'),
+                    ('Хлебобулочные', '🍞'),
+                    ('Сладости и снеки', '🍫'),
+                    ('Консервы', '🥫')
+                ] %}
+                {% for category_name, emoji in popular_categories %}
+                <div class="category-card" onclick="showCategoryProducts('{{ category_name }}')">
+                    <div class="category-icon">{{ emoji }}</div>
+                    <div class="category-name">{{ category_name }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <!-- Main Categories Grid -->
+        <section class="main-categories">
+            <div class="section-header">
+                <h2 class="section-title">Все категории</h2>
+            </div>
             <div class="categories-grid">
                 {% for category in categories %}
-                <div class="category-card" onclick="showCategoryProducts('{{ category.name }}')">
-                    <div class="category-icon">
+                <div class="main-category-card" onclick="showCategoryProducts('{{ category.name }}')">
+                    <div class="main-category-icon">
                         {% if category.name == 'Молочные продукты' %}🥛
                         {% elif category.name == 'Мясо и птица' %}🥩
                         {% elif category.name == 'Овощи' %}🥕
@@ -810,7 +1025,7 @@
                         {% elif category.name == 'Орехи и сухофрукты' %}🥜
                         {% else %}📦{% endif %}
                     </div>
-                    <div class="category-name">{{ category.name }}</div>
+                    <div class="main-category-name">{{ category.name }}</div>
                 </div>
                 {% endfor %}
             </div>
@@ -819,7 +1034,9 @@
         <!-- Products Section -->
         <section class="products-section" id="products-section">
             <button class="back-btn" onclick="showCategories()">← Назад к категориям</button>
-            <h2 class="section-title" id="products-title">Товары</h2>
+            <div class="section-header">
+                <h2 class="section-title" id="products-title">Товары</h2>
+            </div>
             <div class="products-grid" id="products-grid">
                 {% for product in products %}
                 <div class="product-card" data-category="{{ product.category }}" data-brand="{{ product.brand or '' }}">
@@ -894,7 +1111,7 @@
     <div class="modal-overlay" id="help-overlay" onclick="closeHelpModal()"></div>
     <div class="modal" id="help-modal">
         <button class="modal-close" onclick="closeHelpModal()">×</button>
-        <h3 style="color: #6633cc; margin-bottom: 16px;">💜 Служба поддержки Дучарха</h3>
+        <h3 style="color: #6c5ce7; margin-bottom: 16px;">💜 Служба поддержки Дучарха</h3>
         <p style="color: #666; margin-bottom: 16px;">Остались вопросы? Мы поможем!</p>
 
         <a href="tel:+992971844884" class="profile-item" style="margin: 8px 0; background: #f8f9fa; border-radius: 12px;">
@@ -946,6 +1163,7 @@
         function showCategoryProducts(category) {
             currentCategory = category;
             document.getElementById('categories-section').style.display = 'none';
+            document.querySelector('.main-categories').style.display = 'none';
             document.getElementById('products-section').classList.add('show');
             document.getElementById('search-results').classList.remove('show');
 
@@ -962,6 +1180,7 @@
         // Show categories
         function showCategories() {
             document.getElementById('categories-section').style.display = 'block';
+            document.querySelector('.main-categories').style.display = 'block';
             document.getElementById('products-section').classList.remove('show');
             document.getElementById('search-results').classList.remove('show');
         }
@@ -1043,6 +1262,7 @@
             }
 
             document.getElementById('categories-section').style.display = 'none';
+            document.querySelector('.main-categories').style.display = 'none';
             document.getElementById('products-section').classList.remove('show');
             resultsSection.classList.add('show');
         }
