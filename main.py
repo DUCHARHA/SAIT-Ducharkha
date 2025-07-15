@@ -723,7 +723,7 @@ def update_cart_quantity():
         'success': True,
         'cart_count': total_cart_count,
         'current_quantity': new_quantity,
-        'stock_remaining': stock_info['stock'] - new_quantity
+        'stock_remaining': max(0, stock_info['stock'] - new_quantity)
     })
 
 @app.route('/cart')

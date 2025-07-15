@@ -13,19 +13,36 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #fff;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
             color: #000;
             line-height: 1.4;
+            min-height: 100vh;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
         }
 
         /* Header точно как у Самоката */
         .header {
-            background: #fff;
-            border-bottom: 1px solid #f0f0f0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(240, 240, 240, 0.3);
             position: sticky;
             top: 0;
             z-index: 1000;
             height: 64px;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
         }
 
         .header-content {
@@ -97,20 +114,21 @@
         }
 
         .login-button {
-            background: white;
-            color: #6f42c1;
-            border: 2px solid #6f42c1;
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: white;
+            border: none;
             padding: 12px 24px;
-            border-radius: 12px;
+            border-radius: 25px;
             font-size: 16px;
             font-weight: 600;
             text-decoration: none;
             transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
         }
 
         .login-button:hover {
-            background: #6f42c1;
-            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
         }
 
         /* Profile Menu Styles */
@@ -119,11 +137,11 @@
         }
 
         .profile-btn {
-            background: white;
-            color: #6f42c1;
-            border: 2px solid #6f42c1;
-            padding: 8px 16px;
-            border-radius: 12px;
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 25px;
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
@@ -131,15 +149,17 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
         }
 
         .profile-btn:hover {
-            background: #6f42c1;
-            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
         }
 
         .profile-icon {
             font-size: 16px;
+            color: #6f42c1;
         }
 
         .profile-phone {
@@ -246,11 +266,14 @@
         /* Sidebar точно как у Самоката */
         .sidebar {
             width: 240px;
-            background: #fff;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(15px);
             padding: 24px 0;
             flex-shrink: 0;
             order: 1;
-            border-right: 1px solid #f0f0f0;
+            border-right: 1px solid rgba(240, 240, 240, 0.3);
+            border-radius: 0 20px 20px 0;
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.05);
         }
 
         .sidebar-title {
@@ -332,7 +355,7 @@
 
         .promo-card {
             background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
-            border-radius: 12px;
+            border-radius: 20px;
             padding: 24px;
             color: white;
             text-decoration: none;
@@ -342,6 +365,13 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(74, 144, 226, 0.3);
+        }
+
+        .promo-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 20px 50px rgba(74, 144, 226, 0.4);
         }
 
         .promo-card.orange {
@@ -547,16 +577,19 @@
         }
 
         .product-card {
-            background: white;
-            border: 1px solid #f0f0f0;
-            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
             overflow: hidden;
-            transition: all 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
         .product-card:hover {
+            transform: translateY(-5px) scale(1.02);
             border-color: #6f42c1;
-            box-shadow: 0 4px 12px rgba(111,66,193,0.15);
+            box-shadow: 0 15px 40px rgba(111, 66, 193, 0.3);
         }
 
         .product-image {
@@ -632,13 +665,16 @@
         }
 
         .plus-btn {
-            background: #6f42c1;
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
             color: white;
-            border-color: #6f42c1;
+            border: none;
+            box-shadow: 0 2px 10px rgba(111, 66, 193, 0.3);
         }
 
         .plus-btn:hover {
-            background: #5a369e;
+            background: linear-gradient(135deg, #5a369e, #7c3aed);
+            transform: scale(1.1);
+            box-shadow: 0 4px 15px rgba(111, 66, 193, 0.4);
         }
 
         .quantity-display {
@@ -647,6 +683,42 @@
             color: #333;
             min-width: 20px;
             text-align: center;
+        }
+
+        /* Статус товаров */
+        .stock-status {
+            font-size: 12px;
+            font-weight: 600;
+            margin: 4px 0;
+            padding: 2px 6px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stock-status.low-stock {
+            background: linear-gradient(135deg, #ffc107, #ff8c00);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+
+        .stock-status.out-of-stock {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
         }
 
         /* Mobile Адаптация */
@@ -978,7 +1050,14 @@
                         <div class="product-info">
                             <div class="product-name">{{ product.name }}</div>
                             <div class="product-price">{{ "%.0f"|format(product.price) }} ₽</div>
-                            {% if product.available %}
+                            
+                            {% if product.stock == 0 %}
+                                <div class="stock-status out-of-stock">Товар закончился</div>
+                            {% elif product.stock <= 5 %}
+                                <div class="stock-status low-stock">Осталось: {{ product.stock }} шт</div>
+                            {% endif %}
+                            
+                            {% if product.available and product.stock > 0 %}
                             <div class="product-controls">
                                 <button class="quantity-btn minus-btn" id="minus-{{ product.id }}" onclick="changeQuantity({{ product.id }}, -1)" disabled>−</button>
                                 <span class="quantity-display" id="qty-{{ product.id }}">0</span>
@@ -1025,6 +1104,9 @@
 
         // Функция для изменения количества товаров в корзине
         function changeQuantity(productId, change) {
+            const productCard = document.querySelector(`[data-product-id="${productId}"]`);
+            const stockStatus = productCard ? productCard.querySelector('.stock-status') : null;
+            
             fetch('/update_cart_quantity', {
                 method: 'POST',
                 headers: {
@@ -1057,6 +1139,26 @@
                     const cartCount = document.getElementById('cart-count');
                     if (cartCount) {
                         cartCount.textContent = data.cart_count;
+                    }
+
+                    // Обновляем статус остатка товара
+                    if (stockStatus && data.stock_remaining !== undefined) {
+                        const remaining = data.stock_remaining;
+                        if (remaining === 0) {
+                            stockStatus.textContent = 'Товар закончился';
+                            stockStatus.className = 'stock-status out-of-stock';
+                            // Деактивируем кнопку плюс
+                            const plusBtn = productCard.querySelector('.plus-btn');
+                            if (plusBtn) plusBtn.disabled = true;
+                        } else if (remaining <= 5) {
+                            stockStatus.textContent = `Осталось: ${remaining} шт`;
+                            stockStatus.className = 'stock-status low-stock';
+                        } else {
+                            // Убираем статус если больше 5
+                            if (stockStatus.classList.contains('low-stock') || stockStatus.classList.contains('out-of-stock')) {
+                                stockStatus.style.display = 'none';
+                            }
+                        }
                     }
 
                     // Показываем уведомление
@@ -1307,7 +1409,7 @@
                 const profileHTML = `
                     <div class="profile-menu">
                         <div class="profile-btn" onclick="toggleProfileMenu()">
-                            <span class="profile-icon">👤</span>
+                            <span class="profile-icon">👨‍💼</span>
                             <span class="profile-phone">${formatPhone(user.phone)}</span>
                         </div>
                         <div class="profile-dropdown" id="profile-dropdown">
