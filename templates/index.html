@@ -432,8 +432,7 @@
             display: flex;
             align-items: center;
             height: 100%;
-            justify-content: center;
-            position: relative;
+            gap: 16px;
         }
 
         .logo {
@@ -443,18 +442,12 @@
             color: #6f42c1;
             font-size: 24px;
             font-weight: 700;
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
+            flex-shrink: 0;
         }
-
-        
 
         .search-container {
             flex: 1;
-            margin-right: 16px;
             position: relative;
-            max-width: 400px;
         }
 
         .search-input {
@@ -1490,7 +1483,7 @@
 
                         <div class="product-info">
                             <div class="product-name">{{ product.name }}</div>
-                            <div class="product-price">{{ "%.0f"|format(product.price) }} ₽</div>
+                            <div class="product-price">{{ "%.0f"|format(product.price) }} с</div>
 
                             {% if product.stock == 0 %}
                                 <div class="stock-status out-of-stock">Товар закончился</div>
@@ -1698,7 +1691,7 @@
                         </div>
                         <div class="product-info">
                             <h3 class="product-name">${product.name}</h3>
-                            <div class="product-price">${product.price.toFixed(2)} сом</div>
+                            <div class="product-price">${product.price.toFixed(0)} с</div>
                             <div class="stock-status ${stockClass}">${stockStatus}</div>
                             <div class="product-actions">
                                 <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)" ${product.stock <= 0 ? 'disabled' : ''}>−</button>
