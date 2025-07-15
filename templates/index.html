@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Дучарха - Доставка продуктов</title>
+    <title>Дучарха — доставка продуктов за 15 минут</title>
     <style>
         * {
             margin: 0;
@@ -13,113 +13,116 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f8f9fa;
-            color: #1a1a1a;
-            line-height: 1.5;
+            font-family: "YS Text", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background-color: #fff;
+            color: #000;
+            line-height: 1.4;
         }
 
-        /* Header как у Самоката */
+        /* Header точно как у Самоката */
         .header {
-            background: #ffffff;
-            padding: 0;
+            background: #fff;
+            box-shadow: 0 1px 0 0 rgba(0,0,0,.08);
             position: sticky;
             top: 0;
             z-index: 1000;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-        }
-
-        .header-top {
-            background: #6c5ce7;
-            color: white;
-            text-align: center;
-            padding: 8px 16px;
-            font-size: 14px;
-            font-weight: 500;
         }
 
         .header-content {
-            max-width: 1200px;
+            max-width: 1280px;
             margin: 0 auto;
-            padding: 16px 20px;
+            padding: 0 20px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-        }
-
-        .logo-section {
-            display: flex;
-            align-items: center;
-            gap: 24px;
+            height: 72px;
         }
 
         .logo {
-            font-size: 32px;
-            font-weight: 800;
-            color: #6c5ce7;
+            margin-right: 32px;
             text-decoration: none;
-            letter-spacing: -1px;
+            color: #000;
         }
 
-        .location-btn {
+        .logo-text {
+            font-size: 24px;
+            font-weight: 700;
+            color: #6366f1;
+        }
+
+        .delivery-address {
             display: flex;
             align-items: center;
-            gap: 8px;
-            background: #f8f9fa;
-            border: none;
-            padding: 12px 16px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
+            margin-right: 24px;
             cursor: pointer;
-            transition: all 0.2s;
+            padding: 8px 12px;
+            border-radius: 12px;
+            transition: background-color 0.2s;
         }
 
-        .location-btn:hover {
-            background: #e9ecef;
+        .delivery-address:hover {
+            background-color: #f3f4f6;
         }
 
-        .header-search {
+        .delivery-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            color: #6366f1;
+        }
+
+        .delivery-text {
+            font-size: 14px;
+            font-weight: 500;
+            color: #000;
+        }
+
+        .delivery-time {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .search-container {
             flex: 1;
-            max-width: 500px;
-            margin: 0 40px;
+            max-width: 520px;
+            margin: 0 24px;
             position: relative;
         }
 
         .search-input {
             width: 100%;
-            padding: 16px 50px 16px 20px;
-            border: 2px solid #e9ecef;
-            border-radius: 16px;
+            height: 48px;
+            padding: 0 48px 0 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
             font-size: 16px;
-            background: white;
             outline: none;
-            transition: all 0.2s;
+            transition: border-color 0.2s;
         }
 
         .search-input:focus {
-            border-color: #6c5ce7;
-            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+            border-color: #6366f1;
         }
 
-        .search-btn {
+        .search-input::placeholder {
+            color: #9ca3af;
+        }
+
+        .search-button {
             position: absolute;
             right: 12px;
             top: 50%;
             transform: translateY(-50%);
-            background: #6c5ce7;
+            background: none;
             border: none;
-            font-size: 18px;
             cursor: pointer;
-            padding: 10px;
-            border-radius: 10px;
-            color: white;
-            transition: all 0.2s;
+            padding: 8px;
+            border-radius: 6px;
         }
 
-        .search-btn:hover {
-            background: #5b4cdb;
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            color: #6b7280;
         }
 
         .header-actions {
@@ -128,104 +131,89 @@
             gap: 16px;
         }
 
-        .cart-btn {
-            background: #6c5ce7;
-            color: white;
-            border: none;
-            padding: 16px 20px;
-            border-radius: 16px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
+        .cart-button {
             display: flex;
             align-items: center;
-            gap: 8px;
+            padding: 12px 16px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
             text-decoration: none;
-            transition: all 0.2s;
+            transition: background-color 0.2s;
         }
 
-        .cart-btn:hover {
-            background: #5b4cdb;
-            transform: translateY(-1px);
+        .cart-button:hover {
+            background: #5856eb;
+        }
+
+        .cart-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
         }
 
         .cart-count {
-            background: #ff3366;
+            background: #ef4444;
             color: white;
-            border-radius: 12px;
-            padding: 4px 8px;
+            border-radius: 10px;
+            padding: 2px 6px;
             font-size: 12px;
-            font-weight: 700;
+            font-weight: 600;
+            margin-left: 8px;
             min-width: 20px;
             text-align: center;
         }
 
-        .profile-btn {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            padding: 12px;
-            border-radius: 16px;
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .profile-btn:hover {
-            border-color: #6c5ce7;
+        .profile-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
             background: white;
-        }
-
-        /* Main Content */
-        .main-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px 20px;
-        }
-
-        /* Hero Banner как у Самоката */
-        .hero-banner {
-            background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-            border-radius: 24px;
-            padding: 48px;
-            margin-bottom: 48px;
-            color: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             position: relative;
-            overflow: hidden;
         }
 
-        .hero-banner::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -20%;
-            width: 100%;
-            height: 200%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="3" fill="white" opacity="0.1"/><circle cx="80" cy="40" r="2" fill="white" opacity="0.1"/><circle cx="40" cy="80" r="1.5" fill="white" opacity="0.1"/></svg>');
-            animation: float 20s infinite linear;
+        .profile-icon {
+            width: 24px;
+            height: 24px;
+            color: #6b7280;
         }
 
-        @keyframes float {
-            0% { transform: translateX(-100px); }
-            100% { transform: translateX(100px); }
+        /* Hero Banner точно как у Самоката */
+        .hero {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+            padding: 48px 0;
+            margin-bottom: 40px;
         }
 
         .hero-content {
-            position: relative;
-            z-index: 1;
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
         }
 
         .hero-text {
             flex: 1;
+            max-width: 600px;
         }
 
         .hero-title {
             font-size: 48px;
-            font-weight: 800;
-            margin-bottom: 16px;
+            font-weight: 700;
             line-height: 1.1;
+            margin-bottom: 16px;
         }
 
         .hero-subtitle {
@@ -234,181 +222,141 @@
             margin-bottom: 24px;
         }
 
-        .delivery-info {
+        .hero-features {
             display: flex;
-            align-items: center;
-            gap: 16px;
-            background: rgba(255, 255, 255, 0.15);
-            padding: 16px 20px;
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
+            gap: 32px;
+            margin-bottom: 32px;
         }
 
-        .delivery-time {
-            font-size: 18px;
-            font-weight: 700;
-        }
-
-        .hero-image {
-            flex: 0 0 200px;
-            text-align: center;
-            font-size: 120px;
-        }
-
-        /* Quick Categories как у Самоката */
-        .quick-categories {
-            margin-bottom: 48px;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-
-        .section-title {
-            font-size: 32px;
-            font-weight: 800;
-            color: #1a1a1a;
-        }
-
-        .view-all-btn {
-            background: #6c5ce7;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.2s;
-        }
-
-        .view-all-btn:hover {
-            background: #5b4cdb;
-        }
-
-        .categories-scroll {
-            display: flex;
-            gap: 16px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-
-        .categories-scroll::-webkit-scrollbar {
-            display: none;
-        }
-
-        .category-card {
-            flex: 0 0 160px;
-            background: white;
-            border: 2px solid #f1f3f4;
-            border-radius: 20px;
-            padding: 24px 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .category-card:hover {
-            border-color: #6c5ce7;
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(108, 92, 231, 0.15);
-        }
-
-        .category-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-            display: block;
-        }
-
-        .category-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #333;
-            line-height: 1.3;
-        }
-
-        /* Main Categories Grid */
-        .main-categories {
-            margin-bottom: 48px;
-        }
-
-        .categories-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .main-category-card {
-            background: white;
-            border: 2px solid #f1f3f4;
-            border-radius: 20px;
-            padding: 32px 24px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            min-height: 180px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .main-category-card:hover {
-            border-color: #6c5ce7;
-            transform: translateY(-6px);
-            box-shadow: 0 16px 40px rgba(108, 92, 231, 0.15);
-        }
-
-        .main-category-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-            display: block;
-        }
-
-        .main-category-name {
-            font-size: 18px;
-            font-weight: 700;
-            color: #333;
-            line-height: 1.3;
-        }
-
-        /* Products Section */
-        .products-section {
-            display: none;
-        }
-
-        .products-section.show {
-            display: block;
-        }
-
-        .back-btn {
-            background: #f8f9fa;
-            border: 2px solid #e9ecef;
-            padding: 12px 20px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 600;
-            color: #666;
-            cursor: pointer;
-            margin-bottom: 24px;
-            transition: all 0.2s;
+        .hero-feature {
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .back-btn:hover {
+        .hero-feature-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .hero-feature-text {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .hero-image {
+            flex: 0 0 240px;
+            text-align: center;
+            font-size: 120px;
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Categories как у Самоката */
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .view-all-link {
+            color: #6366f1;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .view-all-link:hover {
+            text-decoration: underline;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .category-card {
             background: white;
-            border-color: #6c5ce7;
-            color: #6c5ce7;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .category-card:hover {
+            border-color: #6366f1;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .category-icon {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 16px;
+            font-size: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .category-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 8px;
+        }
+
+        .category-description {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        /* Products Grid */
+        .products-section {
+            display: none;
+        }
+
+        .products-section.active {
+            display: block;
+        }
+
+        .back-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: none;
+            color: #6366f1;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-bottom: 24px;
+            padding: 8px 0;
+        }
+
+        .back-icon {
+            width: 20px;
+            height: 20px;
         }
 
         .products-grid {
@@ -419,27 +367,25 @@
 
         .product-card {
             background: white;
-            border: 2px solid #f1f3f4;
-            border-radius: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
             overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
+            transition: all 0.2s;
         }
 
         .product-card:hover {
-            border-color: #6c5ce7;
-            box-shadow: 0 12px 32px rgba(108, 92, 231, 0.1);
-            transform: translateY(-2px);
+            border-color: #6366f1;
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
         }
 
         .product-image {
             width: 100%;
             height: 200px;
-            background: #f8f9fa;
+            background: #f9fafb;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 64px;
             position: relative;
         }
 
@@ -449,71 +395,78 @@
             object-fit: cover;
         }
 
-        .product-emoji {
-            font-size: 80px;
+        .product-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #ef4444;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
         }
 
         .product-info {
-            padding: 20px;
+            padding: 16px;
         }
 
         .product-brand {
-            color: #6c5ce7;
             font-size: 12px;
-            font-weight: 600;
+            color: #6b7280;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            margin-bottom: 8px;
+            margin-bottom: 4px;
         }
 
         .product-name {
             font-size: 16px;
-            font-weight: 700;
-            color: #1a1a1a;
+            font-weight: 600;
+            color: #000;
             margin-bottom: 8px;
             line-height: 1.3;
         }
 
-        .product-description {
+        .product-weight {
             font-size: 14px;
-            color: #666;
-            margin-bottom: 16px;
-            line-height: 1.4;
+            color: #6b7280;
+            margin-bottom: 12px;
         }
 
         .product-footer {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
         }
 
         .product-price {
             font-size: 20px;
-            font-weight: 800;
-            color: #1a1a1a;
+            font-weight: 700;
+            color: #000;
         }
 
-        .price-currency {
-            font-size: 16px;
-            color: #666;
-            font-weight: 500;
+        .product-old-price {
+            font-size: 14px;
+            color: #9ca3af;
+            text-decoration: line-through;
+            margin-left: 8px;
         }
 
         .quantity-controls {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
 
-        .quantity-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            border: 2px solid #6c5ce7;
+        .quantity-button {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
             background: white;
-            color: #6c5ce7;
-            font-size: 18px;
-            font-weight: 700;
+            color: #6b7280;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -521,44 +474,38 @@
             transition: all 0.2s;
         }
 
-        .quantity-btn:hover {
-            background: #6c5ce7;
-            color: white;
+        .quantity-button:hover {
+            border-color: #6366f1;
+            color: #6366f1;
         }
 
-        .quantity-btn:disabled {
-            border-color: #ddd;
-            color: #ccc;
+        .quantity-button:disabled {
+            opacity: 0.5;
             cursor: not-allowed;
-        }
-
-        .quantity-btn:disabled:hover {
-            background: white;
-            color: #ccc;
         }
 
         .quantity-display {
             font-size: 16px;
-            font-weight: 700;
-            color: #1a1a1a;
+            font-weight: 600;
+            color: #000;
             min-width: 24px;
             text-align: center;
         }
 
-        .stock-warning {
-            background: #fff3cd;
-            color: #856404;
-            padding: 8px 12px;
+        .add-to-cart {
+            background: #6366f1;
+            color: white;
+            border: none;
+            padding: 8px 16px;
             border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
         }
 
-        .out-of-stock {
-            background: #f8d7da;
-            color: #721c24;
+        .add-to-cart:hover {
+            background: #5856eb;
         }
 
         /* Search Results */
@@ -566,7 +513,7 @@
             display: none;
         }
 
-        .search-results.show {
+        .search-results.active {
             display: block;
         }
 
@@ -575,64 +522,141 @@
         }
 
         .results-count {
-            color: #666;
             font-size: 16px;
+            color: #6b7280;
+            margin-top: 8px;
         }
 
         .no-results {
             text-align: center;
             padding: 80px 20px;
-            color: #666;
+            color: #6b7280;
         }
 
-        .no-results h3 {
+        .no-results-title {
             font-size: 24px;
-            margin-bottom: 12px;
-            color: #333;
-        }
-
-        /* Notifications */
-        .notification {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            background: #28a745;
-            color: white;
-            padding: 16px 24px;
-            border-radius: 16px;
             font-weight: 600;
-            z-index: 1000;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            box-shadow: 0 8px 32px rgba(40, 167, 69, 0.2);
+            color: #000;
+            margin-bottom: 8px;
         }
 
-        .notification.show {
-            transform: translateX(0);
-        }
+        /* Mobile */
+        @media (max-width: 768px) {
+            .header-content {
+                height: 64px;
+                padding: 0 16px;
+                flex-wrap: wrap;
+            }
 
-        .notification.error {
-            background: #dc3545;
+            .logo {
+                margin-right: 16px;
+            }
+
+            .delivery-address {
+                order: 1;
+                margin-right: auto;
+            }
+
+            .search-container {
+                order: 3;
+                flex-basis: 100%;
+                margin: 12px 0 0 0;
+                max-width: none;
+            }
+
+            .header-actions {
+                order: 2;
+                gap: 12px;
+            }
+
+            .hero {
+                padding: 32px 0;
+            }
+
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 32px;
+            }
+
+            .hero-title {
+                font-size: 32px;
+            }
+
+            .hero-subtitle {
+                font-size: 18px;
+            }
+
+            .hero-features {
+                justify-content: center;
+                gap: 24px;
+            }
+
+            .hero-image {
+                flex: none;
+                font-size: 80px;
+            }
+
+            .main-content {
+                padding: 0 16px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .category-card {
+                padding: 16px;
+            }
+
+            .category-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 36px;
+                margin-bottom: 12px;
+            }
+
+            .category-name {
+                font-size: 16px;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .product-info {
+                padding: 12px;
+            }
+
+            .product-name {
+                font-size: 14px;
+            }
+
+            .product-price {
+                font-size: 16px;
+            }
         }
 
         /* Profile Dropdown */
-        .profile-menu {
-            position: relative;
-        }
-
         .profile-dropdown {
             position: absolute;
             top: 100%;
             right: 0;
             background: white;
-            border-radius: 16px;
-            padding: 16px 0;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            padding: 8px 0;
             min-width: 200px;
             display: none;
-            z-index: 1001;
+            z-index: 1000;
             margin-top: 8px;
-            border: 2px solid #f1f3f4;
         }
 
         .profile-dropdown.show {
@@ -643,304 +667,170 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 12px 20px;
-            color: #333;
+            padding: 12px 16px;
+            color: #000;
             text-decoration: none;
+            font-size: 14px;
             transition: background-color 0.2s;
         }
 
         .profile-item:hover {
-            background-color: #f8f9fa;
+            background-color: #f9fafb;
         }
 
         .profile-item-icon {
-            font-size: 18px;
             width: 20px;
-            text-align: center;
+            height: 20px;
+            color: #6b7280;
         }
 
-        /* Modal Styles */
-        .modal-overlay {
+        /* Notifications */
+        .notification {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 9998;
-            display: none;
-        }
-
-        .modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            z-index: 9999;
-            max-width: 500px;
-            width: 90%;
-            display: none;
-        }
-
-        .modal.show, .modal-overlay.show {
-            display: block;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 16px;
+            top: 88px;
             right: 20px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            max-width: 320px;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .notification.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .notification-icon {
+            width: 20px;
+            height: 20px;
+            margin-top: 2px;
+        }
+
+        .notification-icon.success {
+            color: #10b981;
+        }
+
+        .notification-icon.error {
+            color: #ef4444;
+        }
+
+        .notification-text {
+            flex: 1;
+            font-size: 14px;
+            color: #000;
+        }
+
+        .notification-close {
             background: none;
             border: none;
-            font-size: 24px;
+            color: #6b7280;
             cursor: pointer;
-            color: #666;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .header-content {
-                padding: 12px 16px;
-                flex-wrap: wrap;
-                gap: 12px;
-            }
-
-            .logo-section {
-                gap: 12px;
-            }
-
-            .location-btn {
-                font-size: 12px;
-                padding: 8px 12px;
-            }
-
-            .header-search {
-                order: 3;
-                flex-basis: 100%;
-                margin: 0;
-                max-width: none;
-            }
-
-            .search-input {
-                padding: 14px 40px 14px 16px;
-                font-size: 16px;
-            }
-
-            .hero-banner {
-                padding: 32px 24px;
-                margin-bottom: 32px;
-            }
-
-            .hero-content {
-                flex-direction: column;
-                text-align: center;
-                gap: 24px;
-            }
-
-            .hero-title {
-                font-size: 32px;
-            }
-
-            .hero-subtitle {
-                font-size: 16px;
-            }
-
-            .hero-image {
-                font-size: 80px;
-            }
-
-            .main-content {
-                padding: 24px 16px;
-            }
-
-            .section-title {
-                font-size: 24px;
-            }
-
-            .categories-scroll {
-                gap: 12px;
-            }
-
-            .category-card {
-                flex: 0 0 120px;
-                padding: 20px 12px;
-            }
-
-            .category-icon {
-                font-size: 36px;
-                margin-bottom: 8px;
-            }
-
-            .category-name {
-                font-size: 12px;
-            }
-
-            .categories-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 16px;
-            }
-
-            .main-category-card {
-                padding: 24px 16px;
-                min-height: 140px;
-            }
-
-            .main-category-icon {
-                font-size: 48px;
-                margin-bottom: 12px;
-            }
-
-            .main-category-name {
-                font-size: 16px;
-            }
-
-            .products-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 12px;
-            }
-
-            .product-card {
-                border-radius: 16px;
-            }
-
-            .product-image {
-                height: 160px;
-            }
-
-            .product-emoji {
-                font-size: 60px;
-            }
-
-            .product-info {
-                padding: 16px;
-            }
-
-            .product-name {
-                font-size: 14px;
-            }
-
-            .product-description {
-                font-size: 12px;
-                margin-bottom: 12px;
-            }
-
-            .product-price {
-                font-size: 18px;
-            }
-
-            .quantity-btn {
-                width: 36px;
-                height: 36px;
-                font-size: 16px;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero-title {
-                font-size: 28px;
-            }
-
-            .hero-image {
-                font-size: 60px;
-            }
-
-            .categories-grid {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .main-category-card {
-                padding: 20px 16px;
-                min-height: 120px;
-            }
-
-            .main-category-icon {
-                font-size: 40px;
-                margin-bottom: 8px;
-            }
-
-            .main-category-name {
-                font-size: 14px;
-            }
-
-            .product-image {
-                height: 140px;
-            }
-
-            .product-emoji {
-                font-size: 50px;
-            }
-
-            .product-info {
-                padding: 12px;
-            }
+            padding: 0;
+            margin-left: 8px;
         }
     </style>
 </head>
 <body>
     <!-- Header -->
     <header class="header">
-        <div class="header-top">
-            ⚡ Доставка за 10-15 минут • Минимальный заказ 200 сом
-        </div>
         <div class="header-content">
-            <div class="logo-section">
-                <a href="/" class="logo">Дучарха</a>
-                <button class="location-btn">
-                    <span>📍</span>
-                    <span>Душанбе</span>
+            <a href="/" class="logo">
+                <div class="logo-text">Дучарха</div>
+            </a>
+
+            <div class="delivery-address">
+                <svg class="delivery-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                </svg>
+                <div>
+                    <div class="delivery-text">Душанбе</div>
+                    <div class="delivery-time">15-25 мин</div>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" class="search-input" id="search-input" placeholder="Найти товары..." autocomplete="off">
+                <button class="search-button" onclick="performSearch()">
+                    <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                    </svg>
                 </button>
             </div>
 
-            <div class="header-search">
-                <input type="text" class="search-input" id="search-input" placeholder="Найти товары..." autocomplete="off">
-                <button class="search-btn" onclick="searchProducts()">🔍</button>
-            </div>
-
             <div class="header-actions">
-                <a href="/cart" class="cart-btn">
-                    🛒 <span class="cart-count" id="cart-count">{{ cart_count }}</span>
+                <a href="/cart" class="cart-button">
+                    <svg class="cart-icon" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                    </svg>
+                    Корзина
+                    <span class="cart-count" id="cart-count">{{ cart_count or 0 }}</span>
                 </a>
 
                 <div class="profile-menu">
-                    <button class="profile-btn" onclick="toggleProfileMenu()">👤</button>
+                    <button class="profile-button" onclick="toggleProfileMenu()">
+                        <svg class="profile-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                    </button>
+
                     <div class="profile-dropdown" id="profile-dropdown">
-                        <div id="user-info" style="display: none; padding: 12px 20px; border-bottom: 1px solid #eee; margin-bottom: 8px;">
-                            <div style="font-weight: 600; color: #6c5ce7;" id="user-phone"></div>
-                            <div style="font-size: 12px; color: #666;">Авторизован</div>
+                        <div id="user-info" style="display: none; padding: 12px 16px; border-bottom: 1px solid #e5e7eb; margin-bottom: 8px;">
+                            <div style="font-weight: 600; color: #000;" id="user-phone"></div>
+                            <div style="font-size: 12px; color: #6b7280;">Авторизован</div>
                         </div>
 
                         <a href="/login" class="profile-item" id="login-item">
-                            <span class="profile-item-icon">🔐</span>
+                            <svg class="profile-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M11 7L9.6 8.4l2.6 2.6H2v2h10.2l-2.6 2.6L11 17l5-5-5-5zm9 12h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-8v2h8v12z"/>
+                            </svg>
                             <span>Войти</span>
                         </a>
 
                         <a href="/my_orders" class="profile-item">
-                            <span class="profile-item-icon">📋</span>
+                            <svg class="profile-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
                             <span>Мои заказы</span>
                         </a>
 
                         <a href="#" class="profile-item" onclick="logoutUser()" id="logout-item" style="display: none;">
-                            <span class="profile-item-icon">🚪</span>
+                            <svg class="profile-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5-5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                            </svg>
                             <span>Выйти</span>
                         </a>
 
-                        <div style="border-top: 1px solid #eee; margin: 8px 0;"></div>
+                        <div style="border-top: 1px solid #e5e7eb; margin: 8px 0;"></div>
 
-                        <a href="#" class="profile-item" onclick="toggleHelpModal()">
-                            <span class="profile-item-icon">❓</span>
-                            <span>Помощь</span>
-                        </a>
                         <a href="/inventory" class="profile-item">
-                            <span class="profile-item-icon">📦</span>
+                            <svg class="profile-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M20 6h-2.18c.11-.31.18-.65.18-1a2.996 2.996 0 0 0-5.5-1.65l-.5.67-.5-.68C10.96 2.54 10.05 2 9 2 7.34 2 6 3.34 6 5c0 .35.07.69.18 1H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-5-2c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zM9 4c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1z"/>
+                            </svg>
                             <span>Панель товароведа</span>
                         </a>
+
                         <a href="/admin" class="profile-item">
-                            <span class="profile-item-icon">⚙️</span>
+                            <svg class="profile-item-icon" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                            </svg>
                             <span>Админ панель</span>
                         </a>
                     </div>
@@ -949,58 +839,47 @@
         </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Hero Banner -->
-        <section class="hero-banner">
-            <div class="hero-content">
-                <div class="hero-text">
-                    <h1 class="hero-title">Доставка продуктов в Душанбе</h1>
-                    <p class="hero-subtitle">Свежие продукты к вашему столу каждый день</p>
-                    <div class="delivery-info">
-                        <span>⚡</span>
-                        <span class="delivery-time">Доставка за 10-15 минут</span>
+    <!-- Hero Banner -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">Доставка продуктов в Душанбе</h1>
+                <p class="hero-subtitle">Более 10 000 товаров из ваших любимых магазинов</p>
+                
+                <div class="hero-features">
+                    <div class="hero-feature">
+                        <svg class="hero-feature-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M13 1L6 8v13h5v-6h2v6h5V8l-7-7zm-1 15h-2v-2h2v2zm0-4h-2v-2h2v2z"/>
+                        </svg>
+                        <span class="hero-feature-text">За 15 минут</span>
+                    </div>
+                    
+                    <div class="hero-feature">
+                        <svg class="hero-feature-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                        <span class="hero-feature-text">Минимум 200 сом</span>
                     </div>
                 </div>
-                <div class="hero-image">🛒</div>
             </div>
-        </section>
+            
+            <div class="hero-image">🛒</div>
+        </div>
+    </section>
 
-        <!-- Quick Categories -->
-        <section class="quick-categories" id="categories-section">
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Categories Section -->
+        <section class="section" id="categories-section">
             <div class="section-header">
-                <h2 class="section-title">Популярные категории</h2>
-                <a href="#" class="view-all-btn">Все категории</a>
+                <h2 class="section-title">Категории</h2>
+                <a href="#" class="view-all-link">Смотреть все</a>
             </div>
-            <div class="categories-scroll">
-                {% set popular_categories = [
-                    ('Молочные продукты', '🥛'),
-                    ('Овощи', '🥕'),
-                    ('Фрукты', '🍎'),
-                    ('Мясо и птица', '🥩'),
-                    ('Напитки', '🥤'),
-                    ('Хлебобулочные', '🍞'),
-                    ('Сладости и снеки', '🍫'),
-                    ('Консервы', '🥫')
-                ] %}
-                {% for category_name, emoji in popular_categories %}
-                <div class="category-card" onclick="showCategoryProducts('{{ category_name }}')">
-                    <div class="category-icon">{{ emoji }}</div>
-                    <div class="category-name">{{ category_name }}</div>
-                </div>
-                {% endfor %}
-            </div>
-        </section>
-
-        <!-- Main Categories Grid -->
-        <section class="main-categories">
-            <div class="section-header">
-                <h2 class="section-title">Все категории</h2>
-            </div>
+            
             <div class="categories-grid">
                 {% for category in categories %}
-                <div class="main-category-card" onclick="showCategoryProducts('{{ category.name }}')">
-                    <div class="main-category-icon">
+                <a href="#" class="category-card" onclick="showCategoryProducts('{{ category.name }}')">
+                    <div class="category-icon">
                         {% if category.name == 'Молочные продукты' %}🥛
                         {% elif category.name == 'Мясо и птица' %}🥩
                         {% elif category.name == 'Овощи' %}🥕
@@ -1025,62 +904,74 @@
                         {% elif category.name == 'Орехи и сухофрукты' %}🥜
                         {% else %}📦{% endif %}
                     </div>
-                    <div class="main-category-name">{{ category.name }}</div>
-                </div>
+                    <div class="category-name">{{ category.name }}</div>
+                    <div class="category-description">Свежие продукты</div>
+                </a>
                 {% endfor %}
             </div>
         </section>
 
         <!-- Products Section -->
-        <section class="products-section" id="products-section">
-            <button class="back-btn" onclick="showCategories()">← Назад к категориям</button>
+        <section class="section products-section" id="products-section">
+            <button class="back-button" onclick="showCategories()">
+                <svg class="back-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+                Назад к категориям
+            </button>
+            
             <div class="section-header">
                 <h2 class="section-title" id="products-title">Товары</h2>
             </div>
+            
             <div class="products-grid" id="products-grid">
                 {% for product in products %}
                 <div class="product-card" data-category="{{ product.category }}" data-brand="{{ product.brand or '' }}">
                     <div class="product-image">
+                        {% if not product.available %}
+                        <div class="product-badge">Нет в наличии</div>
+                        {% elif product.stock <= 5 %}
+                        <div class="product-badge">Осталось {{ product.stock }}</div>
+                        {% endif %}
+                        
                         {% if product.image.startswith('http') %}
                             <img src="{{ product.image }}" alt="{{ product.name }}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <div class="product-emoji" style="display: none;">🛒</div>
+                            <div style="display: none; font-size: 64px;">🛒</div>
                         {% else %}
-                            <div class="product-emoji">{{ product.image }}</div>
+                            <div style="font-size: 64px;">{{ product.image }}</div>
                         {% endif %}
                     </div>
+                    
                     <div class="product-info">
                         {% if product.brand %}
                         <div class="product-brand">{{ product.brand }}</div>
                         {% endif %}
+                        
                         <div class="product-name">{{ product.name }}</div>
-                        <div class="product-description">{{ product.description }}</div>
-
-                        {% if not product.available %}
-                        <div class="stock-warning out-of-stock">
-                            ❌ Нет в наличии
-                        </div>
-                        {% elif product.stock <= 5 %}
-                        <div class="stock-warning">
-                            ⚠️ Осталось {{ product.stock }} шт.
-                        </div>
-                        {% endif %}
-
+                        <div class="product-weight">{{ product.description }}</div>
+                        
                         <div class="product-footer">
-                            <div class="product-price">
-                                {{ "%.0f"|format(product.price) }} <span class="price-currency">сом</span>
+                            <div>
+                                <span class="product-price">{{ "%.0f"|format(product.price) }} ₽</span>
+                                {% if product.old_price %}
+                                <span class="product-old-price">{{ "%.0f"|format(product.old_price) }} ₽</span>
+                                {% endif %}
                             </div>
+                            
                             {% if product.available %}
                             <div class="quantity-controls">
-                                <button class="quantity-btn" 
+                                <button class="quantity-button" 
                                         id="minus-{{ product.id }}" 
                                         onclick="changeQuantity({{ product.id }}, -1)"
                                         disabled>−</button>
                                 <span class="quantity-display" id="qty-{{ product.id }}">0</span>
-                                <button class="quantity-btn" 
+                                <button class="quantity-button" 
                                         id="plus-{{ product.id }}" 
                                         onclick="changeQuantity({{ product.id }}, 1)"
                                         data-max-stock="{{ product.stock }}">+</button>
                             </div>
+                            {% else %}
+                            <button class="add-to-cart" disabled>Нет в наличии</button>
                             {% endif %}
                         </div>
                     </div>
@@ -1090,53 +981,48 @@
         </section>
 
         <!-- Search Results -->
-        <section class="search-results" id="search-results">
-            <button class="back-btn" onclick="hideSearchResults()">← Назад к категориям</button>
+        <section class="section search-results" id="search-results">
+            <button class="back-button" onclick="hideSearchResults()">
+                <svg class="back-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/>
+                </svg>
+                Назад к категориям
+            </button>
+            
             <div class="results-header">
                 <h2 class="section-title" id="results-title">Результаты поиска</h2>
                 <div class="results-count" id="results-count"></div>
             </div>
+            
             <div class="products-grid" id="results-grid"></div>
+            
             <div class="no-results" id="no-results" style="display: none;">
-                <h3>Ничего не найдено</h3>
+                <div class="no-results-title">Ничего не найдено</div>
                 <p>Попробуйте изменить поисковый запрос</p>
             </div>
         </section>
     </main>
 
     <!-- Notification -->
-    <div class="notification" id="notification"></div>
-
-    <!-- Help Modal -->
-    <div class="modal-overlay" id="help-overlay" onclick="closeHelpModal()"></div>
-    <div class="modal" id="help-modal">
-        <button class="modal-close" onclick="closeHelpModal()">×</button>
-        <h3 style="color: #6c5ce7; margin-bottom: 16px;">💜 Служба поддержки Дучарха</h3>
-        <p style="color: #666; margin-bottom: 16px;">Остались вопросы? Мы поможем!</p>
-
-        <a href="tel:+992971844884" class="profile-item" style="margin: 8px 0; background: #f8f9fa; border-radius: 12px;">
-            <span class="profile-item-icon">📞</span>
-            <div>
-                <div style="font-weight: 600;">Позвонить</div>
-                <div style="font-size: 14px; color: #666;">+992 971 84 48 84</div>
-            </div>
-        </a>
-
-        <a href="https://t.me/DilovarAkhi" target="_blank" class="profile-item" style="margin: 8px 0; background: #f8f9fa; border-radius: 12px;">
-            <span class="profile-item-icon">💬</span>
-            <div>
-                <div style="font-weight: 600;">Написать в Telegram</div>
-                <div style="font-size: 14px; color: #666;">@DilovarAkhi</div>
-            </div>
-        </a>
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <svg class="notification-icon" id="notification-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+            </svg>
+            <div class="notification-text" id="notification-text"></div>
+            <button class="notification-close" onclick="hideNotification()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                </svg>
+            </button>
+        </div>
     </div>
 
     <script>
-        let currentCategory = '';
         let cartQuantities = {};
         const products = {{ products | tojson }};
 
-        // Initialize cart quantities
+        // Initialize cart
         window.addEventListener('load', function() {
             const cartItems = {{ session.get('cart', []) | tojson }};
             cartItems.forEach(item => {
@@ -1145,13 +1031,12 @@
             });
         });
 
-        // Profile menu toggle
+        // Profile menu
         function toggleProfileMenu() {
             const dropdown = document.getElementById('profile-dropdown');
             dropdown.classList.toggle('show');
         }
 
-        // Close profile menu when clicking outside
         document.addEventListener('click', function(e) {
             const profileMenu = document.querySelector('.profile-menu');
             if (!profileMenu.contains(e.target)) {
@@ -1159,15 +1044,12 @@
             }
         });
 
-        // Show category products
+        // Categories and products
         function showCategoryProducts(category) {
-            currentCategory = category;
             document.getElementById('categories-section').style.display = 'none';
-            document.querySelector('.main-categories').style.display = 'none';
-            document.getElementById('products-section').classList.add('show');
-            document.getElementById('search-results').classList.remove('show');
+            document.getElementById('products-section').classList.add('active');
+            document.getElementById('search-results').classList.remove('active');
 
-            // Filter products
             const productCards = document.querySelectorAll('.product-card');
             productCards.forEach(card => {
                 const cardCategory = card.dataset.category;
@@ -1177,22 +1059,20 @@
             document.getElementById('products-title').textContent = category;
         }
 
-        // Show categories
         function showCategories() {
             document.getElementById('categories-section').style.display = 'block';
-            document.querySelector('.main-categories').style.display = 'block';
-            document.getElementById('products-section').classList.remove('show');
-            document.getElementById('search-results').classList.remove('show');
+            document.getElementById('products-section').classList.remove('active');
+            document.getElementById('search-results').classList.remove('active');
         }
 
-        // Search functionality
+        // Search
         document.getElementById('search-input').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                searchProducts();
+                performSearch();
             }
         });
 
-        function searchProducts() {
+        function performSearch() {
             const query = document.getElementById('search-input').value.trim();
             if (!query) {
                 hideSearchResults();
@@ -1214,11 +1094,9 @@
             const resultsSection = document.getElementById('search-results');
             const resultsGrid = document.getElementById('results-grid');
             const noResults = document.getElementById('no-results');
-            const resultsTitle = document.getElementById('results-title');
-            const resultsCount = document.getElementById('results-count');
-
-            resultsTitle.textContent = `Результаты поиска "${query}"`;
-            resultsCount.textContent = `Найдено товаров: ${count}`;
+            
+            document.getElementById('results-title').textContent = `Результаты поиска "${query}"`;
+            document.getElementById('results-count').textContent = `Найдено товаров: ${count}`;
 
             if (results.length === 0) {
                 resultsGrid.style.display = 'none';
@@ -1230,31 +1108,30 @@
                 resultsGrid.innerHTML = results.map(product => `
                     <div class="product-card">
                         <div class="product-image">
+                            ${!product.available ? '<div class="product-badge">Нет в наличии</div>' : 
+                              product.stock <= 5 ? `<div class="product-badge">Осталось ${product.stock}</div>` : ''}
                             ${product.image.startsWith('http') 
                                 ? `<img src="${product.image}" alt="${product.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                   <div class="product-emoji" style="display: none;">🛒</div>`
-                                : `<div class="product-emoji">${product.image}</div>`
+                                   <div style="display: none; font-size: 64px;">🛒</div>`
+                                : `<div style="font-size: 64px;">${product.image}</div>`
                             }
                         </div>
                         <div class="product-info">
                             ${product.brand ? `<div class="product-brand">${product.brand}</div>` : ''}
                             <div class="product-name">${product.name}</div>
-                            <div class="product-description">${product.description}</div>
-
-                            ${!product.available ? '<div class="stock-warning out-of-stock">❌ Нет в наличии</div>' :
-                              product.stock <= 5 ? `<div class="stock-warning">⚠️ Осталось ${product.stock} шт.</div>` : ''}
-
+                            <div class="product-weight">${product.description}</div>
                             <div class="product-footer">
-                                <div class="product-price">
-                                    ${Math.round(product.price)} <span class="price-currency">сом</span>
+                                <div>
+                                    <span class="product-price">${Math.round(product.price)} ₽</span>
+                                    ${product.old_price ? `<span class="product-old-price">${Math.round(product.old_price)} ₽</span>` : ''}
                                 </div>
                                 ${product.available ? `
                                     <div class="quantity-controls">
-                                        <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)" ${!cartQuantities[product.id] ? 'disabled' : ''}>−</button>
+                                        <button class="quantity-button" onclick="changeQuantity(${product.id}, -1)" ${!cartQuantities[product.id] ? 'disabled' : ''}>−</button>
                                         <span class="quantity-display">${cartQuantities[product.id] || 0}</span>
-                                        <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)" data-max-stock="${product.stock}">+</button>
+                                        <button class="quantity-button" onclick="changeQuantity(${product.id}, 1)">+</button>
                                     </div>
-                                ` : ''}
+                                ` : '<button class="add-to-cart" disabled>Нет в наличии</button>'}
                             </div>
                         </div>
                     </div>
@@ -1262,13 +1139,12 @@
             }
 
             document.getElementById('categories-section').style.display = 'none';
-            document.querySelector('.main-categories').style.display = 'none';
-            document.getElementById('products-section').classList.remove('show');
-            resultsSection.classList.add('show');
+            document.getElementById('products-section').classList.remove('active');
+            resultsSection.classList.add('active');
         }
 
         function hideSearchResults() {
-            document.getElementById('search-results').classList.remove('show');
+            document.getElementById('search-results').classList.remove('active');
             document.getElementById('search-input').value = '';
             showCategories();
         }
@@ -1293,7 +1169,7 @@
                     document.getElementById('cart-count').textContent = data.cart_count;
 
                     if (change > 0) {
-                        showNotification('Товар добавлен в корзину!');
+                        showNotification('Товар добавлен в корзину!', 'success');
                     }
                 } else {
                     showNotification(data.error || 'Ошибка добавления товара', 'error');
@@ -1316,33 +1192,29 @@
         // Notifications
         function showNotification(message, type = 'success') {
             const notification = document.getElementById('notification');
-            notification.textContent = message;
+            const notificationText = document.getElementById('notification-text');
+            const notificationIcon = document.getElementById('notification-icon');
+            
+            notificationText.textContent = message;
             notification.className = `notification ${type}`;
+            notificationIcon.className = `notification-icon ${type}`;
+            
+            if (type === 'error') {
+                notificationIcon.innerHTML = '<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>';
+            }
+            
             notification.classList.add('show');
 
             setTimeout(() => {
                 notification.classList.remove('show');
-            }, 3000);
+            }, 4000);
         }
 
-        // Help modal
-        function toggleHelpModal() {
-            const modal = document.getElementById('help-modal');
-            const overlay = document.getElementById('help-overlay');
-            const isVisible = modal.style.display === 'block';
-
-            modal.style.display = isVisible ? 'none' : 'block';
-            overlay.style.display = isVisible ? 'none' : 'block';
-
-            document.getElementById('profile-dropdown').classList.remove('show');
+        function hideNotification() {
+            document.getElementById('notification').classList.remove('show');
         }
 
-        function closeHelpModal() {
-            document.getElementById('help-modal').style.display = 'none';
-            document.getElementById('help-overlay').style.display = 'none';
-        }
-
-        // Authentication check (placeholder)
+        // Logout
         function logoutUser() {
             fetch('/auth/logout', {
                 method: 'POST'
@@ -1351,8 +1223,11 @@
             .then(data => {
                 if (data.success) {
                     document.getElementById('profile-dropdown').classList.remove('show');
-                    showNotification('Вы вышли из системы');
+                    showNotification('Вы вышли из системы', 'success');
                 }
+            })
+            .catch(error => {
+                console.error('Logout error:', error);
             });
         }
     </script>
