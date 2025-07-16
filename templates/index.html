@@ -546,7 +546,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .header-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 16px;
         }
 
         .login-button {
@@ -1514,11 +1514,11 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
 
             <div class="header-actions">
-                <a href="/login" class="login-button">Войти</a>
                 <a href="/cart" class="cart-button">
                     🛒 Корзина
                     <span class="cart-count" id="cart-count">{{ cart_count or 0 }}</span>
                 </a>
+                <a href="/login" class="login-button">Войти</a>
             </div>
         </div>
     </header>
