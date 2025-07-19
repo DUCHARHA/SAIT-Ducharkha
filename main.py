@@ -1038,7 +1038,8 @@ def order_confirmation():
 
 @app.route('/login')
 def login():
-    return render_template('login.html')
+    cart_count = len(session.get('cart', []))
+    return render_template('login.html', cart_count=cart_count)
 
 @app.route('/my_orders')
 def my_orders():

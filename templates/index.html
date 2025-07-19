@@ -828,7 +828,8 @@ document.addEventListener('DOMContentLoaded', function() {
             background-color: #f8f8f8;
         }
 
-        .category-link.active {
+        .category-link```text
+.active {
             background-color: #f3f0ff;
             color: #6f42c1;
             font-weight: 500;
@@ -906,8 +907,7 @@ document.addEventListener('DOMContentLoaded', function() {
             background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
         }
 
-        .promo-card```text
--title {
+        .promo-card-title {
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 8px;
@@ -1663,9 +1663,15 @@ document.addEventListener('DOMContentLoaded', function() {
         <aside class="sidebar">
             <div class="sidebar-title">Категории</div>
             <ul class="category-list">
+                <li class="category-item">
+                    <a href="javascript:void(0)" class="category-link" onclick="showAllProducts(); return false;">
+                        <span class="category-icon">🛒</span>
+                        Все товары
+                    </a>
+                </li>
                 {% for category in categories %}
                 <li class="category-item">
-                    <a href="#" class="category-link" onclick="showCategoryProducts('{{ category.name }}')">
+                    <a href="javascript:void(0)" class="category-link" onclick="showCategoryProducts('{{ category.name }}'); return false;">
                         <span class="category-icon">
                             {% if category.name == 'Молочные продукты' %}🥛
                             {% elif category.name == 'Мясо и птица' %}🥩
@@ -1909,8 +1915,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function clearSearchHistory() {
             fetch('/clear_search_history', {
-                ```text
-method: 'POST'
+                method: 'POST'
             })
             .then(response => response.json())
             .then(data => {
@@ -2199,6 +2204,14 @@ method: 'POST'
                 createSparkles(25);
             }
         }
+
+    // Глобальные функции для совместимости с существующим кодом
+    window.changeQuantity = changeQuantity;
+    window.searchProducts = () => searchProducts(document.getElementById('search-input').value, true);
+    window.searchProductsSticky = () => searchProducts(document.getElementById('sticky-search-input').value, true);
+    window.showNotification = showNotification;
+    window.showCategoryProducts = showCategoryProducts;
+    window.showAllProducts = showAllProducts;
     </script>
 </body>
 </html>

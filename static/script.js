@@ -373,6 +373,147 @@
         }
     };
 
+    // Функция для показа всех товаров
+    function showAllProducts() {
+        console.log('Показываем все товары');
+
+        const allCards = document.querySelectorAll('.product-card');
+        allCards.forEach(card => {
+            card.style.display = 'block';
+        });
+
+        const productsTitle = document.getElementById('products-title');
+        if (productsTitle) {
+            productsTitle.textContent = 'Популярные товары';
+        }
+
+        const categoryLinks = document.querySelectorAll('.category-link');
+        categoryLinks.forEach(link => {
+            link.classList.remove('active');
+        });
+
+        // Активируем кнопку "Все товары"
+        const allProductsLink = document.querySelector('.category-link[onclick*="showAllProducts"]');
+        if (allProductsLink) {
+            allProductsLink.classList.add('active');
+        }
+    }
+
+    // Функция для показа товаров категории
+    function showCategoryProducts(categoryName) {
+        console.log('Показываем категорию:', categoryName);
+
+        const allCards = document.querySelectorAll('.product-card');
+        let visibleCount = 0;
+
+        allCards.forEach(card => {
+            const productCategory = card.getAttribute('data-category');
+            if (productCategory === categoryName) {
+                card.style.display = 'block';
+                visibleCount++;
+            } else {
+                card.style.display = 'none';
+            }
+        });
+
+        const productsTitle = document.getElementById('products-title');
+        if (productsTitle) {
+            productsTitle.textContent = `${categoryName} (${visibleCount})`;
+        }
+
+        const categoryLinks = document.querySelectorAll('.category-link');
+        categoryLinks.forEach(link => {
+            link.classList.remove('active');
+            const linkText = link.textContent.trim();
+            const iconSpan = link.querySelector('.category-icon');
+            const categoryText = iconSpan ? linkText.replace(iconSpan.textContent, '').trim() : linkText;
+            if (categoryText === categoryName) {
+                link.classList.add('active');
+            }
+        });
+    }
+
+    // Функция для изменения количества товаров в корзине
+    function changeQuantity(productId, change) {
+        console.log('Изменяем количество товара:', productId, 'на:', change);
+
+        const productCard = document.querySelector(`[data-product-id="${productId}"]`);
+        const stockStatus = productCard ? productCard.querySelector('.stock-status') : null;
+
+        fetch('/update_cart_quantity', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                product_id: productId,
+                change: change
+            })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Ответ сервера:', data);
+
+            if (data.success) {
+                cartQuantities[productId] = data.current_quantity;
+
+                // Обновляем отображение количества
+                const qtyDisplays = document.querySelectorAll(`#qty-${productId}, #modal-qty-${productId}`);
+                qtyDisplays.forEach(display => {
+                    if (display) display.textContent = data.current_quantity;
+                });
+
+                // Обновляем состояние кнопки минус
+                const minusBtns = document.querySelectorAll(`#minus-${productId}`);
+                minusBtns.forEach(btn => {
+                    if (btn) btn.disabled = data.current_quantity <= 0;
+                });
+
+                // Обновляем счетчик корзины
+                const cartCountElements = document.querySelectorAll('#cart-count, .cart-count');
+                cartCountElements.forEach(element => {
+                    if (element) element.textContent = data.cart_count;
+                });
+
+                // Обновляем статус остатков
+                if (stockStatus && data.stock_remaining !== undefined) {
+                    const remaining = data.stock_remaining;
+                    if (remaining === 0) {
+                        stockStatus.textContent = 'Товар закончился';
+                        stockStatus.className = 'stock-status out-of-stock';
+                        const plusBtns = document.querySelectorAll(`#plus-${productId}`);
+                        plusBtns.forEach(btn => {
+                            if (btn) btn.disabled = true;
+                        });
+                    } else if (remaining <= 5) {
+                        stockStatus.textContent = `Осталось: ${remaining} шт`;
+                        stockStatus.className = 'stock-status low-stock';
+                    } else {
+                        if (stockStatus.classList.contains('low-stock') || stockStatus.classList.contains('out-of-stock')) {
+                            stockStatus.style.display = 'none';
+                        }
+                    }
+                }
+
+                if (change > 0) {
+                    showNotification('Товар добавлен в корзину!', 'success');
+                }
+            } else {
+                showNotification(data.error || 'Ошибка при добавлении товара', 'error');
+                console.error('Ошибка от сервера:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Ошибка сети:', error);
+            showNotification('Ошибка соединения', 'error');
+        });
+    }
+
     // Инициализация приложения
     function init() {
         console.log('🚀 Дучарха загружается...');
@@ -407,9 +548,11 @@
     }
 
     // Глобальные функции для совместимости с существующим кодом
-    window.changeQuantity = (productId, change) => cart.updateQuantity(productId, change);
+    window.changeQuantity = changeQuantity;
     window.searchProducts = () => search.performSearch(document.getElementById('search-input').value, true);
     window.searchProductsSticky = () => search.performSearch(document.getElementById('sticky-search-input').value, true);
     window.showNotification = utils.showNotification;
+    window.showCategoryProducts = showCategoryProducts;
+    window.showAllProducts = showAllProducts;
 
 })();
