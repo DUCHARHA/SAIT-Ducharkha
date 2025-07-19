@@ -11,6 +11,7 @@ charset-normalizer==3.4.2
 click==8.2.1
 Flask==3.1.1
 frozenlist==1.7.0
+gunicorn
 idna==3.10
 itsdangerous==2.2.0
 Jinja2==3.1.6
