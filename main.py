@@ -17,7 +17,7 @@ from sms_auth import (
 from flask import send_from_directory
 
 app = Flask(__name__)
-app.secret_key = 'sk-7x9m2n8p4q6r1s5t3u7v9w0e8f2g4h6j8k1l3m5n7p9q2r4s6t8u0v2w4x6y8z1a3b5c7d9e'
+app.secret_key = os.getenv('SECRET_KEY', 'sk-7x9m2n8p4q6r1s5t3u7v9w0e8f2g4h6j8k1l3m5n7p9q2r4s6t8u0v2w4x6y8z1a3b5c7d9e')
 
 # Настройка логирования
 if not app.debug:
@@ -56,8 +56,8 @@ def get_current_user():
         return get_user_by_session(session_token)
     return None
 
-ADMIN_PASSWORD = 'dilo.artes'
-INVENTORY_PASSWORD = 'dilo.artes'
+ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD', 'dilo.artes')
+INVENTORY_PASSWORD = os.getenv('INVENTORY_PASSWORD', 'dilo.artes')
 
 ORDERS_FILE = 'orders.json'
 REVIEWS_FILE = 'reviews.json'
@@ -1133,34 +1133,34 @@ def admin_panel():
 def update_order_status():
     if not session.get('admin_authenticated'):
         return jsonify({'success': False, 'message': 'Не авторизован'})
-    
+
     data = request.get_json()
     order_number = data.get('order_number')
     new_status = data.get('status')
-    
+
     if not order_number or not new_status:
         return jsonify({'success': False, 'message': 'Неверные параметры'})
-    
+
     orders = load_orders()
-    
+
     # Находим заказ по номеру
     order = next((o for o in orders if o.get('number') == order_number), None)
-    
+
     if not order:
         return jsonify({'success': False, 'message': 'Заказ не найден'})
-    
+
     # Обновляем статус
     order['status'] = new_status
-    
+
     # Сохраняем изменения
     with open(ORDERS_FILE, 'w', encoding='utf-8') as f:
         json.dump(orders, f, ensure_ascii=False, indent=2)
-    
+
     # Отправляем push-уведомление
     customer_phone = order.get('customer', {}).get('phone')
     if customer_phone:
         notify_order_status_change(order_number, new_status, customer_phone)
-    
+
     return jsonify({'success': True, 'message': 'Статус заказа обновлен'})
 
 # Периодическая очистка истекших SMS-кодов
