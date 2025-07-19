@@ -652,6 +652,90 @@ document.addEventListener('DOMContentLoaded', function() {
             text-align: center;
         }
 
+        /* Profile Menu Styles */
+        .profile-menu {
+            position: relative;
+        }
+
+        .profile-btn {
+            background: linear-gradient(135deg, #6f42c1, #8b5cf6);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 50%;
+            font-size: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 44px;
+            height: 44px;
+            box-shadow: 0 4px 15px rgba(111, 66, 193, 0.3);
+        }
+
+        .profile-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(111, 66, 193, 0.4);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 16px;
+            padding: 16px 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            min-width: 250px;
+            display: none;
+            z-index: 1001;
+            margin-top: 8px;
+        }
+
+        .profile-dropdown.show {
+            display: block;
+        }
+
+        .profile-header {
+            padding: 12px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            margin-bottom: 8px;
+        }
+
+        .profile-phone-full {
+            font-weight: 600;
+            color: #6f42c1;
+            font-size: 14px;
+        }
+
+        .profile-status {
+            font-size: 12px;
+            color: #10b981;
+            margin-top: 4px;
+        }
+
+        .profile-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .profile-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .profile-item-icon {
+            font-size: 16px;
+            width: 20px;
+            text-align: center;
+        }
+
         .cart-button {
             display: flex;
             align-items: center;
@@ -1514,7 +1598,9 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
 
             <div class="header-actions">
-                <a href="/login" class="login-button">Войти</a>
+                <div id="auth-section">
+                    <a href="/login" class="login-button">Войти</a>
+                </div>
                 <a href="/cart" class="cart-button">
                     🛒 Корзина
                     <span class="cart-count" id="cart-count">{{ cart_count or 0 }}</span>
@@ -1561,8 +1647,10 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="product-controls">
                                 <button class="quantity-btn minus-btn" id="minus-{{ product.id }}" onclick="changeQuantity({{ product.id }}, -1)" disabled>−</button>
                                 <span class="quantity-display" id="qty-{{ product.id }}">0</span>
-                                <button class="quantity-btn plus-btn" onclick="changeQuantity({{ product.id }}, 1)">+</button>
+                                <button class="quantity-btn plus-btn" id="plus-{{ product.id }}" onclick="changeQuantity({{ product.id }}, 1)">+</button>
                             </div>
+                            {% elif not product.available or product.stock <= 0 %}
+                            <div class="product-unavailable">Товар недоступен</div>
                             {% endif %}
                         </div>
                     </div>
@@ -1844,42 +1932,12 @@ method: 'POST'
 
         // Функция для показа товаров категории
         function showCategoryProducts(categoryName) {
-            const productsSection = document.getElementById('products-section');
-            const productsGrid = document.getElementById('products-grid');
-            const allCards = document.querySelectorAll('.product-card');
-            let visibleCount = 0;
-
-            allCards.forEach(card => {
-                const cardCategory = card.dataset.category;
-                if (cardCategory === categoryName) {
-                    card.style.display = 'block';
-                    visibleCount++;
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-
-            const productsTitle = document.getElementById('products-title');
-            if (productsTitle) {
-                productsTitle.textContent = `${categoryName} (${visibleCount})`;
-            }
-
-            const categoryLinks = document.querySelectorAll('.category-link');
-            categoryLinks.forEach(link => {
-                link.classList.remove('active');
-                if (link.textContent.trim() === categoryName) {
-                    link.classList.add('active');
-                }
-            });
-        }
-
-        function showCategoryProducts(categoryName) {
             const allCards = document.querySelectorAll('.product-card');
             let visibleCount = 0;
 
             allCards.forEach(card => {
                 const productCategory = card.getAttribute('data-category');
-                if (productCategory === categoryName || categoryName === 'Все') {
+                if (productCategory === categoryName) {
                     card.style.display = 'block';
                     visibleCount++;
                 } else {
@@ -1895,7 +1953,10 @@ method: 'POST'
             const categoryLinks = document.querySelectorAll('.category-link');
             categoryLinks.forEach(link => {
                 link.classList.remove('active');
-                if (link.textContent.trim() === categoryName) {
+                const linkText = link.textContent.trim();
+                const iconSpan = link.querySelector('.category-icon');
+                const categoryText = iconSpan ? linkText.replace(iconSpan.textContent, '').trim() : linkText;
+                if (categoryText === categoryName) {
                     link.classList.add('active');
                 }
             });
@@ -1965,11 +2026,9 @@ method: 'POST'
         }
 
         function updateAuthUI(user) {
-            const headerActions = document.querySelector('.header-actions');
-            const loginButton = document.querySelector('.login-button');
-
-            if (loginButton && headerActions) {
-                const profileHTML = `
+            const authSection = document.getElementById('auth-section');
+            if (authSection) {
+                authSection.innerHTML = `
                     <div class="profile-menu">
                         <button class="profile-btn" onclick="toggleProfileMenu()">
                             👤
@@ -1998,8 +2057,6 @@ method: 'POST'
                         </div>
                     </div>
                 `;
-
-                loginButton.outerHTML = profileHTML;
             }
         }
 

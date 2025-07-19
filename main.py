@@ -1036,6 +1036,10 @@ def order_confirmation():
 
     return render_template('order_confirmation.html', order=order)
 
+@app.route('/login')
+def login():
+    return render_template('login.html')
+
 @app.route('/my_orders')
 def my_orders():
     phone = request.args.get('phone', '').strip()
@@ -1162,6 +1166,73 @@ def update_order_status():
         notify_order_status_change(order_number, new_status, customer_phone)
 
     return jsonify({'success': True, 'message': 'Статус заказа обновлен'})
+
+@app.route('/auth/send_code', methods=['POST'])
+def send_code():
+    data = request.get_json()
+    phone = data.get('phone')
+
+    if not phone:
+        return jsonify({'success': False, 'message': 'Номер телефона обязателен'})
+
+    success, message = send_sms_code(phone)
+
+    if success:
+        # В тестовом режиме возвращаем код
+        if phone.startswith('992') and len(phone) == 12:
+            return jsonify({
+                'success': True, 
+                'message': 'SMS код отправлен',
+                'test_code': '1234'  # Тестовый код для демонстрации
+            })
+        return jsonify({'success': True, 'message': message})
+    else:
+        return jsonify({'success': False, 'message': message})
+
+@app.route('/auth/verify_code', methods=['POST'])
+def verify_code():
+    data = request.get_json()
+    phone = data.get('phone')
+    code = data.get('code')
+
+    if not phone or not code:
+        return jsonify({'success': False, 'message': 'Телефон и код обязательны'})
+
+    user, session_token = verify_sms_code(phone, code)
+
+    if user:
+        return jsonify({
+            'success': True,
+            'session_token': session_token,
+            'phone': user['phone'],
+            'message': 'Вход выполнен успешно'
+        })
+    else:
+        return jsonify({'success': False, 'message': 'Неверный код'})
+
+@app.route('/auth/check_session', methods=['POST'])
+def check_session():
+    data = request.get_json()
+    session_token = data.get('session_token')
+
+    if not session_token:
+        return jsonify({'success': False, 'message': 'Токен сессии не предоставлен'})
+
+    user = get_user_by_session(session_token)
+
+    if user:
+        return jsonify({'success': True, 'user': user})
+    else:
+        return jsonify({'success': False, 'message': 'Сессия недействительна'})
+
+@app.route('/auth/logout', methods=['POST'])
+def logout():
+    session_token = request.headers.get('Authorization') or request.cookies.get('session_token')
+
+    if session_token:
+        logout_user(session_token)
+
+    return jsonify({'success': True, 'message': 'Выход выполнен'})
 
 # Периодическая очистка истекших SMS-кодов
 def cleanup_codes():
